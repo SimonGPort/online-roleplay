@@ -83,10 +83,13 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   let host = sessions[sessionId];
   let title = req.body.title;
   let type = req.body.type;
+  let system = req.body.system;
   let theme = req.body.theme;
   let language = req.body.language;
   let when = req.body.when;
   let time = req.body.time;
+  let players = [];
+  let conventionsGame = [];
   let frequency = req.body.frequency;
   let description = req.body.description;
   let location = req.body.location;
@@ -105,10 +108,13 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
       title: title,
       eventId: eventId,
       type: type,
+      system: system,
       theme: theme,
+      conventionsGame: conventionsGame,
       description: description,
       img: img,
       language: language,
+      players: players,
       when: when,
       time: time,
       frequency: frequency,

@@ -10,6 +10,7 @@ class CreationEvent extends Component {
       title: "",
       type: "Event",
       theme: "",
+      system: "",
       language: "English",
       when: "",
       time: "",
@@ -29,6 +30,9 @@ class CreationEvent extends Component {
   };
   themeInput = evt => {
     this.setState({ theme: evt.target.value });
+  };
+  systemInput = evt => {
+    this.setState({ system: evt.target.value });
   };
   languageInput = evt => {
     this.setState({ language: evt.target.value });
@@ -60,10 +64,11 @@ class CreationEvent extends Component {
     if (
       this.state.title === "" ||
       this.state.theme === "" ||
+      this.state.system === "" ||
       this.state.imgFile === "" ||
       this.state.when === "" ||
       this.state.time === "" ||
-      this.state.location === ""
+      (this.state.type !== "Online" && this.state.location === "")
     ) {
       alert("You need to complete the form");
       return;
@@ -73,6 +78,7 @@ class CreationEvent extends Component {
     data.append("title", this.state.title);
     data.append("type", this.state.type);
     data.append("theme", this.state.theme);
+    data.append("system", this.state.theme);
     data.append("language", this.state.language);
     data.append("when", this.state.when);
     data.append("time", this.state.time);
@@ -114,6 +120,34 @@ class CreationEvent extends Component {
                 <option>Event</option>
                 <option>Convention</option>
                 <option>Online</option>
+              </select>
+              <label>System</label>
+              <select onChange={this.systemInput}>
+                <option></option>
+                <option>Call of cthulhu</option>
+                <option>Burning wheel</option>
+                <option>Conan</option>
+                <option>Cyberpunk</option>
+                <option>D&D 1/2E</option>
+                <option>D&D 3E</option>
+                <option>Mystery</option>
+                <option>D&D 4E</option>
+                <option>D&D 5E</option>
+                <option>Dungeon world</option>
+                <option>Fiasco</option>
+                <option>GURPS</option>
+                <option>Pathfinder</option>
+                <option>Pathfinder 2E</option>
+                <option>Runequest</option>
+                <option>Starwars FFG</option>
+                <option>Stars without number</option>
+                <option>Shadowrun</option>
+                <option>Dungeon world</option>
+                <option>Pokemon</option>
+                <option>The witcher</option>
+                <option>Warhammer</option>
+                <option>World of darkness</option>
+                <option>Other</option>
               </select>
               <label>Theme</label>
               <select onChange={this.themeInput}>
