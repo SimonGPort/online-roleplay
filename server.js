@@ -28,7 +28,7 @@ reloadMagic(app);
 app.use("/", express.static("build")); // Needed for the HTML and JS files
 app.use("/", express.static("public")); // Needed for local assets
 
-/////////// APP METHOD
+/////////// APP.POST METHOD
 
 app.post("/login", uploads.none(), async (req, res) => {
   let username = req.body.username;
@@ -74,6 +74,82 @@ app.post("/signup", uploads.none(), async (req, res) => {
     console.log("/signup error", err);
     res.send(JSON.stringify({ success: false }));
     return;
+  }
+});
+
+app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
+  console.log("hostingAEvent BackEnd");
+  let sessionId = req.cookies.sid;
+  let host = sessions[sessionId];
+  let title = req.body.title;
+  let type = req.body.type;
+  let theme = req.body.theme;
+  let language = req.body.language;
+  let when = req.body.when;
+  let time = req.body.time;
+  let frequency = req.body.frequency;
+  let description = req.body.description;
+  let location = req.body.location;
+  let numPlayers = req.body.numPlayers;
+  let img = "/uploads/" + req.file.filename;
+  let eventId = "" + Math.floor(Math.random() * 1000000);
+  console.log("image", img);
+  if (host === undefined) {
+    console.log("The user need to login");
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+  try {
+    dbo.collection("events").insertOne({
+      host: host,
+      title: title,
+      eventId: eventId,
+      type: type,
+      theme: theme,
+      description: description,
+      img: img,
+      language: language,
+      when: when,
+      time: time,
+      frequency: frequency,
+      location: location,
+      numPlayers: numPlayers
+    });
+    console.log("The event has been register");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("/book registration fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/autoLogin", async (req, res) => {
+  let sessionId = req.cookies.sid;
+  let username = sessions[sessionId];
+  if (username === undefined) {
+    console.log("an user enter the website without autoLogin");
+    res.send(JSON.stringify({ success: false }));
+  } else {
+    console.log("an user enter the website with autoLogin");
+    res.send(
+      JSON.stringify({
+        success: true,
+        username: username
+      })
+    );
+  }
+});
+
+app.post("/fetchEvents", async (req, res) => {
+  try {
+    events = await dbo
+      .collection("events")
+      .find({})
+      .toArray();
+    res.send(JSON.stringify({ success: true, events: events }));
+  } catch (err) {
+    console.log("Can't fetch the events in the database", err);
   }
 });
 

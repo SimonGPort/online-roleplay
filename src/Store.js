@@ -12,6 +12,9 @@ let reducer = (state, action) => {
     return { ...state, login: action.login, user: action.username };
   }
 
+  if (action.type === "fetchEvents") {
+    return { ...state, events: action.events };
+  }
   //   if (action.type === "signup") {
   //     return { ...state, login: action.login, user: action.username };
   //   }
@@ -32,6 +35,7 @@ const store = createStore(
     login: false,
     chat: [],
     username: "",
+    events: [],
     language: "english"
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
