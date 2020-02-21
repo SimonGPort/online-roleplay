@@ -6,6 +6,7 @@ import Login from "./Login.jsx";
 import MainPage from "./MainPage.jsx";
 import CreationEvent from "./CreationEvent.jsx";
 import { connect } from "react-redux";
+import Event from "./Event.jsx";
 
 class App extends Component {
   renderMainPage = () => {
@@ -57,6 +58,12 @@ class App extends Component {
           path="/new-event"
           exact={true}
           render={this.renderCreationEventPage}
+        />
+        <Route
+          path="/event/:eventId"
+          render={routeProps => (
+            <Event eventId={routeProps.match.params.eventId} />
+          )}
         />
       </BrowserRouter>
     );

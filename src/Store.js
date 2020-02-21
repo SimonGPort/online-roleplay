@@ -15,6 +15,11 @@ let reducer = (state, action) => {
   if (action.type === "fetchEvents") {
     return { ...state, events: action.events };
   }
+
+  if (action.type === "set-messages") {
+    return { ...state, chat: action.messages };
+  }
+
   //   if (action.type === "signup") {
   //     return { ...state, login: action.login, user: action.username };
   //   }

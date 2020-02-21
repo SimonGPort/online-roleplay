@@ -33,3 +33,10 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+.EventPage {
+  display: flex;
+  justify-content: space-evenly;
+}
+.card {
+  border: 1px solid black;
+}

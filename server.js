@@ -89,6 +89,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   let when = req.body.when;
   let time = req.body.time;
   let players = [];
+  let chat = [];
   let conventionsGame = [];
   let frequency = req.body.frequency;
   let description = req.body.description;
@@ -115,6 +116,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
       img: img,
       language: language,
       players: players,
+      chat: chat,
       when: when,
       time: time,
       frequency: frequency,
@@ -144,6 +146,49 @@ app.post("/autoLogin", async (req, res) => {
         username: username
       })
     );
+  }
+});
+
+app.post("/fetchMessages", uploads.none(), async (req, res) => {
+  const eventId = req.query.eventId;
+  try {
+    const event = await dbo.collection("events").findOne({ eventId: eventId });
+    if (!event) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    res.send(JSON.stringify({ success: true, event }));
+  } catch (err) {
+    console.log("/fetchMessages error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/postMessage", uploads.none(), async (req, res) => {
+  const sessionId = req.cookies.sid;
+  if (sessions[sessionId] === undefined) {
+    res.status(403);
+    return res.send(
+      JSON.stringify({ success: false, message: "Invalid session" })
+    );
+  }
+  const username = sessions[sessionId];
+  const eventId = req.query.eventId;
+  let message = req.body.message;
+
+  try {
+    dbo
+      .collection("events")
+      .updateOne(
+        { eventId: eventId },
+        { $push: { chat: { username: username, message: message } } }
+      );
+    console.log("messagePost success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("messagePost fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
   }
 });
 
