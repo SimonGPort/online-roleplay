@@ -29,6 +29,7 @@ class App extends Component {
 
   componentDidMount() {
     this.fetchSession();
+    this.fetchEvents();
   }
 
   fetchSession = async () => {
@@ -43,6 +44,22 @@ class App extends Component {
       });
     } else {
       console.log("no autologin");
+    }
+  };
+
+  fetchEvents = async () => {
+    let response = await fetch("/fetchEvents");
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("/fetchEvents", body);
+    if (body.success) {
+      console.log("fetchEvents success");
+      this.props.dispatch({
+        type: "fetchEvents",
+        events: body.events
+      });
+    } else {
+      console.log("fetchEvents error");
     }
   };
 

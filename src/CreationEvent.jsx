@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import SimpleMap from "./SimpleMap.jsx";
+import SearchLocation from "./SearchLocation.jsx";
 
 class CreationEvent extends Component {
   constructor(props) {
@@ -16,7 +18,7 @@ class CreationEvent extends Component {
       time: "",
       frequency: "Just once",
       description: "",
-      location: "",
+      location: {},
       numPlayers: 5,
       imgFile: ""
     };
@@ -52,8 +54,8 @@ class CreationEvent extends Component {
   numPlayersInput = evt => {
     this.setState({ numPlayers: evt.target.value });
   };
-  locationInput = evt => {
-    this.setState({ location: evt.target.value });
+  locationInput = location => {
+    this.setState({ location });
   };
   pictureInput = e => {
     this.setState({ imgFile: e.target.files[0] });
@@ -182,7 +184,7 @@ class CreationEvent extends Component {
               <textarea
                 rows="6"
                 cols="20"
-                maxlength="500"
+                maxLength="500"
                 onChange={this.descriptionInput}
               ></textarea>
               {this.state.type !== "Convention" && (
@@ -203,8 +205,17 @@ class CreationEvent extends Component {
 
               {this.state.type !== "Online" && (
                 <>
-                  <label>Where can you play?</label>
-                  <input onChange={this.locationInput} />
+                  <div>
+                    <label>Address</label>
+                    {/* onChange={this.locationInput}  */}
+                    <SearchLocation setLocation={this.locationInput} />
+                  </div>
+                  <div>
+                    <SimpleMap
+                      lat={this.state.location.lat}
+                      lng={this.state.location.lng}
+                    />
+                  </div>
                 </>
               )}
               <input type="submit" value="Submit" />

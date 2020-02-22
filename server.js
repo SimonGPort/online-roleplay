@@ -149,14 +149,15 @@ app.post("/autoLogin", async (req, res) => {
   }
 });
 
-app.post("/fetchMessages", uploads.none(), async (req, res) => {
+app.get("/fetchMessages", async (req, res) => {
   const eventId = req.query.eventId;
   try {
     const event = await dbo.collection("events").findOne({ eventId: eventId });
     if (!event) {
       return res.send(JSON.stringify({ success: false }));
     }
-    res.send(JSON.stringify({ success: true, event }));
+    const chat = event.chat;
+    res.send(JSON.stringify({ success: true, chat }));
   } catch (err) {
     console.log("/fetchMessages error", err);
     res.send(JSON.stringify({ success: false }));
@@ -173,11 +174,11 @@ app.post("/postMessage", uploads.none(), async (req, res) => {
     );
   }
   const username = sessions[sessionId];
-  const eventId = req.query.eventId;
+  const eventId = req.body.eventId;
   let message = req.body.message;
 
   try {
-    dbo
+    await dbo
       .collection("events")
       .updateOne(
         { eventId: eventId },
@@ -192,9 +193,9 @@ app.post("/postMessage", uploads.none(), async (req, res) => {
   }
 });
 
-app.post("/fetchEvents", async (req, res) => {
+app.get("/fetchEvents", async (req, res) => {
   try {
-    events = await dbo
+    const events = await dbo
       .collection("events")
       .find({})
       .toArray();

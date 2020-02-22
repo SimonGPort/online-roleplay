@@ -25,7 +25,7 @@ class MainPage extends Component {
   }
 
   fetchEvents = async () => {
-    let response = await fetch("/fetchEvents", { method: "POST" });
+    let response = await fetch("/fetchEvents");
     let body = await response.text();
     body = JSON.parse(body);
     console.log("/fetchEvents", body);
@@ -47,7 +47,7 @@ class MainPage extends Component {
   render = () => {
     if (this.props.events.length === 0) {
       return null;
-      // <div className="MainPage">
+      // <div className="main-page">
       //   <div></div>
       //   <Calendar
       //     localizer={localizer}
@@ -61,10 +61,8 @@ class MainPage extends Component {
       // </div>
     }
     return (
-      <div className="MainPage">
-        <div>
-          <Announcements announcements={this.state.selection} />
-        </div>
+      <div className="main-page">
+        <Announcements announcements={this.state.selection} />
         <Calendar
           localizer={localizer}
           events={this.props.events}

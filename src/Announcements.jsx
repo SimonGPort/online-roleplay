@@ -13,6 +13,7 @@ class Announcements extends Component {
     if (this.props.announcements.length === 0) {
       return (
         <div>
+          Event Sponsored
           <Card eventId={eventSponsored} />
         </div>
       );

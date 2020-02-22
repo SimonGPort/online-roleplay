@@ -29,14 +29,23 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
-.MainPage {
+.main-page {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
-.EventPage {
+.event-page {
   display: flex;
   justify-content: space-evenly;
 }
 .card {
   border: 1px solid black;
+}
+.event-infos {
+  border: 1px solid black;
+}
+.markerOnMap {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  transform: translate(-50%, -100%);
 }
