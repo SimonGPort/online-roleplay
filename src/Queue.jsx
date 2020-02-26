@@ -1,20 +1,76 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import ConventionQueue from "./ConventionQueue.jsx";
 
 class Queue extends Component {
   constructor() {
     super();
   }
-  //   requestToJoinHandle = evt => {
-  //     if (this.props.login === false) {
-  //       return alert("you need to login");
-  //     }
-  //     ....... a faire
-  //   };
+  requestToJoin = async evt => {
+    if (this.props.login === false) {
+      return alert("you need to login");
+    }
+    let data = new FormData();
+    data.append("id", this.props.id);
+    data.append("user", this.props.user);
+    let response = await fetch("/requestToJoin", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      this.props.dispatch({
+        type: "joinEvent",
+        user: this.props.user,
+        id: this.props.id
+      });
+    } else {
+      alert("you can't join this event");
+    }
+  };
 
-  //   LeaveTheQueue=evt=>{
-  //       a faire aussi
-  //   }
+  leaveTheQueue = async evt => {
+    let data = new FormData();
+    data.append("id", this.props.id);
+    data.append("user", this.props.user);
+    let response = await fetch("/leaveTheQueue", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      this.props.dispatch({
+        type: "leaveEvent",
+        user: this.props.user,
+        id: this.props.id
+      });
+    } else {
+      alert("error, you can't leave this event");
+    }
+  };
+
+  deleteEvent = async evt => {
+    if (window.confirm("Do you really want to delete the event?")) {
+      let data = new FormData();
+      data.append("id", this.props.id);
+      let response = await fetch("/deleteTheEvent", {
+        method: "POST",
+        body: data
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      if (body.success) {
+        this.props.dispatch({
+          type: "DeleteEvent",
+          id: this.props.id
+        });
+      } else {
+        alert("error, you can't delete this event");
+      }
+    }
+  };
 
   render = () => {
     if (this.props.type === "Convention") {
@@ -27,7 +83,6 @@ class Queue extends Component {
         </div>
       );
     }
-
     return (
       <div>
         <div>
@@ -35,16 +90,20 @@ class Queue extends Component {
           {parseInt(this.props.numPlayers) + 1}
         </div>
         <div>
-          {/* (il faut une logique si on est le GM, il peut pas y avoir de bouton join, mais delete event) */}
-          {this.props.players.includes(this.props.username) ? (
+          {this.props.user === this.props.host ? (
+            <div>
+              Delete the event
+              <button onClick={this.deleteEvent} />
+            </div>
+          ) : this.props.players.includes(this.props.user) ? (
             <div>
               Leave the queue
-              <button onClick={this.LeaveTheQueue} />
+              <button onClick={this.leaveTheQueue} />
             </div>
           ) : (
             <div>
               Request to join
-              <button onClick={this.requestToJoinHandle} />
+              <button onClick={this.requestToJoin} />
             </div>
           )}
         </div>
@@ -52,9 +111,9 @@ class Queue extends Component {
         <div>
           {this.props.players.map((player, idx) => {
             if (idx <= this.props.players.length) {
-              return <div>Attendees: player</div>;
+              return <div>Attendees: {player}</div>;
             }
-            return <div>On the waiting list: player</div>;
+            return <div>On the waiting list: {player}</div>;
           })}
         </div>
       </div>
@@ -62,4 +121,4 @@ class Queue extends Component {
   };
 }
 
-export default Queue;
+export default connect()(Queue);

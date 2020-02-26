@@ -94,7 +94,6 @@ class CreationEvent extends Component {
       body: data
     });
     let body = await response.text();
-    // console.log("/hostingAEvent response", body);
     body = JSON.parse(body);
     if (body.success) {
       alert("Your event is post");

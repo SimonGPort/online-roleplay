@@ -27,6 +27,7 @@ reloadMagic(app);
 
 app.use("/", express.static("build")); // Needed for the HTML and JS files
 app.use("/", express.static("public")); // Needed for local assets
+app.use("/uploads", express.static("uploads"));
 
 /////////// APP.POST METHOD
 
@@ -72,6 +73,50 @@ app.post("/signup", uploads.none(), async (req, res) => {
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("/signup error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/requestToJoin", uploads.none(), async (req, res) => {
+  let user = req.body.user;
+  let eventId = req.body.id;
+  console.log("user and eventID", user, eventId);
+  try {
+    await dbo
+      .collection("events")
+      .updateOne({ eventId: eventId }, { $push: { players: user } });
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("requestToJoin fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/leaveTheQueue", uploads.none(), async (req, res) => {
+  let user = req.body.user;
+  let eventId = req.body.id;
+  console.log("user and eventID", user, eventId);
+  try {
+    await dbo
+      .collection("events")
+      .updateOne({ eventId: eventId }, { $pull: { players: user } });
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("leaveTheQueue fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/deleteTheEvent", uploads.none(), async (req, res) => {
+  let eventId = req.body.id;
+  try {
+    await dbo.collection("events").deleteOne({ eventId: eventId });
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("DeleteEvent fail", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }

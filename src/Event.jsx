@@ -33,7 +33,10 @@ class Event extends Component {
       console.log("this.props.eventId", this.props.eventId);
       return element.eventId === this.props.eventId;
     });
-    return (
+
+    return this.props.events.length === 0 ? (
+      <div>loading ...</div>
+    ) : (
       <div className="event-page">
         <div>
           <div className="event-infos">
@@ -58,7 +61,7 @@ class Event extends Component {
             conventionsGame={event.conventionsGame}
             host={event.host}
             login={this.props.login}
-            username={this.props.username}
+            user={this.props.user}
           />
         </div>
       </div>
@@ -69,7 +72,8 @@ class Event extends Component {
 let mapStateToProps = state => {
   return {
     events: state.events,
-    login: state.login
+    login: state.login,
+    user: state.user
   };
 };
 export default connect(mapStateToProps)(Event);

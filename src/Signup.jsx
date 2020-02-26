@@ -39,7 +39,7 @@ class Signup extends Component {
       this.props.dispatch({
         type: "signup",
         login: true,
-        username: this.state.username
+        user: this.state.username
       });
       this.props.history.push("/");
     } else {

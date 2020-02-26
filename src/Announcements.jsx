@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Card from "./Card.jsx";
 
 ///Mettre l'ID de l'eventSponsored dans un array, exemple: ["255215"]
-const eventSponsored = "255215";
+const eventSponsored = "904373";
 
 class Announcements extends Component {
   constructor() {

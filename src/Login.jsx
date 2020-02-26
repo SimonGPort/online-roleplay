@@ -20,8 +20,6 @@ class Login extends Component {
 
   submitHandler = async evt => {
     evt.preventDefault();
-    console.log("username", this.state.username);
-    console.log("password", this.state.password);
     let data = new FormData();
     data.append("username", this.state.username);
     data.append("password", this.state.password);
@@ -33,7 +31,7 @@ class Login extends Component {
       this.props.dispatch({
         type: "login",
         login: true,
-        username: this.state.username
+        user: this.state.username
       });
       this.props.history.push("/");
     } else {

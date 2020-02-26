@@ -40,7 +40,7 @@ class App extends Component {
       this.props.dispatch({
         type: "login",
         login: true,
-        username: body.username
+        user: body.username
       });
     } else {
       console.log("no autologin");
