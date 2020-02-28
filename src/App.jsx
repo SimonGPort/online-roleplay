@@ -7,8 +7,17 @@ import MainPage from "./MainPage.jsx";
 import CreationEvent from "./CreationEvent.jsx";
 import { connect } from "react-redux";
 import Event from "./Event.jsx";
+import CreationConventionTable from "./CreationConventionTable.jsx";
+import ConventionEvent from "./ConventionEvent.jsx";
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      loading: false
+    };
+  }
+
   renderMainPage = () => {
     return <MainPage />;
   };
@@ -28,8 +37,9 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.fetchSession();
-    this.fetchEvents();
+    Promise.all([this.fetchSession(), this.fetchEvents()]).then(() =>
+      this.setState({ loading: true })
+    );
   }
 
   fetchSession = async () => {
@@ -64,6 +74,9 @@ class App extends Component {
   };
 
   render = () => {
+    if (this.state.loading === false) {
+      return <div>Loading... </div>;
+    }
     return (
       <BrowserRouter>
         <Navbar />
@@ -81,6 +94,29 @@ class App extends Component {
           render={routeProps => (
             <Event eventId={routeProps.match.params.eventId} />
           )}
+        />
+        <Route
+          path="/creation-convention-table/:eventId"
+          render={routeProps => {
+            console.log(routeProps.match.params.eventId);
+            return (
+              <CreationConventionTable
+                eventId={routeProps.match.params.eventId}
+              />
+            );
+          }}
+        />
+        <Route
+          path="/convention-event/:eventId/:tableId"
+          render={routeProps => {
+            console.log(routeProps.match.params.tableId);
+            return (
+              <ConventionEvent
+                tableId={routeProps.match.params.tableId}
+                eventId={routeProps.match.params.eventId}
+              />
+            );
+          }}
         />
       </BrowserRouter>
     );

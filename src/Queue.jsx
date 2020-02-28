@@ -77,7 +77,9 @@ class Queue extends Component {
       return (
         <div>
           <ConventionQueue
-            id={this.props.id}
+            eventId={this.props.id}
+            host={this.props.host}
+            user={this.props.user}
             conventionsGame={this.props.conventionsGame}
           />
         </div>

@@ -238,6 +238,75 @@ app.post("/postMessage", uploads.none(), async (req, res) => {
   }
 });
 
+/////////////////ICI POUR LA CONVENTION TABLE
+app.post(
+  "/creatingAConventionTable",
+  uploads.single("imgFile"),
+  async (req, res) => {
+    const sessionId = req.cookies.sid;
+    if (sessions[sessionId] === undefined) {
+      res.status(403);
+      return res.send(
+        JSON.stringify({ success: false, message: "Invalid session" })
+      );
+    }
+    let gm = "";
+    let tableCreator = sessions[sessionId];
+    let visibility = "Restricted";
+    let eventId = req.body.eventId;
+    let title = req.body.title;
+    let type = "Convention's table";
+    let system = req.body.system;
+    let theme = req.body.theme;
+    let language = req.body.language;
+    let when = req.body.when;
+    let time = req.body.time;
+    let players = [];
+    let chat = [];
+    let tableId = "" + Math.floor(Math.random() * 1000000);
+    let frequency = "Just once";
+    let description = req.body.description;
+    // let location = req.body.location;
+    let numPlayers = req.body.numPlayers;
+    let img = "/uploads/" + req.file.filename;
+    let conventionTable = {
+      gm: gm,
+      tableCreator: tableCreator,
+      visibility: visibility,
+      tableId: tableId,
+      title: title,
+      type: type,
+      system: system,
+      theme: theme,
+      language: language,
+      when: when,
+      time: time,
+      players: players,
+      chat: chat,
+      frequency: frequency,
+      description: description,
+      numPlayers: numPlayers,
+      img: img
+    };
+    console.log("conventionTable:", conventionTable);
+    console.log("eventId", eventId);
+    try {
+      await dbo
+        .collection("events")
+        .updateOne(
+          { eventId: eventId },
+          { $push: { conventionsGame: conventionTable } }
+        );
+      console.log("conventionTable creation success");
+      res.send(JSON.stringify({ success: true }));
+    } catch (err) {
+      console.log("conventionTable creation fail", err);
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+  }
+);
+
 app.get("/fetchEvents", async (req, res) => {
   try {
     const events = await dbo

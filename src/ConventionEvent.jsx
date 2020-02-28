@@ -3,7 +3,7 @@ import Chat from "./Chat.jsx";
 import { connect } from "react-redux";
 import Queue from "./Queue.jsx";
 
-class Event extends Component {
+class ConventionEvent extends Component {
   constructor() {
     super();
   }
@@ -12,25 +12,33 @@ class Event extends Component {
     let event = this.props.events.find(element => {
       return element.eventId === this.props.eventId;
     });
+    console.log("event", event);
+    let table = event.conventionsGame.find(element => {
+      return element.tableId === this.props.tableId;
+    });
 
-    return (
+    return this.props.events.length === 0 ? (
+      <div>loading ...</div>
+    ) : (
       <div className="event-page">
         <div>
           <div className="event-infos">
-            <div>{event.title}</div>
-            <div>{event.descrition}</div>
-            <div>Organiser of this event: {event.host}</div>
+            <div>{table.title}</div>
+            <div>{table.descrition}</div>
+            <div>Game Master: {table.gm}</div>
             <div>
-              <img src={event.img} />
+              <img src={table.img} />
             </div>
           </div>
 
           <div>
-            <Chat id={this.props.eventId} />
+            {/* faire un nouveau component qui prends en consideration la tableId */}
+            {/* <Chat eventId={this.props.eventId} tableId={this.props.tableId}/> */}
           </div>
         </div>
         <div>
-          <Queue
+          {/* faire un nouveau component qui prends en consideration la tableId */}
+          {/* <Queue
             id={this.props.eventId}
             type={event.type}
             players={event.players}
@@ -39,7 +47,7 @@ class Event extends Component {
             host={event.host}
             login={this.props.login}
             user={this.props.user}
-          />
+          /> */}
         </div>
       </div>
     );
@@ -53,4 +61,4 @@ let mapStateToProps = state => {
     user: state.user
   };
 };
-export default connect(mapStateToProps)(Event);
+export default connect(mapStateToProps)(ConventionEvent);
