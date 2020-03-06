@@ -49,3 +49,10 @@ body {
   position: relative;
   transform: translate(-50%, -100%);
 }
+
+.draggable-image {
+  background-image: url("/images/Orc.png");
+  background-size: cover;
+  height: 60px;
+  width: 60px;
+}

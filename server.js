@@ -29,7 +29,7 @@ app.use("/", express.static("build")); // Needed for the HTML and JS files
 app.use("/", express.static("public")); // Needed for local assets
 app.use("/uploads", express.static("uploads"));
 
-/////////// APP.POST METHOD
+/////////// APP. METHOD
 
 app.post("/login", uploads.none(), async (req, res) => {
   let username = req.body.username;
@@ -81,7 +81,6 @@ app.post("/signup", uploads.none(), async (req, res) => {
 app.post("/requestToJoin", uploads.none(), async (req, res) => {
   let user = req.body.user;
   let eventId = req.body.id;
-  console.log("user and eventID", user, eventId);
   try {
     await dbo
       .collection("events")
@@ -89,6 +88,25 @@ app.post("/requestToJoin", uploads.none(), async (req, res) => {
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("requestToJoin fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/dragged", uploads.none(), async (req, res) => {
+  let translateX = req.body.translateX;
+  let translateY = req.body.translateY;
+  let tokenId = req.body.tokenId;
+  try {
+    await dbo
+      .collection("tokens")
+      .updateOne(
+        { tokenId: tokenId },
+        { $set: { translateX: translateX, translateY: translateY } }
+      );
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("dragged error", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }
@@ -114,6 +132,28 @@ app.post("/deleteTheEvent", uploads.none(), async (req, res) => {
   let eventId = req.body.id;
   try {
     await dbo.collection("events").deleteOne({ eventId: eventId });
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("DeleteEvent fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/deleteTheEventConvention", uploads.none(), async (req, res) => {
+  let eventId = req.body.eventId;
+  let tableIndex = req.body.tableIndex;
+  let tableId = req.body.tableId;
+  let field = "conventionsGame." + tableIndex;
+  console.log("deleteConventionEvent:", field);
+  console.log("je test mes variables", eventId, tableIndex, tableId);
+  try {
+    await dbo
+      .collection("events")
+      .update(
+        { eventId: eventId },
+        { $pull: { conventionsGame: { tableId: tableId } } }
+      );
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("DeleteEvent fail", err);
@@ -210,6 +250,40 @@ app.get("/fetchMessages", async (req, res) => {
   }
 });
 
+app.get("/fetchGameView", async (req, res) => {
+  const tokenId = "1";
+  try {
+    const gameView = await dbo
+      .collection("tokens")
+      .findOne({ tokenId: tokenId });
+    if (!gameView) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    res.send(JSON.stringify({ success: true, gameView }));
+  } catch (err) {
+    console.log("/GameView error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.get("/fetchMessagesConvention", async (req, res) => {
+  const eventId = req.query.eventId;
+  const tableIndex = req.query.tableIndex;
+  try {
+    const event = await dbo.collection("events").findOne({ eventId: eventId });
+    if (!event) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    const chat = event.conventionsGame[tableIndex].chat;
+    res.send(JSON.stringify({ success: true, chat }));
+  } catch (err) {
+    console.log("/fetchMessages error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
 app.post("/postMessage", uploads.none(), async (req, res) => {
   const sessionId = req.cookies.sid;
   if (sessions[sessionId] === undefined) {
@@ -238,7 +312,163 @@ app.post("/postMessage", uploads.none(), async (req, res) => {
   }
 });
 
-/////////////////ICI POUR LA CONVENTION TABLE
+app.post("/postMessageConvention", uploads.none(), async (req, res) => {
+  const sessionId = req.cookies.sid;
+  if (sessions[sessionId] === undefined) {
+    res.status(403);
+    return res.send(
+      JSON.stringify({ success: false, message: "Invalid session" })
+    );
+  }
+  const username = sessions[sessionId];
+  const eventId = req.body.eventId;
+  let message = req.body.message;
+  let tableIndex = req.body.tableIndex;
+  let field = "conventionsGame." + tableIndex + ".chat";
+  console.log("field:", field);
+
+  try {
+    await dbo.collection("events").updateOne(
+      { eventId: eventId },
+      {
+        $push: {
+          [field]: {
+            username: username,
+            message: message
+          }
+        }
+      }
+    );
+    console.log("messagePost success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("messagePost fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/requestToJoinConventionEvent", uploads.none(), async (req, res) => {
+  const sessionId = req.cookies.sid;
+  if (sessions[sessionId] === undefined) {
+    res.status(403);
+    return res.send(
+      JSON.stringify({ success: false, message: "Invalid session" })
+    );
+  }
+  const user = sessions[sessionId];
+  const eventId = req.body.eventId;
+  let tableIndex = req.body.tableIndex;
+  let field = "conventionsGame." + tableIndex + ".players";
+  try {
+    await dbo.collection("events").updateOne(
+      { eventId: eventId },
+      {
+        $push: {
+          [field]: user
+        }
+      }
+    );
+    console.log("messagePost success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("messagePost fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/leaveTheQueueConvention", uploads.none(), async (req, res) => {
+  const sessionId = req.cookies.sid;
+  if (sessions[sessionId] === undefined) {
+    res.status(403);
+    return res.send(
+      JSON.stringify({ success: false, message: "Invalid session" })
+    );
+  }
+  const user = sessions[sessionId];
+  const eventId = req.body.eventId;
+  let tableIndex = req.body.tableIndex;
+  let field = "conventionsGame." + tableIndex + ".players";
+  try {
+    await dbo.collection("events").updateOne(
+      { eventId: eventId },
+      {
+        $pull: {
+          [field]: user
+        }
+      }
+    );
+    console.log("messagePost success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("messagePost fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/gameAcceptedForConvention", uploads.none(), async (req, res) => {
+  const sessionId = req.cookies.sid;
+  if (sessions[sessionId] === undefined) {
+    res.status(403);
+    return res.send(
+      JSON.stringify({ success: false, message: "Invalid session" })
+    );
+  }
+  const eventId = req.body.eventId;
+  let tableIndex = req.body.tableIndex;
+  let field = "conventionsGame." + tableIndex + ".visibility";
+  try {
+    await dbo.collection("events").updateOne(
+      { eventId: eventId },
+      {
+        $set: {
+          [field]: "Unrestricted"
+        }
+      }
+    );
+    console.log("gameAcceptedForConvention success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("gameAcceptedForConvention fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/newGmEventConvention", uploads.none(), async (req, res) => {
+  const sessionId = req.cookies.sid;
+  if (sessions[sessionId] === undefined) {
+    res.status(403);
+    return res.send(
+      JSON.stringify({ success: false, message: "Invalid session" })
+    );
+  }
+  const username = sessions[sessionId];
+  const eventId = req.body.eventId;
+  let tableIndex = req.body.tableIndex;
+  let field = "conventionsGame." + tableIndex + ".gm";
+  console.log("field:", field);
+
+  try {
+    await dbo.collection("events").updateOne(
+      { eventId: eventId },
+      {
+        $set: {
+          [field]: username
+        }
+      }
+    );
+    console.log("newGmEventConvention success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("newGmEventConvention fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
 app.post(
   "/creatingAConventionTable",
   uploads.single("imgFile"),
@@ -250,7 +480,7 @@ app.post(
         JSON.stringify({ success: false, message: "Invalid session" })
       );
     }
-    let gm = "";
+    let gm = req.body.gm;
     let tableCreator = sessions[sessionId];
     let visibility = "Restricted";
     let eventId = req.body.eventId;
@@ -288,8 +518,6 @@ app.post(
       numPlayers: numPlayers,
       img: img
     };
-    console.log("conventionTable:", conventionTable);
-    console.log("eventId", eventId);
     try {
       await dbo
         .collection("events")

@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import Event from "./Event.jsx";
 import CreationConventionTable from "./CreationConventionTable.jsx";
 import ConventionEvent from "./ConventionEvent.jsx";
+import Online from "./Online.jsx";
 
 class App extends Component {
   constructor() {
@@ -96,6 +97,15 @@ class App extends Component {
           )}
         />
         <Route
+          path="/online/:host/:eventId"
+          render={routeProps => (
+            <Online
+              host={routeProps.match.params.host}
+              eventId={routeProps.match.params.eventId}
+            />
+          )}
+        />
+        <Route
           path="/creation-convention-table/:eventId"
           render={routeProps => {
             console.log(routeProps.match.params.eventId);
@@ -109,7 +119,6 @@ class App extends Component {
         <Route
           path="/convention-event/:eventId/:tableId"
           render={routeProps => {
-            console.log(routeProps.match.params.tableId);
             return (
               <ConventionEvent
                 tableId={routeProps.match.params.tableId}

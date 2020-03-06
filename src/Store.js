@@ -7,7 +7,7 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "signup") {
-    return { ...state, login: action.login, user: action.username };
+    return { ...state, login: action.login, user: action.user };
   }
   if (action.type === "login") {
     return { ...state, login: action.login, user: action.user };
@@ -17,8 +17,116 @@ let reducer = (state, action) => {
     return { ...state, events: action.events };
   }
 
+  if (action.type === "draggingStart") {
+    return { ...state, dragging: true, tokenIdDragged: action.tokenIdDragged };
+  }
+  if (action.type === "draggingEnd") {
+    return { ...state, dragging: false, tokenIdDragged: "" };
+  }
+
+  if (action.type === "gameUpdate") {
+    let listOfTokens = [];
+    listOfTokens.push(action.gameView);
+    return { ...state, gameView: listOfTokens };
+  }
+
   if (action.type === "set-messages") {
-    return { ...state, chat: action.messages };
+    let eventId = action.eventId;
+    let messages = action.messages;
+
+    const index = state.events.findIndex(event => {
+      return event.eventId === eventId;
+    });
+
+    return produce(state, draftState => {
+      draftState.events[index].chat = messages;
+    });
+  }
+
+  if (action.type === "set-messages-convention") {
+    let eventId = action.eventId;
+    let messages = action.messages;
+    let tableId = action.tableId;
+
+    const eventIndex = state.events.findIndex(event => {
+      return event.eventId === eventId;
+    });
+    const tableIndex = state.events[eventIndex].conventionsGame.findIndex(
+      table => {
+        return table.tableId === tableId;
+      }
+    );
+
+    return produce(state, draftState => {
+      draftState.events[eventIndex].conventionsGame[tableIndex].chat = messages;
+    });
+  }
+
+  if (action.type === "newGmEventConvention") {
+    let eventId = action.eventId;
+    let user = action.user;
+    let tableIndex = action.tableIndex;
+
+    return produce(state, draftState => {
+      draftState.events[eventIndex].conventionsGame[tableIndex].gm = user;
+    });
+  }
+
+  if (action.type === "gameAcceptedConvention") {
+    let eventId = action.eventId;
+    let tableIndex = action.tableIndex;
+    let eventIndex = state.events.findIndex(event => {
+      return event.eventId === eventId;
+    });
+    return produce(state, draftState => {
+      draftState.events[eventIndex].conventionsGame[tableIndex].visibility =
+        "NotRestricted";
+    });
+  }
+
+  if (action.type === "newGmEventConvention") {
+    let eventIndex = action.eventIndex;
+    let user = action.user;
+    let tableIndex = action.tableIndex;
+    return produce(state, draftState => {
+      draftState.events[eventIndex].conventionsGame[tableIndex].gm = user;
+    });
+  }
+
+  if (action.type === "joinEventConvention") {
+    let eventIndex = action.eventIndex;
+    let user = action.user;
+    let tableIndex = action.tableIndex;
+    return produce(state, draftState => {
+      draftState.events[eventIndex].conventionsGame[tableIndex].players.push(
+        user
+      );
+    });
+  }
+
+  if (action.type === "leaveEventConvention") {
+    let eventIndex = action.eventIndex;
+    let user = action.user;
+    let tableIndex = action.tableIndex;
+    const indexPlayer = state.events[eventIndex].conventionsGame[
+      tableIndex
+    ].players.findIndex(player => {
+      return player === user;
+    });
+    return produce(state, draftState => {
+      draftState.events[eventIndex].conventionsGame[tableIndex].players.splice(
+        indexPlayer,
+        1
+      );
+    });
+  }
+
+  if (action.type === "DeleteEventConvention") {
+    let eventIndex = action.eventIndex;
+    let tableIndex = action.tableIndex;
+    return produce(state, draftState => {
+      draftState.events[eventIndex].conventionsGame.splice(tableIndex, 1);
+    });
   }
 
   if (action.type === "joinEvent") {
@@ -55,11 +163,14 @@ const store = createStore(
   reducer,
   {
     sessions: [],
+    dragging: false,
+    tokenIdDragged: "",
     users: [],
+    user: "",
     login: false,
-    chat: [],
     events: [],
-    language: "english"
+    language: "english",
+    gameView: []
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

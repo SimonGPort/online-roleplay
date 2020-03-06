@@ -6,6 +6,28 @@ class ConventionQueue extends Component {
   constructor() {
     super();
   }
+
+  gameAccepted = async idx => {
+    let data = new FormData();
+    data.append("tableIndex", idx);
+    data.append("eventId", this.props.eventId);
+    let response = await fetch("/gameAcceptedForConvention", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      this.props.dispatch({
+        type: "gameAcceptedConvention",
+        eventId: this.props.eventId,
+        tableIndex: idx
+      });
+    } else {
+      alert("error, you can't accept this event");
+    }
+  };
+
   render = () => {
     return (
       <div>
@@ -15,7 +37,9 @@ class ConventionQueue extends Component {
             if (game.visibility !== "Restricted") {
               return (
                 <div key={idx}>
-                  <Link to={`/convention-table/${game.tableId}`}>
+                  <Link
+                    to={`/convention-event/${this.props.eventId}/${game.tableId}`}
+                  >
                     {game.title}
                   </Link>
                 </div>
@@ -33,7 +57,9 @@ class ConventionQueue extends Component {
                     {game.title}
                   </Link>
                   {this.props.host === this.props.user ? (
-                    <button>Make this event visible for all</button>
+                    <button onClick={() => this.gameAccepted(idx)}>
+                      Accept this game
+                    </button>
                   ) : (
                     <div>The organisator need to make this game visible</div>
                   )}

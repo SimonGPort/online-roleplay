@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-class Chat extends Component {
+class ConventionChat extends Component {
   constructor() {
     super();
     this.state = {
@@ -18,19 +18,23 @@ class Chat extends Component {
   }
 
   updateMessages = async () => {
-    let response = await fetch("/fetchMessages?eventId=" + this.props.id);
+    let response = await fetch(
+      "/fetchMessagesConvention?eventId=" +
+        this.props.eventId +
+        "&tableIndex=" +
+        this.props.tableIndex
+    );
     let responseBody = await response.text();
-    // console.log('response from messages', responseBody);
     let parsed = JSON.parse(responseBody);
-    // console.log('parsed', parsed);
     if (!parsed.success) {
       this.props.dispatch({ type: "logout" });
       return;
     }
     this.props.dispatch({
-      type: "set-messages",
+      type: "set-messages-convention",
       messages: parsed.chat,
-      eventId: this.props.id
+      eventId: this.props.eventId,
+      tableId: this.props.tableId
     });
   };
 
@@ -42,8 +46,9 @@ class Chat extends Component {
     evt.preventDefault();
     let data = new FormData();
     data.append("message", this.state.inputValue);
-    data.append("eventId", this.props.id);
-    let response = await fetch("/postMessage", {
+    data.append("eventId", this.props.eventId);
+    data.append("tableIndex", this.props.tableIndex);
+    let response = await fetch("/postMessageConvention", {
       method: "POST",
       body: data
     });
@@ -78,4 +83,4 @@ class Chat extends Component {
   };
 }
 
-export default connect()(Chat);
+export default connect()(ConventionChat);

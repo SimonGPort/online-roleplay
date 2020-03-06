@@ -47,6 +47,22 @@ class CreationConventionTable extends Component {
     this.setState({ imgFile: e.target.files[0] });
   };
 
+  fetchEvents = async () => {
+    let response = await fetch("/fetchEvents");
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("/fetchEvents", body);
+    if (body.success) {
+      console.log("fetchEvents success");
+      this.props.dispatch({
+        type: "fetchEvents",
+        events: body.events
+      });
+    } else {
+      console.log("fetchEvents error");
+    }
+  };
+
   submitHandler = async evt => {
     evt.preventDefault();
     if (
@@ -55,13 +71,23 @@ class CreationConventionTable extends Component {
       this.state.system === "" ||
       this.state.imgFile === "" ||
       this.state.when === "" ||
-      this.state.time === ""
+      this.state.time === "" ||
+      this.props.user === ""
     ) {
       alert("You need to complete the form");
       return;
     }
+    let gm = "";
+    let event = this.props.events.find(element => {
+      return element.eventId === this.props.eventId;
+    });
+    let host = event.host;
+    if (this.props.user !== host) {
+      gm = this.props.user;
+    }
     let data = new FormData();
     data.append("title", this.state.title);
+    data.append("gm", gm);
     data.append("theme", this.state.theme);
     data.append("system", this.state.theme);
     data.append("language", this.state.language);
@@ -80,7 +106,8 @@ class CreationConventionTable extends Component {
     body = JSON.parse(body);
     if (body.success) {
       alert("Your event is post");
-      //   this.props.history.push("/");
+      this.fetchEvents();
+      this.props.history.push("/event/" + this.props.eventId);
     } else {
       alert("Can't post your event");
     }
@@ -179,7 +206,8 @@ class CreationConventionTable extends Component {
 let mapStateToProps = state => {
   return {
     login: state.login,
-    user: state.user
+    user: state.user,
+    events: state.events
   };
 };
 
