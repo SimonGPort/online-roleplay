@@ -25,9 +25,7 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "gameUpdate") {
-    let listOfTokens = [];
-    listOfTokens.push(action.gameView);
-    return { ...state, gameView: listOfTokens };
+    return { ...state, gameView: action.gameView };
   }
 
   if (action.type === "set-messages") {

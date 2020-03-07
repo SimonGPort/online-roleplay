@@ -10,6 +10,7 @@ import Event from "./Event.jsx";
 import CreationConventionTable from "./CreationConventionTable.jsx";
 import ConventionEvent from "./ConventionEvent.jsx";
 import Online from "./Online.jsx";
+import CreationOnlineToken from "./CreationOnlineToken.jsx";
 
 class App extends Component {
   constructor() {
@@ -122,6 +123,18 @@ class App extends Component {
             return (
               <ConventionEvent
                 tableId={routeProps.match.params.tableId}
+                eventId={routeProps.match.params.eventId}
+              />
+            );
+          }}
+        />
+
+        <Route
+          path="/new-token-online/:host/:eventId"
+          render={routeProps => {
+            return (
+              <CreationOnlineToken
+                host={routeProps.match.params.host}
                 eventId={routeProps.match.params.eventId}
               />
             );

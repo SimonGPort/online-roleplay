@@ -5,12 +5,11 @@ import GameViewPort from "./GameViewPort.jsx";
 export default function Online(props) {
   return (
     <div>
-      <div></div>
       <div>
-        <GameViewPort host={props.host} eventId={props.eventId}></GameViewPort>
+        <GmBar host={props.host} eventId={props.eventId} />
       </div>
       <div>
-        <GmBar />
+        <GameViewPort host={props.host} eventId={props.eventId}></GameViewPort>
       </div>
     </div>
   );

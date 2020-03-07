@@ -250,12 +250,13 @@ app.get("/fetchMessages", async (req, res) => {
   }
 });
 
+///je travail ici
 app.get("/fetchGameView", async (req, res) => {
-  const tokenId = "1";
   try {
     const gameView = await dbo
       .collection("tokens")
-      .findOne({ tokenId: tokenId });
+      .find({})
+      .toArray();
     if (!gameView) {
       return res.send(JSON.stringify({ success: false }));
     }
@@ -534,6 +535,44 @@ app.post(
     }
   }
 );
+
+///je travail ICICICICI
+app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
+  const sessionId = req.cookies.sid;
+  if (sessions[sessionId] === undefined) {
+    res.status(403);
+    return res.send(
+      JSON.stringify({ success: false, message: "Invalid session" })
+    );
+  }
+  let host = sessions[sessionId];
+
+  let imgFile = "/uploads/" + req.file.filename;
+  let numberOfTokens = req.body.numberOfTokens;
+
+  for (let i = 0; i < numberOfTokens; i++) {
+    let tokenId = "" + Math.floor(Math.random() * 1000000);
+    try {
+      await dbo.collection("tokens").updateOne(
+        // { eventId: eventId },
+        {
+          $push: {
+            tokenId: tokenId,
+            imgFile: imgFile,
+            positionY: "0",
+            positionX: "0"
+          }
+        }
+      );
+      console.log("token creation success");
+      res.send(JSON.stringify({ success: true }));
+    } catch (err) {
+      console.log("token creation fail", err);
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+  }
+});
 
 app.get("/fetchEvents", async (req, res) => {
   try {

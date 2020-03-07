@@ -6,7 +6,9 @@ class Draggable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDragging: false
+      isDragging: false,
+      prevPositionX: 0,
+      prevPositionY: 0
     };
   }
   componentWillUnmount() {
@@ -19,11 +21,13 @@ class Draggable extends Component {
     window.addEventListener("mouseup", this.handleMouseUp);
 
     this.setState({
-      isDragging: true
+      isDragging: true,
+      prevPositionX: clientX,
+      prevPositionY: clientY
     });
     this.props.dispatch({
       type: "draggingStart",
-      tokenIdDragged: "1"
+      tokenIdDragged: this.props.token.tokenId
     });
   };
 
@@ -33,11 +37,18 @@ class Draggable extends Component {
     if (!isDragging) {
       return;
     }
+
+    let differenceX = clientX - this.state.prevPositionX;
+    let differenceY = clientY - this.state.prevPositionY;
     this.props.dispatch({
       type: "MouseMoveToken",
-      positionX: clientX,
-      positionY: clientY,
+      positionX: Number(this.props.token.positionX) + differenceX,
+      positionY: Number(this.props.token.positionY) + differenceY,
       tokenId: this.props.token.tokenId
+    });
+    this.setState({
+      prevPositionX: clientX,
+      prevPositionY: clientY
     });
   };
 
@@ -51,14 +62,14 @@ class Draggable extends Component {
     this.props.dispatch({
       type: "draggingEnd"
     });
-    this.dragged(clientX, clientY);
+
+    this.dragged(this.props.token.positionX, this.props.token.positionY);
   };
 
-  dragged = async (clientX, clientY) => {
+  dragged = async (positionX, positionY) => {
     let data = new FormData();
-    console.log("client", clientX, clientY);
-    data.append("positionX", clientX);
-    data.append("positionY", clientY);
+    data.append("positionX", positionX);
+    data.append("positionY", positionY);
     data.append("tokenId", this.props.token.tokenId);
     await fetch("/dragged", { method: "POST", body: data });
   };
