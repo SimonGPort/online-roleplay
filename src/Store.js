@@ -72,6 +72,21 @@ let reducer = (state, action) => {
     });
   }
 
+  if (action.type === "MouseMoveToken") {
+    let tokenId = action.tokenId;
+    let positionX = action.positionX;
+    let positionY = action.positionY;
+
+    const tokenIndex = state.gameView.findIndex(token => {
+      return token.tokenId === tokenId;
+    });
+
+    return produce(state, draftState => {
+      draftState.gameView[tokenIndex].positionX = positionX;
+      draftState.gameView[tokenIndex].positionY = positionY;
+    });
+  }
+
   if (action.type === "gameAcceptedConvention") {
     let eventId = action.eventId;
     let tableIndex = action.tableIndex;

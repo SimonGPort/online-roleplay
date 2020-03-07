@@ -94,15 +94,15 @@ app.post("/requestToJoin", uploads.none(), async (req, res) => {
 });
 
 app.post("/dragged", uploads.none(), async (req, res) => {
-  let translateX = req.body.translateX;
-  let translateY = req.body.translateY;
+  let positionX = req.body.positionX;
+  let positionY = req.body.positionY;
   let tokenId = req.body.tokenId;
   try {
     await dbo
       .collection("tokens")
       .updateOne(
         { tokenId: tokenId },
-        { $set: { translateX: translateX, translateY: translateY } }
+        { $set: { positionX: positionX, positionY: positionY } }
       );
     res.send(JSON.stringify({ success: true }));
   } catch (err) {

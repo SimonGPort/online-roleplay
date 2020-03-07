@@ -6,19 +6,7 @@ class Draggable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDragging: false,
-
-      originalX: 0,
-      originalY: 0,
-
-      translateX: 0,
-      translateY: 0,
-
-      // translateX: this.props.token.translateX,
-      // translateY: this.props.token.translateY,
-
-      lastTranslateX: 0,
-      lastTranslateY: 0
+      isDragging: false
     };
   }
   componentWillUnmount() {
@@ -31,8 +19,6 @@ class Draggable extends Component {
     window.addEventListener("mouseup", this.handleMouseUp);
 
     this.setState({
-      originalX: clientX,
-      originalY: clientY,
       isDragging: true
     });
     this.props.dispatch({
@@ -47,35 +33,33 @@ class Draggable extends Component {
     if (!isDragging) {
       return;
     }
-    this.setState(prevState => ({
-      translateX: clientX - prevState.originalX + prevState.lastTranslateX,
-      translateY: clientY - prevState.originalY + prevState.lastTranslateY
-    }));
+    this.props.dispatch({
+      type: "MouseMoveToken",
+      positionX: clientX,
+      positionY: clientY,
+      tokenId: this.props.token.tokenId
+    });
   };
 
-  handleMouseUp = () => {
+  handleMouseUp = ({ clientX, clientY }) => {
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
 
     this.setState({
-      originalX: 0,
-      originalY: 0,
-      lastTranslateX: this.state.translateX,
-      lastTranslateY: this.state.translateY,
-
       isDragging: false
     });
     this.props.dispatch({
       type: "draggingEnd"
     });
-    this.dragged();
+    this.dragged(clientX, clientY);
   };
 
-  dragged = async evt => {
+  dragged = async (clientX, clientY) => {
     let data = new FormData();
-    data.append("translateX", this.state.translateX);
-    data.append("translateY", this.state.translateY);
-    data.append("tokenId", "1");
+    console.log("client", clientX, clientY);
+    data.append("positionX", clientX);
+    data.append("positionY", clientY);
+    data.append("tokenId", this.props.token.tokenId);
     await fetch("/dragged", { method: "POST", body: data });
   };
 
@@ -108,7 +92,9 @@ class Draggable extends Component {
         <div
           className="online-container"
           style={{
-            transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`
+            position: "absolute",
+            top: `${this.props.token.positionY}px`,
+            left: `${this.props.token.positionX}px`
           }}
           onMouseDown={this.handleMouseDown}
 
