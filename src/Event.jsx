@@ -33,7 +33,7 @@ class Event extends Component {
           month === monthEvent &&
           date === dateEvent &&
           time >= timeEvent &&
-          time <= timeEvent + 60 &&
+          time <= timeEvent + 240 &&
           event.players.includes(this.props.user)) ||
         this.props.user === event.host
       ) {

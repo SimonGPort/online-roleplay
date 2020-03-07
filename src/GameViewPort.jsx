@@ -11,6 +11,9 @@ class GameViewPort extends Component {
     this.gameInterval = setInterval(this.updateGameView, 500);
   }
 
+  // componentWillUnmount() { a faire, il faut enlever le updateGameView
+  // }
+
   updateGameView = async () => {
     if (this.props.dragging === true) {
       return;
@@ -30,9 +33,15 @@ class GameViewPort extends Component {
   render = () => {
     return (
       <div>
-        <Draggable>
-          <div className="draggable-image" />
-        </Draggable>
+        {this.props.gameView.map((token, idx) => {
+          return (
+            <div key={idx}>
+              <Draggable token={token}>
+                <div className="draggable-image" />
+              </Draggable>
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -40,7 +49,8 @@ class GameViewPort extends Component {
 
 let mapStateToProps = state => {
   return {
-    dragging: state.dragging
+    dragging: state.dragging,
+    gameView: state.gameView
   };
 };
 

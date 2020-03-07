@@ -14,6 +14,9 @@ class Draggable extends Component {
       translateX: 0,
       translateY: 0,
 
+      // translateX: this.props.token.translateX,
+      // translateY: this.props.token.translateY,
+
       lastTranslateX: 0,
       lastTranslateY: 0
     };
