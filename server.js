@@ -250,12 +250,13 @@ app.get("/fetchMessages", async (req, res) => {
   }
 });
 
-///je travail ici
 app.get("/fetchGameView", async (req, res) => {
+  let host = req.query.host;
+  let page = req.query.page;
   try {
     const gameView = await dbo
       .collection("tokens")
-      .find({})
+      .find({ host: host, page: page })
       .toArray();
     if (!gameView) {
       return res.send(JSON.stringify({ success: false }));
@@ -536,7 +537,6 @@ app.post(
   }
 );
 
-///je travail ICICICICI
 app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
   const sessionId = req.cookies.sid;
   if (sessions[sessionId] === undefined) {
@@ -545,32 +545,41 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
       JSON.stringify({ success: false, message: "Invalid session" })
     );
   }
-  let host = sessions[sessionId];
-
+  let host = req.body.host;
+  let page = req.body.page;
+  let type = req.body.type;
+  let zIndex = 2;
+  if (type === "Background") {
+    zIndex = 1;
+  }
+  let permission = [host];
+  let height = 60;
+  let width = 60;
   let imgFile = "/uploads/" + req.file.filename;
-  let numberOfTokens = req.body.numberOfTokens;
-
-  for (let i = 0; i < numberOfTokens; i++) {
-    let tokenId = "" + Math.floor(Math.random() * 1000000);
-    try {
-      await dbo.collection("tokens").updateOne(
-        // { eventId: eventId },
-        {
-          $push: {
-            tokenId: tokenId,
-            imgFile: imgFile,
-            positionY: "0",
-            positionX: "0"
-          }
-        }
-      );
-      console.log("token creation success");
-      res.send(JSON.stringify({ success: true }));
-    } catch (err) {
-      console.log("token creation fail", err);
-      res.send(JSON.stringify({ success: false }));
-      return;
-    }
+  let numberOfTokens = Number(req.body.numberOfTokens);
+  try {
+    await dbo.collection("tokens").insertMany(
+      Array.from(new Array(numberOfTokens)).map(() => {
+        return {
+          tokenId: "" + Math.floor(Math.random() * 1000000),
+          imgFile: imgFile,
+          positionY: "0",
+          positionX: "0",
+          host: host,
+          page: page,
+          type: type,
+          zIndex: zIndex,
+          permission: permission,
+          height: height,
+          width: width
+        };
+      })
+    );
+    console.log("token creation success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("token creation fail", err);
+    res.send(JSON.stringify({ success: false }));
   }
 });
 

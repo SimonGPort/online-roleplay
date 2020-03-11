@@ -1,13 +1,15 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 class CreationOnlineToken extends Component {
   constructor(props) {
     super(props);
     this.state = {
       imgFile: "",
-      numberOfTokens: 1
+      numberOfTokens: 1,
+      type: "Token"
     };
   }
 
@@ -16,11 +18,22 @@ class CreationOnlineToken extends Component {
   };
 
   numberOfTokens = evt => {
+    if (this.state.numberOfTokens < 1) {
+      return this.setState({ numberOfTokens: 1 });
+    }
     this.setState({ numberOfTokens: evt.target.value });
+  };
+
+  typeInput = evt => {
+    this.setState({ type: evt.target.value });
   };
 
   submitHandler = async evt => {
     evt.preventDefault();
+    if (this.props.login === false) {
+      alert("you need to login");
+      return;
+    }
     if (this.state.imgFile === "") {
       alert("You need to add an image for the token");
       return;
@@ -28,16 +41,20 @@ class CreationOnlineToken extends Component {
     let data = new FormData();
     data.append("numberOfTokens", this.state.numberOfTokens);
     data.append("imgFile", this.state.imgFile);
+    data.append("type", this.state.type);
+    data.append("page", this.props.page);
+    data.append("host", this.props.host);
     let response = await fetch("/creatingANewToken", {
       method: "POST",
       body: data
     });
     let body = await response.text();
     body = JSON.parse(body);
-    debugger;
     if (body.success) {
       alert("Your token is created");
-      this.props.history.push(`/online/${event.host}/${event.eventId}`);
+      this.props.history.push(
+        `/online/${this.props.host}/${this.props.eventId}`
+      );
     } else {
       alert("Can't create your token");
     }
@@ -46,16 +63,26 @@ class CreationOnlineToken extends Component {
   render = () => {
     return (
       <div>
+        <div>
+          <Link to={`/online/${this.props.host}/${this.props.eventId}`}>
+            Back
+          </Link>
+        </div>
         <form onSubmit={this.submitHandler}>
           <div>
             <label>token's image</label>
             <input type="file" onChange={this.pictureInput} />
-            <label>Number of token</label>
+            <label>Number of object</label>
             <input
               type="number"
               value={this.state.numberOfTokens}
               onChange={this.numberOfTokens}
             />
+            <label>Type:</label>
+            <select value={this.state.type} onChange={this.typeInput}>
+              <option>Token</option>
+              <option>Background</option>
+            </select>
           </div>
           <div>
             <input type="submit" value="Submit" />
@@ -68,7 +95,9 @@ class CreationOnlineToken extends Component {
 
 let mapStateToProps = state => {
   return {
-    gameView: state.gameView
+    gameView: state.gameView,
+    page: state.page,
+    login: state.login
   };
 };
 

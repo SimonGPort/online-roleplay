@@ -16,6 +16,11 @@ let reducer = (state, action) => {
   if (action.type === "fetchEvents") {
     return { ...state, events: action.events };
   }
+  ///je travail ici
+  if (action.type === "typeSelection") {
+    console.log("action.typeSelection", action.typeSelection);
+    return { ...state, typeSelection: action.typeSelection };
+  }
 
   if (action.type === "draggingStart") {
     return { ...state, dragging: true, tokenIdDragged: action.tokenIdDragged };
@@ -183,7 +188,9 @@ const store = createStore(
     login: false,
     events: [],
     language: "english",
-    gameView: []
+    gameView: [],
+    page: 1,
+    typeSelection: "Token"
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

@@ -8,7 +8,8 @@ class Draggable extends Component {
     this.state = {
       isDragging: false,
       prevPositionX: 0,
-      prevPositionY: 0
+      prevPositionY: 0,
+      isResizing: false
     };
   }
   componentWillUnmount() {
@@ -19,6 +20,17 @@ class Draggable extends Component {
   handleMouseDown = ({ clientX, clientY }) => {
     window.addEventListener("mousemove", this.handleMouseMove);
     window.addEventListener("mouseup", this.handleMouseUp);
+    const child = document.getElementById(this.props.token.tokenId);
+
+    console.log("child", child.offsetWidth);
+    let differenceX = clientX - this.props.token.positionX;
+    let differenceY = clientY - this.props.token.positionY;
+    if (
+      differenceX >= child.offsetWidth * 0.9 &&
+      differenceY >= child.offsetHeight * 0.9
+    ) {
+      return;
+    }
 
     this.setState({
       isDragging: true,
@@ -32,9 +44,15 @@ class Draggable extends Component {
   };
 
   handleMouseMove = ({ clientX, clientY }) => {
-    const { isDragging } = this.state;
+    const { isDragging, isResizing } = this.state;
 
     if (!isDragging) {
+      return;
+    }
+    if (isResizing) {
+      return;
+    }
+    if (this.props.token.type !== this.props.typeSelection) {
       return;
     }
 
@@ -74,27 +92,6 @@ class Draggable extends Component {
     await fetch("/dragged", { method: "POST", body: data });
   };
 
-  // submitHandler = async evt => {
-  //   evt.preventDefault();
-  //   let data = new FormData();
-  //   data.append("username", this.state.username);
-  //   data.append("password", this.state.password);
-  //   let response = await fetch("/login", { method: "POST", body: data });
-  //   let body = await response.text();
-  //   console.log("/login response", body);
-  //   body = JSON.parse(body);
-  //   if (body.success) {
-  //     this.props.dispatch({
-  //       type: "login",
-  //       login: true,
-  //       user: this.state.username
-  //     });
-  //     this.props.history.push("/");
-  //   } else {
-  //     alert("error with the login");
-  //   }
-  // };
-
   render() {
     const { children } = this.props;
 
@@ -108,8 +105,6 @@ class Draggable extends Component {
             left: `${this.props.token.positionX}px`
           }}
           onMouseDown={this.handleMouseDown}
-
-          // isDragging={this.state.isDragging}
         >
           {children}
         </div>
@@ -118,10 +113,10 @@ class Draggable extends Component {
   }
 }
 
-// let Container = styled.div.attrs({
-//   style: ({ x, y }) => ({
-//     transform: `translate(${x}px, ${y}px)`
-//   })
-// });
+let mapStateToProps = state => {
+  return {
+    typeSelection: state.typeSelection
+  };
+};
 
-export default connect()(Draggable);
+export default connect(mapStateToProps)(Draggable);
