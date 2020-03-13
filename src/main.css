@@ -53,7 +53,13 @@ body {
 .draggable-image {
   background-size: cover;
   cursor: move;
-  resize: both;
   overflow: hidden;
   position: relative;
+}
+
+#can {
+  border: solid black 1px;
+  z-index: 2;
+  position: relative;
+  /* width: 100vw; */
 }

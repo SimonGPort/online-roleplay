@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 export default function GmBar(props) {
-  const [selection, setSelection] = useState("Token");
-  const [isErasing, setIsErasing] = useState(false);
+  const selection = useSelector(state => state.typeSelection);
+  const isErasing = useSelector(state => state.isErasingToken);
+  const isDuplicate = useSelector(state => state.isDuplicateToken);
+
   const dispatch = useDispatch();
   return (
     <div>
@@ -16,7 +18,6 @@ export default function GmBar(props) {
         <select
           value={selection}
           onChange={evt => {
-            setSelection(evt.target.value);
             dispatch({
               type: "typeSelection",
               typeSelection: evt.target.value
@@ -30,7 +31,6 @@ export default function GmBar(props) {
       <div>
         <button
           onClick={evt => {
-            setIsErasing(!isErasing);
             dispatch({
               type: "isErasingToken",
               isErasingToken: !isErasing
@@ -42,6 +42,28 @@ export default function GmBar(props) {
         >
           Erase
         </button>
+      </div>
+      <div>
+        <button
+          onClick={evt => {
+            dispatch({
+              type: "isDuplicate",
+              isDuplicate: !isDuplicate.action
+            });
+          }}
+          style={{
+            backgroundColor: isDuplicate.action === true ? "yellow" : ""
+          }}
+        >
+          duplicate
+        </button>
+        <input
+          type="number"
+          value={isDuplicate.number}
+          onChange={evt => {
+            dispatch({ type: "duplicateNumber", number: evt.target.value });
+          }}
+        ></input>
       </div>
     </div>
   );

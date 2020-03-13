@@ -17,7 +17,53 @@ class Draggable extends Component {
     window.removeEventListener("mouseup", this.handleMouseUp);
   }
 
+  eraseToken = async evt => {
+    let data = new FormData();
+    data.append("tokenId", this.props.token.tokenId);
+    let response = await fetch("/eraseToken", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      console.log("the token is erase");
+    }
+  };
+
+  duplicateToken = async evt => {
+    let data = new FormData();
+    console.log(this.props.token);
+    data.append("number", this.props.isDuplicateToken.number);
+    data.append("token", JSON.stringify(this.props.token));
+    let response = await fetch("/duplicateToken", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      console.log("the token is duplicate");
+    }
+  };
+
   handleMouseDown = ({ clientX, clientY }) => {
+    if (
+      this.props.isErasingToken &&
+      this.props.typeSelection === this.props.token.type
+    ) {
+      this.eraseToken();
+      return;
+    }
+
+    if (
+      this.props.isDuplicateToken.action &&
+      this.props.typeSelection === this.props.token.type
+    ) {
+      this.duplicateToken();
+      return;
+    }
+
     window.addEventListener("mousemove", this.handleMouseMove);
     window.addEventListener("mouseup", this.handleMouseUp);
     const child = document.getElementById(this.props.token.tokenId);
@@ -26,6 +72,7 @@ class Draggable extends Component {
     let differenceX = clientX - this.props.token.positionX;
     let differenceY = clientY - this.props.token.positionY;
     if (
+      this.props.user === this.props.token.host &&
       differenceX >= child.offsetWidth * 0.9 &&
       differenceY >= child.offsetHeight * 0.9
     ) {
@@ -73,7 +120,7 @@ class Draggable extends Component {
   handleMouseUp = ({ clientX, clientY }) => {
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
-
+    const child = document.getElementById(this.props.token.tokenId);
     this.setState({
       isDragging: false
     });
@@ -81,13 +128,20 @@ class Draggable extends Component {
       type: "draggingEnd"
     });
 
-    this.dragged(this.props.token.positionX, this.props.token.positionY);
+    this.dragged(
+      this.props.token.positionX,
+      this.props.token.positionY,
+      child.offsetWidth,
+      child.offsetHeight
+    );
   };
 
-  dragged = async (positionX, positionY) => {
+  dragged = async (positionX, positionY, width, height) => {
     let data = new FormData();
     data.append("positionX", positionX);
     data.append("positionY", positionY);
+    data.append("width", width);
+    data.append("height", height);
     data.append("tokenId", this.props.token.tokenId);
     await fetch("/dragged", { method: "POST", body: data });
   };
@@ -115,7 +169,10 @@ class Draggable extends Component {
 
 let mapStateToProps = state => {
   return {
-    typeSelection: state.typeSelection
+    typeSelection: state.typeSelection,
+    isErasingToken: state.isErasingToken,
+    user: state.user,
+    isDuplicateToken: state.isDuplicateToken
   };
 };
 

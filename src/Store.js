@@ -16,10 +16,29 @@ let reducer = (state, action) => {
   if (action.type === "fetchEvents") {
     return { ...state, events: action.events };
   }
-  ///je travail ici
+
   if (action.type === "typeSelection") {
-    console.log("action.typeSelection", action.typeSelection);
     return { ...state, typeSelection: action.typeSelection };
+  }
+
+  if (action.type === "isErasingToken") {
+    return { ...state, isErasingToken: action.isErasingToken };
+  }
+
+  if (action.type === "duplicateNumber") {
+    if (action.number < 0) {
+      action.number = 1;
+    }
+    console.log(action.number);
+    return produce(state, draftState => {
+      draftState.isDuplicateToken.number = action.number;
+    });
+  }
+
+  if (action.type === "isDuplicate") {
+    return produce(state, draftState => {
+      draftState.isDuplicateToken.action = action.isDuplicate;
+    });
   }
 
   if (action.type === "draggingStart") {
@@ -190,7 +209,9 @@ const store = createStore(
     language: "english",
     gameView: [],
     page: 1,
-    typeSelection: "Token"
+    typeSelection: "Token",
+    isErasingToken: false,
+    isDuplicateToken: { action: false, number: 1 }
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

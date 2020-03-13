@@ -96,14 +96,21 @@ app.post("/requestToJoin", uploads.none(), async (req, res) => {
 app.post("/dragged", uploads.none(), async (req, res) => {
   let positionX = req.body.positionX;
   let positionY = req.body.positionY;
+  let width = req.body.width;
+  let height = req.body.height;
   let tokenId = req.body.tokenId;
   try {
-    await dbo
-      .collection("tokens")
-      .updateOne(
-        { tokenId: tokenId },
-        { $set: { positionX: positionX, positionY: positionY } }
-      );
+    await dbo.collection("tokens").updateOne(
+      { tokenId: tokenId },
+      {
+        $set: {
+          positionX: positionX,
+          positionY: positionY,
+          width: width,
+          height: height
+        }
+      }
+    );
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("dragged error", err);
@@ -548,7 +555,7 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
   let host = req.body.host;
   let page = req.body.page;
   let type = req.body.type;
-  let zIndex = 2;
+  let zIndex = 3;
   if (type === "Background") {
     zIndex = 1;
   }
@@ -621,6 +628,64 @@ app.post("/login", uploads.none(), async (req, res) => {
 app.post("/logout", (req, res) => {
   const sessionId = req.cookies.sid;
   delete sessions[sessionId];
+  console.log("logout sucess");
+  res.send(JSON.stringify({ success: true }));
+});
+
+app.post("/eraseToken", uploads.none(), async (req, res) => {
+  const tokenId = req.body.tokenId;
+  try {
+    await dbo.collection("tokens").deleteOne({ tokenId: tokenId });
+    console.log("eraseToken success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("eraseToken fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+
+  console.log("logout sucess");
+  res.send(JSON.stringify({ success: true }));
+});
+
+app.post("/duplicateToken", uploads.none(), async (req, res) => {
+  let number = req.body.number;
+  let token = JSON.parse(req.body.token);
+  console.log("token", token);
+  let imgFile = token.imgFile;
+  let host = token.host;
+  let page = token.page;
+  let type = token.type;
+  let zIndex = token.zIndex;
+  let permission = token.permission;
+  let height = token.height;
+  let width = token.width;
+
+  try {
+    await dbo.collection("tokens").insertMany(
+      Array.from(new Array(number)).map(() => {
+        return {
+          tokenId: "" + Math.floor(Math.random() * 1000000),
+          imgFile: imgFile,
+          positionY: "0",
+          positionX: "0",
+          host: host,
+          page: page,
+          type: type,
+          zIndex: zIndex,
+          permission: permission,
+          height: height,
+          width: width
+        };
+      })
+    );
+    console.log("token duplication success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("token duplication fail", err);
+    res.send(JSON.stringify({ success: false }));
+  }
+
   console.log("logout sucess");
   res.send(JSON.stringify({ success: true }));
 });
