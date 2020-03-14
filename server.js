@@ -82,7 +82,8 @@ app.post("/signup", uploads.none(), async (req, res) => {
       hide: null,
       chat: [],
       onlineUsers: [],
-      page: { gm: 1, players: 1 }
+      pageLocation: { gm: 1, players: 1 },
+      canvas: ""
     });
     let sessionId = "" + Math.floor(Math.random() * 1000000);
     sessions[sessionId] = req.body.username;
@@ -94,11 +95,11 @@ app.post("/signup", uploads.none(), async (req, res) => {
     return;
   }
 });
-/////je travail ici
+
 app.post("/newUserOnline", uploads.none(), async (req, res) => {
   let user = req.body.user;
   let host = req.body.host;
-
+  console.log("newUserOnline", user, host);
   try {
     await dbo
       .collection("tokens")
@@ -109,6 +110,25 @@ app.post("/newUserOnline", uploads.none(), async (req, res) => {
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("newUserOnline fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/newUserOffline", uploads.none(), async (req, res) => {
+  let user = req.body.user;
+  let host = req.body.host;
+
+  try {
+    await dbo
+      .collection("tokens")
+      .updateOne(
+        { host: host, type: "MasterToken" },
+        { $pull: { onlineUsers: { user: user, initiative: null } } }
+      );
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("newUserOffline fail", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }
@@ -144,6 +164,30 @@ app.post("/dragged", uploads.none(), async (req, res) => {
           positionY: positionY,
           width: width,
           height: height
+        }
+      }
+    );
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("dragged error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+///je travail ici
+app.post("/drawData", uploads.none(), async (req, res) => {
+  let canvas = req.body.img;
+  let host = req.body.host;
+  // let width = req.body.width;
+  // let height = req.body.height;
+
+  try {
+    await dbo.collection("tokens").updateOne(
+      { host: host, type: "MasterToken" },
+      {
+        $set: {
+          canvas: canvas
         }
       }
     );
@@ -292,19 +336,30 @@ app.get("/fetchMessages", async (req, res) => {
     return;
   }
 });
-
+///je travail ici
 app.get("/fetchGameView", async (req, res) => {
   let host = req.query.host;
   let page = req.query.page;
   try {
     const gameView = await dbo
       .collection("tokens")
-      .find({ host: host, page: page })
+      .find({ host: host })
       .toArray();
     if (!gameView) {
       return res.send(JSON.stringify({ success: false }));
     }
-    res.send(JSON.stringify({ success: true, gameView }));
+
+    let MasterToken = gameView.find(token => {
+      return token.type === "MasterToken";
+    });
+    console.log("page", page);
+    console.log("gameview", gameView);
+    let gameViewFilter = gameView.filter(token => {
+      return token.page === page;
+    });
+    console.log("gameview2", gameView);
+
+    res.send(JSON.stringify({ success: true, gameViewFilter, MasterToken }));
   } catch (err) {
     console.log("/GameView error", err);
     res.send(JSON.stringify({ success: false }));
@@ -591,7 +646,7 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
   let host = req.body.host;
   let page = req.body.page;
   let type = req.body.type;
-  let zIndex = 3;
+  let zIndex = 2;
   if (type === "Background") {
     zIndex = 1;
   }
@@ -615,7 +670,7 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
           permission: permission,
           height: height,
           width: width,
-          hide: false
+          hide: true
         };
       })
     );

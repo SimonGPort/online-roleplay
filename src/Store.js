@@ -55,7 +55,11 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "gameUpdate") {
-    return { ...state, gameView: action.gameView };
+    return {
+      ...state,
+      gameView: action.gameView,
+      MasterToken: action.MasterToken
+    };
   }
 
   if (action.type === "set-messages") {
@@ -219,7 +223,8 @@ const store = createStore(
     isErasingToken: false,
     isDuplicateToken: { action: false, number: 1 },
     isHidingToken: false,
-    CreationOnlineToken: false
+    CreationOnlineToken: false,
+    MasterToken: {}
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

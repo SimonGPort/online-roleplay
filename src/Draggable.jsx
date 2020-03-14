@@ -31,7 +31,6 @@ class Draggable extends Component {
     }
   };
 
-  ///ici
   hideToken = async evt => {
     let data = new FormData();
     console.log(this.props.token);
@@ -96,7 +95,6 @@ class Draggable extends Component {
     window.addEventListener("mouseup", this.handleMouseUp);
     const child = document.getElementById(this.props.token.tokenId);
 
-    console.log("child", child.offsetWidth);
     let differenceX = clientX - this.props.token.positionX;
     let differenceY = clientY - this.props.token.positionY;
     if (

@@ -18,31 +18,10 @@ class GameViewPort extends Component {
   }
 
   componentDidMount() {
-    this.gameInterval = setInterval(this.updateGameView, 500);
+    // this.gameInterval = setInterval(this.updateGameView, 500);
     this.canvasDrawingIni();
     window.addEventListener("resize", this.resizeCanvas);
   }
-
-  componentWillUnmount() {
-    clearInterval(this.gameInterval);
-  }
-
-  updateGameView = async () => {
-    if (this.props.dragging === true) {
-      return;
-    }
-    let response = await fetch(
-      "/fetchGameView?host=" + this.props.host + "&page=" + this.props.page
-    );
-    let responseBody = await response.text();
-    let body = JSON.parse(responseBody);
-    if (body.success) {
-      console.log("body.onlineView", body.gameView);
-      this.props.dispatch({ type: "gameUpdate", gameView: body.gameView });
-      return;
-    }
-    console.log("error with the gameViewUpdate");
-  };
 
   ///// method for the canvas
   // color = obj => {
@@ -81,11 +60,12 @@ class GameViewPort extends Component {
       return;
     }
     let canvas = this.canvasRef.current;
+    let ctx = canvas.getContext("2d");
     this.setState({
       canvas: canvas,
-      ctx: canvas.getContext("2d")
+      ctx: ctx
     });
-
+    // this.drawCanvas(ctx);
     // w = canvas.width;
     // h = canvas.height;
     canvas.addEventListener("mousemove", evt => {
@@ -125,7 +105,11 @@ class GameViewPort extends Component {
   //   }
   // };
 
-  findxy = (status, e) => {
+  findxy = async (status, e) => {
+    if (this.props.typeSelection !== "Draw") {
+      return;
+    }
+
     if (status === "down") {
       this.setState({
         prevX: this.state.currX,
@@ -149,13 +133,24 @@ class GameViewPort extends Component {
       //   dot_flag = false;
       // }
     }
+
     if (status === "up" || status === "out") {
+      if (this.state.localFlag === false) {
+        return;
+      }
       this.setState({ localFlag: false });
-      // this.props.dispatch({
-      //   type: "isDrawing",
-      //   action: false
-      // });
+      let img = new Image(this.state.canvas.width, this.state.canvas.height);
+      img.src = this.state.canvas.toDataURL();
+      console.log(img.width);
+
+      let data = new FormData();
+      data.append("img", img);
+      data.append("host", this.props.host);
+      data.append("width", img.width);
+      data.append("height", img.height);
+      await fetch("/drawData", { method: "POST", body: data });
     }
+
     if (status === "move") {
       if (this.state.localFlag) {
         this.setState({
@@ -169,8 +164,13 @@ class GameViewPort extends Component {
     }
   };
 
+  // drawCanvas = ctx => {
+  //   console.log("ctx", ctx);
+  //   console.log("MasterToken.canvas", this.props.MasterToken.canvas);
+  //   ctx.drawImage(this.props.MasterToken.canvas, 0, 0);
+  // };
+
   render = () => {
-    console.log("gameView", this.props.gameView);
     return (
       <div>
         {this.props.gameView.map((token, idx) => {
@@ -182,7 +182,15 @@ class GameViewPort extends Component {
                   id={token.tokenId}
                   style={{
                     backgroundImage: `url(${token.imgFile})`,
-                    zIndex: token.zIndex,
+                    zIndex:
+                      (this.props.user === this.props.host &&
+                        this.props.typeSelection === "Background" &&
+                        token.type === "Background") ||
+                      (this.props.user === this.props.host &&
+                        this.props.typeSelection === "Token" &&
+                        token.type === "Token")
+                        ? "4"
+                        : token.zIndex,
                     height: token.height + "px",
                     width: token.width + "px",
                     resize:
@@ -209,7 +217,9 @@ let mapStateToProps = state => {
     dragging: state.dragging,
     gameView: state.gameView,
     page: state.page,
-    user: state.user
+    user: state.user,
+    typeSelection: state.typeSelection,
+    MasterToken: state.MasterToken
   };
 };
 

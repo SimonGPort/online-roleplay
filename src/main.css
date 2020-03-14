@@ -59,7 +59,7 @@ body {
 
 #can {
   border: solid black 1px;
-  z-index: 2;
+  z-index: 3;
   position: relative;
   /* width: 100vw; */
 }

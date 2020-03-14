@@ -34,6 +34,7 @@ export default function GmBar(props) {
         >
           <option>Token</option>
           <option>Background</option>
+          <option>Draw</option>
         </select>
       </div>
       <div>
