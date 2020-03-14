@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 class CreationOnlineToken extends Component {
   constructor(props) {
@@ -18,7 +16,7 @@ class CreationOnlineToken extends Component {
   };
 
   numberOfTokens = evt => {
-    if (this.state.numberOfTokens < 1) {
+    if (this.state.numberOfTokens < 0) {
       return this.setState({ numberOfTokens: 1 });
     }
     this.setState({ numberOfTokens: evt.target.value });
@@ -52,9 +50,10 @@ class CreationOnlineToken extends Component {
     body = JSON.parse(body);
     if (body.success) {
       alert("Your token is created");
-      this.props.history.push(
-        `/online/${this.props.host}/${this.props.eventId}`
-      );
+      this.props.dispatch({
+        type: "CreationOnlineToken",
+        action: false
+      });
     } else {
       alert("Can't create your token");
     }
@@ -64,9 +63,16 @@ class CreationOnlineToken extends Component {
     return (
       <div>
         <div>
-          <Link to={`/online/${this.props.host}/${this.props.eventId}`}>
+          <button
+            onClick={() =>
+              this.props.dispatch({
+                type: "CreationOnlineToken",
+                action: false
+              })
+            }
+          >
             Back
-          </Link>
+          </button>
         </div>
         <form onSubmit={this.submitHandler}>
           <div>
@@ -101,4 +107,4 @@ let mapStateToProps = state => {
   };
 };
 
-export default withRouter(connect(mapStateToProps)(CreationOnlineToken));
+export default connect(mapStateToProps)(CreationOnlineToken);

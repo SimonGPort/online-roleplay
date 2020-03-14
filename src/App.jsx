@@ -128,18 +128,6 @@ class App extends Component {
             );
           }}
         />
-
-        <Route
-          path="/new-token-online/:host/:eventId"
-          render={routeProps => {
-            return (
-              <CreationOnlineToken
-                host={routeProps.match.params.host}
-                eventId={routeProps.match.params.eventId}
-              />
-            );
-          }}
-        />
       </BrowserRouter>
     );
   };

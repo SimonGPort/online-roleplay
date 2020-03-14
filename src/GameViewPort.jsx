@@ -186,7 +186,12 @@ class GameViewPort extends Component {
                     height: token.height + "px",
                     width: token.width + "px",
                     resize:
-                      this.props.user === this.props.host ? "both" : "none"
+                      this.props.user === this.props.host ? "both" : "none",
+                    display:
+                      this.props.user !== this.props.host && token.hide === true
+                        ? "none"
+                        : "block",
+                    opacity: token.hide === true ? "0.5" : "1"
                   }}
                 />
               </Draggable>

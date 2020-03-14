@@ -67,12 +67,48 @@ app.post("/signup", uploads.none(), async (req, res) => {
     await dbo
       .collection("users")
       .insertOne({ username: username, password: pwd, email: email });
+    await dbo.collection("tokens").insertOne({
+      host: username,
+      type: "MasterToken",
+      tokenId: "" + Math.floor(Math.random() * 1000000),
+      imgFile: null,
+      positionY: null,
+      positionX: null,
+      page: null,
+      zIndex: null,
+      permission: null,
+      height: null,
+      width: null,
+      hide: null,
+      chat: [],
+      onlineUsers: [],
+      page: { gm: 1, players: 1 }
+    });
     let sessionId = "" + Math.floor(Math.random() * 1000000);
     sessions[sessionId] = req.body.username;
     res.cookie("sid", sessionId);
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("/signup error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+/////je travail ici
+app.post("/newUserOnline", uploads.none(), async (req, res) => {
+  let user = req.body.user;
+  let host = req.body.host;
+
+  try {
+    await dbo
+      .collection("tokens")
+      .updateOne(
+        { host: host, type: "MasterToken" },
+        { $push: { onlineUsers: { user: user, initiative: null } } }
+      );
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("newUserOnline fail", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }
@@ -578,7 +614,8 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
           zIndex: zIndex,
           permission: permission,
           height: height,
-          width: width
+          width: width,
+          hide: false
         };
       })
     );
@@ -648,14 +685,32 @@ app.post("/eraseToken", uploads.none(), async (req, res) => {
   res.send(JSON.stringify({ success: true }));
 });
 
+app.post("/hideToken", uploads.none(), async (req, res) => {
+  let token = JSON.parse(req.body.token);
+  let hide = !token.hide;
+  let tokenId = token.tokenId;
+  try {
+    await dbo
+      .collection("tokens")
+      .updateOne({ tokenId: tokenId }, { $set: { hide: hide } });
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("hideToken fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
 app.post("/duplicateToken", uploads.none(), async (req, res) => {
-  let number = req.body.number;
+  let number = parseInt(req.body.number);
+  console.log(number, "number");
   let token = JSON.parse(req.body.token);
   console.log("token", token);
   let imgFile = token.imgFile;
   let host = token.host;
   let page = token.page;
   let type = token.type;
+  let hide = token.hide;
   let zIndex = token.zIndex;
   let permission = token.permission;
   let height = token.height;
@@ -664,6 +719,7 @@ app.post("/duplicateToken", uploads.none(), async (req, res) => {
   try {
     await dbo.collection("tokens").insertMany(
       Array.from(new Array(number)).map(() => {
+        console.log("number", number);
         return {
           tokenId: "" + Math.floor(Math.random() * 1000000),
           imgFile: imgFile,
@@ -675,7 +731,8 @@ app.post("/duplicateToken", uploads.none(), async (req, res) => {
           zIndex: zIndex,
           permission: permission,
           height: height,
-          width: width
+          width: width,
+          hide: hide
         };
       })
     );

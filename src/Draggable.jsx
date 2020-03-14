@@ -31,6 +31,22 @@ class Draggable extends Component {
     }
   };
 
+  ///ici
+  hideToken = async evt => {
+    let data = new FormData();
+    console.log(this.props.token);
+    data.append("token", JSON.stringify(this.props.token));
+    let response = await fetch("/hideToken", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      console.log("the token is hiding");
+    }
+  };
+
   duplicateToken = async evt => {
     let data = new FormData();
     console.log(this.props.token);
@@ -43,6 +59,10 @@ class Draggable extends Component {
     let body = await response.text();
     body = JSON.parse(body);
     if (body.success) {
+      this.props.dispatch({
+        type: "isDuplicate",
+        isDuplicate: false
+      });
       console.log("the token is duplicate");
     }
   };
@@ -61,6 +81,14 @@ class Draggable extends Component {
       this.props.typeSelection === this.props.token.type
     ) {
       this.duplicateToken();
+      return;
+    }
+
+    if (
+      this.props.isHidingToken &&
+      this.props.typeSelection === this.props.token.type
+    ) {
+      this.hideToken();
       return;
     }
 
@@ -172,7 +200,8 @@ let mapStateToProps = state => {
     typeSelection: state.typeSelection,
     isErasingToken: state.isErasingToken,
     user: state.user,
-    isDuplicateToken: state.isDuplicateToken
+    isDuplicateToken: state.isDuplicateToken,
+    isHidingToken: state.isHidingToken
   };
 };
 

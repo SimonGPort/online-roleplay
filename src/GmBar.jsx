@@ -6,14 +6,22 @@ export default function GmBar(props) {
   const selection = useSelector(state => state.typeSelection);
   const isErasing = useSelector(state => state.isErasingToken);
   const isDuplicate = useSelector(state => state.isDuplicateToken);
+  const isHiding = useSelector(state => state.isHidingToken);
 
   const dispatch = useDispatch();
   return (
     <div>
       <div>Hello world</div>
-      <Link to={`/new-token-online/${props.host}/${props.eventId}`}>
+      <button
+        onClick={() =>
+          dispatch({
+            type: "CreationOnlineToken",
+            action: true
+          })
+        }
+      >
         New Token
-      </Link>
+      </button>
       <div>
         <select
           value={selection}
@@ -64,6 +72,21 @@ export default function GmBar(props) {
             dispatch({ type: "duplicateNumber", number: evt.target.value });
           }}
         ></input>
+      </div>
+      <div>
+        <button
+          onClick={evt => {
+            dispatch({
+              type: "isHidingToken",
+              isHidingToken: !isHiding
+            });
+          }}
+          style={{
+            backgroundColor: isHiding === true ? "yellow" : ""
+          }}
+        >
+          Hide
+        </button>
       </div>
     </div>
   );

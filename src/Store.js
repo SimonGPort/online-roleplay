@@ -5,6 +5,9 @@ let reducer = (state, action) => {
   if (action.type === "logout") {
     return { ...state, login: action.login, user: "" };
   }
+  if (action.type === "CreationOnlineToken") {
+    return { ...state, CreationOnlineToken: action.action };
+  }
 
   if (action.type === "signup") {
     return { ...state, login: action.login, user: action.user };
@@ -23,6 +26,9 @@ let reducer = (state, action) => {
 
   if (action.type === "isErasingToken") {
     return { ...state, isErasingToken: action.isErasingToken };
+  }
+  if (action.type === "isHidingToken") {
+    return { ...state, isHidingToken: action.isHidingToken };
   }
 
   if (action.type === "duplicateNumber") {
@@ -211,7 +217,9 @@ const store = createStore(
     page: 1,
     typeSelection: "Token",
     isErasingToken: false,
-    isDuplicateToken: { action: false, number: 1 }
+    isDuplicateToken: { action: false, number: 1 },
+    isHidingToken: false,
+    CreationOnlineToken: false
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

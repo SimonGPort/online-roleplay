@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import ConventionQueue from "./ConventionQueue.jsx";
+import { withRouter } from "react-router-dom";
 
 class Queue extends Component {
   constructor() {
@@ -66,6 +67,7 @@ class Queue extends Component {
           type: "DeleteEvent",
           id: this.props.id
         });
+        this.props.history.push("/");
       } else {
         alert("error, you can't delete this event");
       }
@@ -123,4 +125,4 @@ class Queue extends Component {
   };
 }
 
-export default connect()(Queue);
+export default withRouter(connect()(Queue));
