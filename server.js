@@ -81,7 +81,6 @@ app.post("/signup", uploads.none(), async (req, res) => {
       width: null,
       hide: null,
       chat: [],
-      onlineUsers: [],
       pageLocation: { gm: 1, players: 1 },
       canvas: ""
     });
@@ -177,17 +176,17 @@ app.post("/dragged", uploads.none(), async (req, res) => {
 
 ///je travail ici
 app.post("/drawData", uploads.none(), async (req, res) => {
-  let canvas = req.body.img;
+  let src = req.body.src;
   let host = req.body.host;
-  // let width = req.body.width;
-  // let height = req.body.height;
+  let width = req.body.width;
+  let height = req.body.height;
 
   try {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
         $set: {
-          canvas: canvas
+          canvas: { src, width, height }
         }
       }
     );
@@ -336,7 +335,7 @@ app.get("/fetchMessages", async (req, res) => {
     return;
   }
 });
-///je travail ici
+
 app.get("/fetchGameView", async (req, res) => {
   let host = req.query.host;
   let page = req.query.page;
@@ -352,12 +351,9 @@ app.get("/fetchGameView", async (req, res) => {
     let MasterToken = gameView.find(token => {
       return token.type === "MasterToken";
     });
-    console.log("page", page);
-    console.log("gameview", gameView);
     let gameViewFilter = gameView.filter(token => {
       return token.page === page;
     });
-    console.log("gameview2", gameView);
 
     res.send(JSON.stringify({ success: true, gameViewFilter, MasterToken }));
   } catch (err) {
@@ -401,6 +397,66 @@ app.post("/postMessage", uploads.none(), async (req, res) => {
       .collection("events")
       .updateOne(
         { eventId: eventId },
+        { $push: { chat: { username: username, message: message } } }
+      );
+    console.log("messagePost success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("messagePost fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+////je travail ici
+app.post("/postMessageChatOnline", uploads.none(), async (req, res) => {
+  const sessionId = req.cookies.sid;
+  if (sessions[sessionId] === undefined) {
+    res.status(403);
+    return res.send(
+      JSON.stringify({ success: false, message: "Invalid session" })
+    );
+  }
+  const username = sessions[sessionId];
+  const tokenId = req.body.tokenId;
+  let message = req.body.message;
+  let diceResult = null;
+  let firstNumber = "";
+  let secondNumber = "";
+  let firstCharacter = message.slice(0, 1);
+  if (firstCharacter === "/") {
+    newMessage = message.slice(1);
+    let indexOfD = newMessage.indexOf("d");
+    let indexOfPlus = newMessage.indexOf("+");
+    let indexOfMinus = newMessage.indexOf("-");
+    let indexOfMultiply = newMessage.indexOf("*");
+    let indexOfSubtraction = newMessage.indexOf("/");
+    firstNumber = parseInt(newMessage.slice(0, indexOfD));
+    secondNumber = parseInt(newMessage.slice(indexOfD + 1));
+    let diceArray = [];
+    for (let i = 0; i < firstNumber; i++) {
+      let randomNum = Math.ceil(Math.random() * secondNumber);
+      diceResult = diceResult + randomNum;
+      randomNum = "(" + randomNum + ")";
+      diceArray.push(randomNum);
+    }
+    diceResult = " Result: " + diceResult;
+    for (let i = 0; i < firstNumber; i++) {
+      diceResult = diceResult + " " + diceArray[i];
+    }
+
+    console.log("dice", firstNumber, secondNumber);
+  }
+  console.log("dice2", firstNumber, secondNumber);
+  if (diceResult) {
+    message = message + diceResult;
+  }
+
+  try {
+    await dbo
+      .collection("tokens")
+      .updateOne(
+        { tokenId: tokenId },
         { $push: { chat: { username: username, message: message } } }
       );
     console.log("messagePost success");

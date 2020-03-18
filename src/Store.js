@@ -5,6 +5,11 @@ let reducer = (state, action) => {
   if (action.type === "logout") {
     return { ...state, login: action.login, user: "" };
   }
+
+  if (action.type === "removeMasterToken") {
+    return { ...state, MasterToken: {} };
+  }
+
   if (action.type === "CreationOnlineToken") {
     return { ...state, CreationOnlineToken: action.action };
   }
@@ -187,6 +192,26 @@ let reducer = (state, action) => {
       draftState.events[index].players.push(user);
     });
   }
+
+  if (action.type === "newUserOnline") {
+    let user = {};
+    user.user = action.user;
+    user.initiative = null;
+
+    return produce(state, draftState => {
+      draftState.usersOnline.push(user);
+    });
+  }
+
+  if (action.type === "newUserOffline") {
+    console.log(action.user);
+    return produce(state, draftState => {
+      draftState.userOnline = draftState.usersOnline.filter(
+        user => user.user !== action.user
+      );
+    });
+  }
+
   if (action.type === "leaveEvent") {
     let eventId = action.id;
     let user = action.user;
@@ -212,7 +237,7 @@ const store = createStore(
     sessions: [],
     dragging: false,
     tokenIdDragged: "",
-    users: [],
+    usersOnline: [],
     user: "",
     login: false,
     events: [],

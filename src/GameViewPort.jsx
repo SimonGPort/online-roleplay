@@ -66,6 +66,7 @@ class GameViewPort extends Component {
       ctx: ctx
     });
     // this.drawCanvas(ctx);
+
     // w = canvas.width;
     // h = canvas.height;
     canvas.addEventListener("mousemove", evt => {
@@ -139,15 +140,16 @@ class GameViewPort extends Component {
         return;
       }
       this.setState({ localFlag: false });
-      let img = new Image(this.state.canvas.width, this.state.canvas.height);
-      img.src = this.state.canvas.toDataURL();
-      console.log(img.width);
+      // let img = new Image(this.state.canvas.width, this.state.canvas.height);
+      // img.src = this.state.canvas.toDataURL();
 
       let data = new FormData();
-      data.append("img", img);
+      // data.append("img", img);
+      // this.canvasRef.current
+      data.append("src", this.canvasRef.current.toDataURL());
       data.append("host", this.props.host);
-      data.append("width", img.width);
-      data.append("height", img.height);
+      data.append("width", this.state.canvas.width);
+      data.append("height", this.state.canvas.height);
       await fetch("/drawData", { method: "POST", body: data });
     }
 
@@ -164,11 +166,18 @@ class GameViewPort extends Component {
     }
   };
 
-  // drawCanvas = ctx => {
-  //   console.log("ctx", ctx);
-  //   console.log("MasterToken.canvas", this.props.MasterToken.canvas);
-  //   ctx.drawImage(this.props.MasterToken.canvas, 0, 0);
-  // };
+  drawCanvas = ctx => {
+    if (!this.props.MasterToken.canvas) {
+      return;
+    }
+    const { width, height, src } = this.props.MasterToken.canvas;
+    let img = new Image(width, height);
+    img.src = src;
+    // console.log("ctx", ctx);
+    // console.log("MasterToken.canvas", this.props.MasterToken.canvas);
+    console.log("typeof", typeof this.props.MasterToken.canvas);
+    ctx.drawImage(img, 0, 0);
+  };
 
   render = () => {
     return (

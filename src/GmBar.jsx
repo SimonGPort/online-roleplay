@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import ChatOnline from "./ChatOnline.jsx";
 
 export default function GmBar(props) {
   const selection = useSelector(state => state.typeSelection);
@@ -88,6 +88,9 @@ export default function GmBar(props) {
         >
           Hide
         </button>
+      </div>
+      <div>
+        <ChatOnline />
       </div>
     </div>
   );
