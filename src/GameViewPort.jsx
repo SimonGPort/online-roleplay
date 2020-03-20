@@ -1,6 +1,7 @@
 import React, { Component, useState } from "react";
 import Draggable from "./Draggable.jsx";
 import { connect } from "react-redux";
+import GmBar from "./GmBar.jsx";
 
 class GameViewPort extends Component {
   constructor(props) {
@@ -13,16 +14,22 @@ class GameViewPort extends Component {
       prevY: 0,
       localFlag: false,
       ctx: undefined,
-      canvas: undefined
+      canvas: undefined,
+      canvasUrl: undefined
     };
   }
 
   componentDidMount() {
-    // this.gameInterval = setInterval(this.updateGameView, 500);
     this.canvasDrawingIni();
     window.addEventListener("resize", this.resizeCanvas);
+    // this.drawCanvas(this.state.ctx);
   }
 
+  componentDidUpdate() {
+    if (this.state.canvasUrl !== this.props.MasterToken.canvas.src) {
+      this.drawCanvas(this.state.ctx);
+    }
+  }
   ///// method for the canvas
   // color = obj => {
   //   switch (obj.id) {
@@ -63,10 +70,9 @@ class GameViewPort extends Component {
     let ctx = canvas.getContext("2d");
     this.setState({
       canvas: canvas,
-      ctx: ctx
+      ctx: ctx,
+      canvasUrl: canvas.toDataURL()
     });
-    // this.drawCanvas(ctx);
-
     // w = canvas.width;
     // h = canvas.height;
     canvas.addEventListener("mousemove", evt => {
@@ -83,6 +89,35 @@ class GameViewPort extends Component {
     });
   };
 
+  canvasFill = async () => {
+    const { width, height } = this.state.canvas;
+    // this.state.ctx.fillStyle = "black";
+    this.state.ctx.fillRect(0, 0, width, height);
+
+    let data = new FormData();
+    // data.append("img", img);
+    // this.canvasRef.current
+    data.append("src", this.canvasRef.current.toDataURL());
+    data.append("host", this.props.host);
+    data.append("width", this.state.canvas.width);
+    data.append("height", this.state.canvas.height);
+    await fetch("/drawData", { method: "POST", body: data });
+  };
+
+  canvasClear = async () => {
+    const { width, height } = this.state.canvas;
+    // this.state.ctx.fillStyle = "blue";
+    this.state.ctx.clearRect(0, 0, width, height);
+    let data = new FormData();
+    // data.append("img", img);
+    // this.canvasRef.current
+    data.append("src", this.canvasRef.current.toDataURL());
+    data.append("host", this.props.host);
+    data.append("width", this.state.canvas.width);
+    data.append("height", this.state.canvas.height);
+    await fetch("/drawData", { method: "POST", body: data });
+  };
+
   resizeCanvas = () => {
     console.log("window.innerWidth", window.innerWidth);
     this.state.canvas.width = window.innerWidth;
@@ -97,7 +132,9 @@ class GameViewPort extends Component {
     this.state.ctx.lineWidth = 2;
     this.state.ctx.stroke();
     this.state.ctx.closePath();
+    this.setState({ canvasUrl: this.state.canvas.toDataURL() });
   };
+
   // erase = () => {
   //   var m = confirm("Want to clear");
   //   if (m) {
@@ -172,16 +209,28 @@ class GameViewPort extends Component {
     }
     const { width, height, src } = this.props.MasterToken.canvas;
     let img = new Image(width, height);
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+    };
     img.src = src;
-    // console.log("ctx", ctx);
-    // console.log("MasterToken.canvas", this.props.MasterToken.canvas);
-    console.log("typeof", typeof this.props.MasterToken.canvas);
-    ctx.drawImage(img, 0, 0);
+    this.setState({ canvasUrl: this.props.MasterToken.canvas.src });
+    console.log("helloworld");
+    if (this.state.canvasUrl === this.props.MasterToken.canvas.src) {
+      console.log("ils sont pareil");
+    } else {
+      console.log("ils sont different");
+    }
   };
 
   render = () => {
     return (
       <div>
+        <GmBar
+          host={this.props.host}
+          eventId={this.props.eventId}
+          canvasFill={this.canvasFill}
+          canvasClear={this.canvasClear}
+        />
         {this.props.gameView.map((token, idx) => {
           return (
             <div key={token.tokenId}>
@@ -228,7 +277,9 @@ let mapStateToProps = state => {
     page: state.page,
     user: state.user,
     typeSelection: state.typeSelection,
-    MasterToken: state.MasterToken
+    MasterToken: state.MasterToken,
+    canvasFill: state.canvasFill,
+    canvasClear: state.canvasClear
   };
 };
 

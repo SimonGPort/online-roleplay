@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import GmBar from "./GmBar.jsx";
 import GameViewPort from "./GameViewPort.jsx";
 import CreationOnlineToken from "./CreationOnlineToken.jsx";
 
@@ -90,7 +89,6 @@ export default function Online(props) {
     <div className="Online">
       {CreationToken === false ? (
         <>
-          <GmBar host={props.host} eventId={props.eventId} />
           <GameViewPort host={props.host} eventId={props.eventId} />
         </>
       ) : (

@@ -7,6 +7,9 @@ export default function GmBar(props) {
   const isErasing = useSelector(state => state.isErasingToken);
   const isDuplicate = useSelector(state => state.isDuplicateToken);
   const isHiding = useSelector(state => state.isHidingToken);
+  const canvasFill = useSelector(state => state.canvasFill);
+  const canvasClear = useSelector(state => state.canvasClear);
+  const typeSelection = useSelector(state => state.typeSelection);
 
   const dispatch = useDispatch();
   return (
@@ -88,6 +91,24 @@ export default function GmBar(props) {
         >
           Hide
         </button>
+        <div>
+          <button
+            onClick={props.canvasFill}
+            style={{
+              display: typeSelection === "Draw" ? "block" : "none"
+            }}
+          >
+            Fill
+          </button>
+          <button
+            onClick={props.canvasClear}
+            style={{
+              display: typeSelection === "Draw" ? "block" : "none"
+            }}
+          >
+            Clear
+          </button>
+        </div>
       </div>
       <div>
         <ChatOnline />
