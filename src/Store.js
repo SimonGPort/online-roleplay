@@ -36,6 +36,10 @@ let reducer = (state, action) => {
     return { ...state, isHidingToken: action.isHidingToken };
   }
 
+  if (action.type === "isScanning") {
+    return { ...state, isScanning: action.isScanning };
+  }
+
   if (action.type === "duplicateNumber") {
     if (action.number < 0) {
       action.number = 1;
@@ -248,6 +252,7 @@ const store = createStore(
     isErasingToken: false,
     isDuplicateToken: { action: false, number: 1 },
     isHidingToken: false,
+    isScanning: false,
     CreationOnlineToken: false,
     MasterToken: {}
   },

@@ -82,6 +82,7 @@ app.post("/signup", uploads.none(), async (req, res) => {
       hide: null,
       chat: [],
       pageLocation: { gm: 1, players: 1 },
+      scan: [],
       canvas: ""
     });
     let sessionId = "" + Math.floor(Math.random() * 1000000);
@@ -174,19 +175,43 @@ app.post("/dragged", uploads.none(), async (req, res) => {
   }
 });
 
-///je travail ici
+app.post("/scan", uploads.none(), async (req, res) => {
+  let positionX = req.body.positionX;
+  let positionY = req.body.positionY;
+  console.log("req.body.time", req.body.time, typeof req.body.time);
+  let time = JSON.parse(req.body.time);
+  let user = req.body.user;
+  let host = req.body.host;
+  try {
+    await dbo.collection("tokens").updateOne(
+      { host: host, type: "MasterToken" },
+      {
+        $push: {
+          scan: { positionX, positionY, time, user }
+        }
+      }
+    );
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("dragged error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
 app.post("/drawData", uploads.none(), async (req, res) => {
   let src = req.body.src;
   let host = req.body.host;
   let width = req.body.width;
   let height = req.body.height;
+  let clear = JSON.parse(req.body.clear);
 
   try {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
         $set: {
-          canvas: { src, width, height }
+          canvas: { src, width, height, clear }
         }
       }
     );
@@ -408,7 +433,6 @@ app.post("/postMessage", uploads.none(), async (req, res) => {
   }
 });
 
-////je travail ici
 app.post("/postMessageChatOnline", uploads.none(), async (req, res) => {
   const sessionId = req.cookies.sid;
   if (sessions[sessionId] === undefined) {

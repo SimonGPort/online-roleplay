@@ -101,6 +101,7 @@ class GameViewPort extends Component {
     data.append("host", this.props.host);
     data.append("width", this.state.canvas.width);
     data.append("height", this.state.canvas.height);
+    data.append("clear", JSON.stringify(false));
     await fetch("/drawData", { method: "POST", body: data });
   };
 
@@ -115,6 +116,7 @@ class GameViewPort extends Component {
     data.append("host", this.props.host);
     data.append("width", this.state.canvas.width);
     data.append("height", this.state.canvas.height);
+    data.append("clear", JSON.stringify(true));
     await fetch("/drawData", { method: "POST", body: data });
   };
 
@@ -156,20 +158,10 @@ class GameViewPort extends Component {
         currY: e.clientY - this.state.canvas.offsetTop,
         localFlag: true
       });
-
       // this.props.dispatch({
-      //   type: "isDrawing",
-      //   action: true
+      //   type: "draggingStart",
+      //   tokenIdDragged: null
       // });
-
-      // dot_flag = true;
-      // if (dot_flag) {
-      //   ctx.beginPath();
-      //   ctx.fillStyle = color;
-      //   ctx.fillRect(currX, currY, 2, 2);
-      //   ctx.closePath();
-      //   dot_flag = false;
-      // }
     }
 
     if (status === "up" || status === "out") {
@@ -187,7 +179,11 @@ class GameViewPort extends Component {
       data.append("host", this.props.host);
       data.append("width", this.state.canvas.width);
       data.append("height", this.state.canvas.height);
+      data.append("clear", JSON.stringify(false));
       await fetch("/drawData", { method: "POST", body: data });
+      // this.props.dispatch({
+      //   type: "draggingEnd"
+      // });
     }
 
     if (status === "move") {
@@ -203,68 +199,148 @@ class GameViewPort extends Component {
     }
   };
 
-  drawCanvas = ctx => {
+  drawCanvas = async ctx => {
     if (!this.props.MasterToken.canvas) {
       return;
     }
-    const { width, height, src } = this.props.MasterToken.canvas;
+    const { width, height, src, clear } = this.props.MasterToken.canvas;
     let img = new Image(width, height);
     img.onload = () => {
+      console.log("clear", clear);
+      if (clear === true) {
+        const { width, height } = this.state.canvas;
+        this.state.ctx.clearRect(0, 0, width, height);
+      }
       ctx.drawImage(img, 0, 0);
     };
     img.src = src;
     this.setState({ canvasUrl: this.props.MasterToken.canvas.src });
-    console.log("helloworld");
-    if (this.state.canvasUrl === this.props.MasterToken.canvas.src) {
-      console.log("ils sont pareil");
-    } else {
-      console.log("ils sont different");
+
+    let data = new FormData();
+    // data.append("img", img);
+    // this.canvasRef.current
+    data.append("src", this.canvasRef.current.toDataURL());
+    data.append("host", this.props.host);
+    data.append("width", this.state.canvas.width);
+    data.append("height", this.state.canvas.height);
+    data.append("clear", JSON.stringify(false));
+    await fetch("/drawData", { method: "POST", body: data });
+  };
+
+  handleMouseDown = async ({ clientX, clientY }) => {
+    if (this.props.isScanning === false) {
+      return;
     }
+    let time = {};
+    let today = new Date();
+    time.year = today.getFullYear();
+    time.month = today.getMonth() + 1;
+    time.date = today.getDate();
+    time.hours = today.getHours();
+    time.minute = today.getMinutes();
+    time.second = today.getSeconds();
+
+    let data = new FormData();
+    data.append("positionX", clientX);
+    data.append("positionY", clientY);
+    data.append("time", JSON.stringify(time));
+    data.append("user", this.props.user);
+    data.append("host", this.props.host);
+    let response = await fetch("/scan", { method: "POST", body: data });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      console.log("Your scan is post");
+    } else {
+      console.log("Can't scan");
+    }
+    this.props.dispatch({
+      type: "isScanning",
+      isScanning: false
+    });
   };
 
   render = () => {
+    let scan = this.props.MasterToken.scan.find(scan => {
+      let timeNow = {};
+      let today = new Date();
+      timeNow.year = today.getFullYear();
+      timeNow.month = today.getMonth() + 1;
+      timeNow.date = today.getDate();
+      timeNow.hours = today.getHours();
+      timeNow.minute = today.getMinutes();
+      timeNow.second = today.getSeconds();
+      return (
+        scan.time.year === timeNow.year &&
+        scan.time.month === timeNow.month &&
+        scan.time.date === timeNow.date &&
+        scan.time.hours === timeNow.hours &&
+        scan.time.minute === timeNow.minute &&
+        scan.time.second <= timeNow.second &&
+        scan.time.second + 1 >= timeNow.second
+      );
+    });
+
     return (
       <div>
+        {scan !== undefined ? (
+          <img
+            src="/images/scan.gif"
+            className="scan"
+            style={{
+              top: `${scan.positionY}px`,
+              left: `${scan.positionX}px`,
+              position: "fixed",
+              zIndex: 5
+            }}
+          />
+        ) : (
+          ""
+        )}
+
         <GmBar
           host={this.props.host}
           eventId={this.props.eventId}
           canvasFill={this.canvasFill}
           canvasClear={this.canvasClear}
         />
-        {this.props.gameView.map((token, idx) => {
-          return (
-            <div key={token.tokenId}>
-              <Draggable token={token}>
-                <div
-                  className="draggable-image"
-                  id={token.tokenId}
-                  style={{
-                    backgroundImage: `url(${token.imgFile})`,
-                    zIndex:
-                      (this.props.user === this.props.host &&
-                        this.props.typeSelection === "Background" &&
-                        token.type === "Background") ||
-                      (this.props.user === this.props.host &&
-                        this.props.typeSelection === "Token" &&
-                        token.type === "Token")
-                        ? "4"
-                        : token.zIndex,
-                    height: token.height + "px",
-                    width: token.width + "px",
-                    resize:
-                      this.props.user === this.props.host ? "both" : "none",
-                    display:
-                      this.props.user !== this.props.host && token.hide === true
-                        ? "none"
-                        : "block",
-                    opacity: token.hide === true ? "0.5" : "1"
-                  }}
-                />
-              </Draggable>
-            </div>
-          );
-        })}
-        <canvas ref={this.canvasRef} id="can" />
+        <div onMouseDown={this.handleMouseDown}>
+          {this.props.gameView.map((token, idx) => {
+            return (
+              <div key={token.tokenId}>
+                <Draggable token={token}>
+                  <div
+                    className="draggable-image"
+                    id={token.tokenId}
+                    style={{
+                      backgroundImage: `url(${token.imgFile})`,
+                      zIndex:
+                        (this.props.user === this.props.host &&
+                          this.props.typeSelection === "Background" &&
+                          token.type === "Background") ||
+                        (this.props.user === this.props.host &&
+                          this.props.typeSelection === "Token" &&
+                          token.type === "Token")
+                          ? "4"
+                          : token.zIndex,
+                      height: token.height + "px",
+                      width: token.width + "px",
+                      resize:
+                        this.props.user === this.props.host ? "both" : "none",
+                      display:
+                        this.props.user !== this.props.host &&
+                        token.hide === true
+                          ? "none"
+                          : "block",
+                      opacity: token.hide === true ? "0.5" : "1"
+                    }}
+                  />
+                </Draggable>
+              </div>
+            );
+          })}
+          <canvas ref={this.canvasRef} id="canvas" />
+        </div>
       </div>
     );
   };
@@ -279,7 +355,8 @@ let mapStateToProps = state => {
     typeSelection: state.typeSelection,
     MasterToken: state.MasterToken,
     canvasFill: state.canvasFill,
-    canvasClear: state.canvasClear
+    canvasClear: state.canvasClear,
+    isScanning: state.isScanning
   };
 };
 

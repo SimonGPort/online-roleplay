@@ -7,8 +7,7 @@ export default function GmBar(props) {
   const isErasing = useSelector(state => state.isErasingToken);
   const isDuplicate = useSelector(state => state.isDuplicateToken);
   const isHiding = useSelector(state => state.isHidingToken);
-  const canvasFill = useSelector(state => state.canvasFill);
-  const canvasClear = useSelector(state => state.canvasClear);
+  const isScanning = useSelector(state => state.isScanning);
   const typeSelection = useSelector(state => state.typeSelection);
 
   const dispatch = useDispatch();
@@ -109,6 +108,21 @@ export default function GmBar(props) {
             Clear
           </button>
         </div>
+      </div>
+      <div>
+        <button
+          onClick={evt => {
+            dispatch({
+              type: "isScanning",
+              isScanning: !isScanning
+            });
+          }}
+          style={{
+            backgroundColor: isScanning === true ? "yellow" : ""
+          }}
+        >
+          Scan {isScanning}
+        </button>
       </div>
       <div>
         <ChatOnline />

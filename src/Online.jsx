@@ -46,36 +46,7 @@ export default function Online(props) {
 
   useEffect(() => {
     dispatch({ type: "newUserOnline", user: user });
-    //   (async () => {
-    //   let data = new FormData();
-    //   data.append("user", user);
-    //   data.append("host", props.host);
-    //   let response = await fetch("/newUserOnline", {
-    //     method: "POST",
-    //     body: data
-    //   });
-    //   let body = await response.text();
-    //   body = JSON.parse(body);
-    //   if (body.success) {
-    //     console.log("newUserOnline success");
-    //   }
-    // })()
-
     return () => {
-      // (async () => {
-      //   let data = new FormData();
-      //   data.append("user", user);
-      //   data.append("host", props.host);
-      //   let response = await fetch("/newUserOffline", {
-      //     method: "POST",
-      //     body: data
-      //   });
-      //   let body = await response.text();
-      //   body = JSON.parse(body);
-      //   if (body.success) {
-      //     console.log("newUserOffline success");
-      //   }
-      // })();
       dispatch({ type: "newUserOffline", user: user });
       dispatch({ type: "removeMasterToken" });
     };

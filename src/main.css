@@ -57,11 +57,17 @@ body {
   position: relative;
 }
 
-#can {
+#canvas {
   border: solid black 1px;
   z-index: 3;
   position: relative;
-  /* width: 500px;
-  height: 500px; */
-  /* width: 100vw; */
+  /* width: 200px;
+  height: 200px; */
+  /* width: 1000px;
+  height: 1000px; */
+}
+.scan {
+  height: 60px;
+  width: 60px;
+  transform: translate(-50%, -50%);
 }
