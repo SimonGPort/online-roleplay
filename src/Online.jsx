@@ -17,8 +17,16 @@ export default function Online(props) {
         return;
       }
       (async () => {
+        let myPage = 1;
+        if (user === props.host) {
+          myPage = page.gmPage;
+        } else {
+          myPage = page.playersPage;
+        }
+        myPage = JSON.stringify(myPage);
+        console.log("page:", myPage, page, page.gmPage, page.playersPage);
         let response = await fetch(
-          "/fetchGameView?host=" + props.host + "&page=" + page
+          "/fetchGameView?host=" + props.host + "&page=" + myPage
         );
         let responseBody = await response.text();
         let body = JSON.parse(responseBody);
@@ -42,7 +50,7 @@ export default function Online(props) {
     return () => {
       clearInterval(interval);
     };
-  }, [dragging]);
+  }, [dragging, page]);
 
   useEffect(() => {
     dispatch({ type: "newUserOnline", user: user });

@@ -40,7 +40,7 @@ class CreationOnlineToken extends Component {
     data.append("numberOfTokens", this.state.numberOfTokens);
     data.append("imgFile", this.state.imgFile);
     data.append("type", this.state.type);
-    data.append("page", this.props.page);
+    data.append("page", JSON.stringify(this.props.page));
     data.append("host", this.props.host);
     let response = await fetch("/creatingANewToken", {
       method: "POST",
@@ -102,7 +102,7 @@ class CreationOnlineToken extends Component {
 let mapStateToProps = state => {
   return {
     gameView: state.gameView,
-    page: state.page,
+    page: state.page.gmPage,
     login: state.login
   };
 };

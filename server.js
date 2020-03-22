@@ -74,7 +74,7 @@ app.post("/signup", uploads.none(), async (req, res) => {
       imgFile: null,
       positionY: null,
       positionX: null,
-      page: null,
+      page: { gmPage: 1, playersPage: 1 },
       zIndex: null,
       permission: null,
       height: null,
@@ -175,10 +175,29 @@ app.post("/dragged", uploads.none(), async (req, res) => {
   }
 });
 
+app.post("/newPage", uploads.none(), async (req, res) => {
+  let playersPage = JSON.parse(req.body.playersPage);
+  let gmPage = JSON.parse(req.body.gmPage);
+  let host = req.body.host;
+
+  try {
+    await dbo.collection("tokens").updateOne(
+      { host: host, type: "MasterToken" },
+      {
+        $set: { page: { playersPage: playersPage, gmPage: gmPage } }
+      }
+    );
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("dragged error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
 app.post("/scan", uploads.none(), async (req, res) => {
   let positionX = req.body.positionX;
   let positionY = req.body.positionY;
-  console.log("req.body.time", req.body.time, typeof req.body.time);
   let time = JSON.parse(req.body.time);
   let user = req.body.user;
   let host = req.body.host;
@@ -363,7 +382,8 @@ app.get("/fetchMessages", async (req, res) => {
 
 app.get("/fetchGameView", async (req, res) => {
   let host = req.query.host;
-  let page = req.query.page;
+  let page = JSON.parse(req.query.page);
+
   try {
     const gameView = await dbo
       .collection("tokens")
@@ -716,6 +736,7 @@ app.post(
 );
 
 app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
+  console.log("helloworld");
   const sessionId = req.cookies.sid;
   if (sessions[sessionId] === undefined) {
     res.status(403);
@@ -724,8 +745,9 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
     );
   }
   let host = req.body.host;
-  let page = req.body.page;
+  let page = JSON.parse(req.body.page);
   let type = req.body.type;
+  console.log("type", type);
   let zIndex = 2;
   if (type === "Background") {
     zIndex = 1;

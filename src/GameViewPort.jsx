@@ -67,14 +67,14 @@ class GameViewPort extends Component {
       return;
     }
     let canvas = this.canvasRef.current;
+    console.log("window size", canvas.width, canvas.height);
     let ctx = canvas.getContext("2d");
     this.setState({
       canvas: canvas,
       ctx: ctx,
       canvasUrl: canvas.toDataURL()
     });
-    // w = canvas.width;
-    // h = canvas.height;
+
     canvas.addEventListener("mousemove", evt => {
       this.findxy("move", evt);
     });
@@ -95,8 +95,6 @@ class GameViewPort extends Component {
     this.state.ctx.fillRect(0, 0, width, height);
 
     let data = new FormData();
-    // data.append("img", img);
-    // this.canvasRef.current
     data.append("src", this.canvasRef.current.toDataURL());
     data.append("host", this.props.host);
     data.append("width", this.state.canvas.width);
@@ -110,8 +108,6 @@ class GameViewPort extends Component {
     // this.state.ctx.fillStyle = "blue";
     this.state.ctx.clearRect(0, 0, width, height);
     let data = new FormData();
-    // data.append("img", img);
-    // this.canvasRef.current
     data.append("src", this.canvasRef.current.toDataURL());
     data.append("host", this.props.host);
     data.append("width", this.state.canvas.width);
@@ -122,6 +118,7 @@ class GameViewPort extends Component {
 
   resizeCanvas = () => {
     console.log("window.innerWidth", window.innerWidth);
+    console.log("window.innerHeight", window.innerHeight);
     this.state.canvas.width = window.innerWidth;
     this.state.canvas.height = window.innerHeight;
   };
@@ -151,6 +148,8 @@ class GameViewPort extends Component {
     }
 
     if (status === "down") {
+      console.log("helloworld");
+      console.log("client", e.clientX, e.clientY);
       this.setState({
         prevX: this.state.currX,
         prevY: this.state.currY,
@@ -169,21 +168,14 @@ class GameViewPort extends Component {
         return;
       }
       this.setState({ localFlag: false });
-      // let img = new Image(this.state.canvas.width, this.state.canvas.height);
-      // img.src = this.state.canvas.toDataURL();
 
       let data = new FormData();
-      // data.append("img", img);
-      // this.canvasRef.current
       data.append("src", this.canvasRef.current.toDataURL());
       data.append("host", this.props.host);
       data.append("width", this.state.canvas.width);
       data.append("height", this.state.canvas.height);
       data.append("clear", JSON.stringify(false));
       await fetch("/drawData", { method: "POST", body: data });
-      // this.props.dispatch({
-      //   type: "draggingEnd"
-      // });
     }
 
     if (status === "move") {
@@ -206,7 +198,6 @@ class GameViewPort extends Component {
     const { width, height, src, clear } = this.props.MasterToken.canvas;
     let img = new Image(width, height);
     img.onload = () => {
-      console.log("clear", clear);
       if (clear === true) {
         const { width, height } = this.state.canvas;
         this.state.ctx.clearRect(0, 0, width, height);
@@ -217,8 +208,6 @@ class GameViewPort extends Component {
     this.setState({ canvasUrl: this.props.MasterToken.canvas.src });
 
     let data = new FormData();
-    // data.append("img", img);
-    // this.canvasRef.current
     data.append("src", this.canvasRef.current.toDataURL());
     data.append("host", this.props.host);
     data.append("width", this.state.canvas.width);
@@ -281,6 +270,10 @@ class GameViewPort extends Component {
       );
     });
 
+    let hideProperty = token => {
+      return this.props.user !== this.props.host && token.hide === true;
+    };
+
     return (
       <div>
         {scan !== undefined ? (
@@ -305,7 +298,7 @@ class GameViewPort extends Component {
           canvasClear={this.canvasClear}
         />
         <div onMouseDown={this.handleMouseDown}>
-          {this.props.gameView.map((token, idx) => {
+          {this.props.gameView.map(token => {
             return (
               <div key={token.tokenId}>
                 <Draggable token={token}>
@@ -327,11 +320,7 @@ class GameViewPort extends Component {
                       width: token.width + "px",
                       resize:
                         this.props.user === this.props.host ? "both" : "none",
-                      display:
-                        this.props.user !== this.props.host &&
-                        token.hide === true
-                          ? "none"
-                          : "block",
+                      display: hideProperty(token) ? "none" : "block",
                       opacity: token.hide === true ? "0.5" : "1"
                     }}
                   />

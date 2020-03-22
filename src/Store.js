@@ -25,6 +25,18 @@ let reducer = (state, action) => {
     return { ...state, events: action.events };
   }
 
+  // if (action.type === "newGmPage") {
+  //   return produce(state, draftState => {
+  //     draftState.page.gmPage = action.newGmPage;
+  //   });
+  // }
+
+  // if (action.type === "newPlayersPage") {
+  //   return produce(state, draftState => {
+  //     draftState.page.playersPage = action.newPlayersPage;
+  //   });
+  // }
+
   if (action.type === "typeSelection") {
     return { ...state, typeSelection: action.typeSelection };
   }
@@ -64,11 +76,12 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "gameUpdate") {
-    return {
-      ...state,
-      gameView: action.gameView,
-      MasterToken: action.MasterToken
-    };
+    return produce(state, draftState => {
+      draftState.gameView = action.gameView;
+      draftState.MasterToken = action.MasterToken;
+      draftState.page.gmPage = action.MasterToken.page.gmPage;
+      draftState.page.playersPage = action.MasterToken.page.playersPage;
+    });
   }
 
   if (action.type === "set-messages") {
@@ -247,7 +260,7 @@ const store = createStore(
     events: [],
     language: "english",
     gameView: [],
-    page: 1,
+    page: { gmPage: "", playersPage: "" },
     typeSelection: "Token",
     isErasingToken: false,
     isDuplicateToken: { action: false, number: 1 },

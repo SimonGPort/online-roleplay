@@ -10,7 +10,7 @@ export default class Navbar extends Component {
 
   render = () => {
     return (
-      <div className="navbar">
+      <div id="navbar">
         <div>
           <Link to="/">
             <img src="/images/DnD logo.jpg" className="navbar-logo" />
