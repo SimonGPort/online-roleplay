@@ -267,7 +267,8 @@ const store = createStore(
     isHidingToken: false,
     isScanning: false,
     CreationOnlineToken: false,
-    MasterToken: {}
+    MasterToken: {},
+    erasingCanvas: true
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

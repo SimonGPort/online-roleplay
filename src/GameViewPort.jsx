@@ -8,8 +8,6 @@ class GameViewPort extends Component {
     super(props);
     this.canvasRef = React.createRef();
     this.state = {
-      currX: 0,
-      currY: 0,
       prevX: 0,
       prevY: 0,
       localFlag: false,
@@ -27,7 +25,7 @@ class GameViewPort extends Component {
 
   componentDidUpdate() {
     if (this.state.canvasUrl !== this.props.MasterToken.canvas.src) {
-      this.drawCanvas(this.state.ctx);
+      this.drawCanvas(this.state.ctx, this.state.canvas);
     }
   }
   ///// method for the canvas
@@ -67,6 +65,8 @@ class GameViewPort extends Component {
       return;
     }
     let canvas = this.canvasRef.current;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     console.log("window size", canvas.width, canvas.height);
     let ctx = canvas.getContext("2d");
     this.setState({
@@ -117,21 +117,26 @@ class GameViewPort extends Component {
   };
 
   resizeCanvas = () => {
-    console.log("window.innerWidth", window.innerWidth);
-    console.log("window.innerHeight", window.innerHeight);
     this.state.canvas.width = window.innerWidth;
     this.state.canvas.height = window.innerHeight;
   };
 
-  draw = () => {
+  draw = e => {
+    // if (this.props.erasingCanvas) {
+    //   this.state.ctx.globalCompositeOperation = "destination-out";
+    // }
     this.state.ctx.beginPath();
     this.state.ctx.moveTo(this.state.prevX, this.state.prevY);
-    this.state.ctx.lineTo(this.state.currX, this.state.currY);
+    this.state.ctx.lineTo(e.offsetX, e.offsetY);
     this.state.ctx.strokeStyle = "black";
-    this.state.ctx.lineWidth = 2;
+    this.state.ctx.lineWidth = 5;
     this.state.ctx.stroke();
     this.state.ctx.closePath();
-    this.setState({ canvasUrl: this.state.canvas.toDataURL() });
+    this.setState({
+      canvasUrl: this.state.canvas.toDataURL(),
+      prevX: e.offsetX,
+      prevY: e.offsetY
+    });
   };
 
   // erase = () => {
@@ -151,10 +156,8 @@ class GameViewPort extends Component {
       console.log("helloworld");
       console.log("client", e.clientX, e.clientY);
       this.setState({
-        prevX: this.state.currX,
-        prevY: this.state.currY,
-        currX: e.clientX - this.state.canvas.offsetLeft,
-        currY: e.clientY - this.state.canvas.offsetTop,
+        prevX: e.offsetX,
+        prevY: e.offsetY,
         localFlag: true
       });
       // this.props.dispatch({
@@ -180,28 +183,22 @@ class GameViewPort extends Component {
 
     if (status === "move") {
       if (this.state.localFlag) {
-        this.setState({
-          prevX: this.state.currX,
-          prevY: this.state.currY,
-          currX: e.clientX - this.state.canvas.offsetLeft,
-          currY: e.clientY - this.state.canvas.offsetTop
-        });
-        this.draw();
+        this.draw(e);
       }
     }
   };
 
-  drawCanvas = async ctx => {
+  drawCanvas = async (ctx, canvas) => {
     if (!this.props.MasterToken.canvas) {
       return;
     }
     const { width, height, src, clear } = this.props.MasterToken.canvas;
     let img = new Image(width, height);
     img.onload = () => {
-      if (clear === true) {
-        const { width, height } = this.state.canvas;
-        this.state.ctx.clearRect(0, 0, width, height);
-      }
+      // if (clear === true) {
+      //   const { width, height } = canvas;
+      //   ctx.clearRect(0, 0, width, height);
+      // }
       ctx.drawImage(img, 0, 0);
     };
     img.src = src;
@@ -210,8 +207,8 @@ class GameViewPort extends Component {
     let data = new FormData();
     data.append("src", this.canvasRef.current.toDataURL());
     data.append("host", this.props.host);
-    data.append("width", this.state.canvas.width);
-    data.append("height", this.state.canvas.height);
+    data.append("width", canvas.width);
+    data.append("height", canvas.height);
     data.append("clear", JSON.stringify(false));
     await fetch("/drawData", { method: "POST", body: data });
   };
@@ -345,7 +342,8 @@ let mapStateToProps = state => {
     MasterToken: state.MasterToken,
     canvasFill: state.canvasFill,
     canvasClear: state.canvasClear,
-    isScanning: state.isScanning
+    isScanning: state.isScanning,
+    erasingCanvas: state.erasingCanvas
   };
 };
 
