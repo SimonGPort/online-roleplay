@@ -178,7 +178,7 @@ export default function GmBar(props) {
         </div>
       </div>
       <div>
-        <ChatOnline />
+        <ChatOnline host={props.host} />
       </div>
     </div>
   );

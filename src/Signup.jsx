@@ -24,9 +24,6 @@ class Signup extends Component {
 
   submitHandler = async evt => {
     evt.preventDefault();
-    console.log("username", this.state.username);
-    console.log("email", this.state.email);
-    console.log("password", this.state.password);
     let data = new FormData();
     data.append("username", this.state.username);
     data.append("email", this.state.email);

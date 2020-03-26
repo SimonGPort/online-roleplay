@@ -97,7 +97,6 @@ class CreationConventionTable extends Component {
     data.append("numPlayers", this.state.numPlayers);
     data.append("imgFile", this.state.imgFile);
     data.append("eventId", this.props.eventId);
-    console.log("eventId", this.props.eventId);
     let response = await fetch("/creatingAConventionTable", {
       method: "POST",
       body: data

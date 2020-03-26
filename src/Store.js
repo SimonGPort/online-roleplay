@@ -216,14 +216,14 @@ let reducer = (state, action) => {
     user.initiative = null;
 
     return produce(state, draftState => {
-      draftState.usersOnline.push(user);
+      draftState.MasterToken.onlineUsers.push(user);
     });
   }
 
   if (action.type === "newUserOffline") {
     console.log(action.user);
     return produce(state, draftState => {
-      draftState.userOnline = draftState.usersOnline.filter(
+      draftState.MasterToken.onlineUsers = draftState.MasterToken.onlineUsers.filter(
         user => user.user !== action.user
       );
     });
@@ -254,7 +254,7 @@ const store = createStore(
     sessions: [],
     dragging: false,
     tokenIdDragged: "",
-    usersOnline: [],
+    // usersOnline: [],
     user: "",
     login: false,
     events: [],

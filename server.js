@@ -83,7 +83,8 @@ app.post("/signup", uploads.none(), async (req, res) => {
       chat: [],
       pageLocation: { gm: 1, players: 1 },
       scan: [],
-      canvas: ""
+      canvas: "",
+      onlineUsers: []
     });
     let sessionId = "" + Math.floor(Math.random() * 1000000);
     sessions[sessionId] = req.body.username;
@@ -105,7 +106,7 @@ app.post("/newUserOnline", uploads.none(), async (req, res) => {
       .collection("tokens")
       .updateOne(
         { host: host, type: "MasterToken" },
-        { $push: { onlineUsers: { user: user, initiative: null } } }
+        { $push: { onlineUsers: { user: user, initiative: "" } } }
       );
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
@@ -124,7 +125,7 @@ app.post("/newUserOffline", uploads.none(), async (req, res) => {
       .collection("tokens")
       .updateOne(
         { host: host, type: "MasterToken" },
-        { $pull: { onlineUsers: { user: user, initiative: null } } }
+        { $pull: { onlineUsers: { user } } }
       );
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
@@ -185,6 +186,30 @@ app.post("/newPage", uploads.none(), async (req, res) => {
       { host: host, type: "MasterToken" },
       {
         $set: { page: { playersPage: playersPage, gmPage: gmPage } }
+      }
+    );
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("dragged error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+///je travail ici
+app.post("/playerinitiative", uploads.none(), async (req, res) => {
+  let playerinitiative = JSON.parse(req.body.playerinitiative);
+  let user = JSON.parse(req.body.user);
+  let host = req.body.host;
+  let playerIndex = JSON.parse(req.body.playerIndex);
+  user.initiative = playerinitiative;
+  let field = "onlineUsers." + playerIndex;
+
+  try {
+    await dbo.collection("tokens").updateOne(
+      { host: host, type: "MasterToken" },
+      {
+        $set: { [field]: { user } }
       }
     );
     res.send(JSON.stringify({ success: true }));

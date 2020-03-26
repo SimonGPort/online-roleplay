@@ -77,10 +77,40 @@ class ChatOnline extends Component {
           </div>
         </div>
         <div>
-          {this.props.usersOnline.map((user, idx) => {
+          {this.props.onlineUsers.map((user, idx) => {
             return (
               <div key={idx}>
-                {user.user}/{user.initiative}
+                {user.user}/
+                <input
+                  key={idx}
+                  value={user.initiative}
+                  type="number"
+                  onChange={async evt => {
+                    console.log("initiative changes");
+                    let data = new FormData();
+                    data.append("playerinitiative", evt.target.value);
+                    data.append("host", this.props.host);
+                    data.append("user", JSON.stringify(user));
+                    let playerIndex = this.props.onlineUsers.findIndex(
+                      onlineUser => {
+                        return onlineUser.user === user.user;
+                      }
+                    );
+                    data.append("playerIndex", JSON.stringify(playerIndex));
+                    let response = await fetch("/playerinitiative", {
+                      method: "POST",
+                      body: data
+                    });
+                    const body = await response.text();
+                    const parsed = JSON.parse(body);
+                    if (parsed.success) {
+                      console.log("playerinitiative success");
+                    } else {
+                      console.log("playerinitiative Failure");
+                    }
+                  }}
+                />
+                {user.initiative}
               </div>
             );
           })}
@@ -93,7 +123,7 @@ let mapStateToProps = state => {
   return {
     chat: state.MasterToken.chat,
     tokenId: state.MasterToken.tokenId,
-    usersOnline: state.usersOnline,
+    onlineUsers: state.MasterToken.onlineUsers,
     user: state.user
   };
 };

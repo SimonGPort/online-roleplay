@@ -90,8 +90,6 @@ let mapStateToProps = state => {
     return [...accumulator, { ...eventToAdd, eventId: [eventToAdd.eventId] }];
   }, []);
 
-  console.log("reducedList:", reducedList);
-
   let eventsReformatted = reducedList.map(event => {
     let eventTransform = {};
     eventTransform.title = event.type + " (" + event.eventId.length + ")";
@@ -101,11 +99,8 @@ let mapStateToProps = state => {
     let day = parseInt(event.when.slice(8));
     let hour = parseInt(event.when.slice(0, 2));
     let minute = parseInt(event.when.slice(3));
-    console.log("time:", year, month, day, hour, minute);
     eventTransform.start = new Date(year, month, day, hour, minute, 0, 0);
     eventTransform.end = new Date(year, month, day, hour + 4, minute, 0, 0);
-    console.log("eventTransform", eventTransform);
-    console.log("newMyEventsList", state.myEventsList);
     return eventTransform;
   });
 

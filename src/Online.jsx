@@ -24,7 +24,6 @@ export default function Online(props) {
           myPage = page.playersPage;
         }
         myPage = JSON.stringify(myPage);
-        console.log("page:", myPage, page, page.gmPage, page.playersPage);
         let response = await fetch(
           "/fetchGameView?host=" + props.host + "&page=" + myPage
         );
@@ -53,9 +52,29 @@ export default function Online(props) {
   }, [dragging, page]);
 
   useEffect(() => {
-    dispatch({ type: "newUserOnline", user: user });
+    // dispatch({ type: "newUserOnline", user: user });
+    (async () => {
+      let data = new FormData();
+      data.append("user", user);
+      data.append("host", props.host);
+      let response = await fetch("/newUserOnline", {
+        method: "POST",
+        body: data
+      });
+    })();
+
     return () => {
-      dispatch({ type: "newUserOffline", user: user });
+      // dispatch({ type: "newUserOffline", user: user });
+      (async () => {
+        let data = new FormData();
+        data.append("user", user);
+        data.append("host", props.host);
+        let response = await fetch("/newUserOffline", {
+          method: "POST",
+          body: data
+        });
+      })();
+
       dispatch({ type: "removeMasterToken" });
     };
   }, []);
