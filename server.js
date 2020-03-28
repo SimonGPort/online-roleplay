@@ -83,7 +83,7 @@ app.post("/signup", uploads.none(), async (req, res) => {
       chat: [],
       pageLocation: { gm: 1, players: 1 },
       scan: [],
-      canvas: "",
+      canvas: { src: "", width: null, height: null, clear: false },
       onlineUsers: []
     });
     let sessionId = "" + Math.floor(Math.random() * 1000000);
@@ -196,7 +196,6 @@ app.post("/newPage", uploads.none(), async (req, res) => {
   }
 });
 
-///je travail ici
 app.post("/playerinitiative", uploads.none(), async (req, res) => {
   let playerinitiative = JSON.parse(req.body.playerinitiative);
   let user = JSON.parse(req.body.user);
@@ -209,7 +208,7 @@ app.post("/playerinitiative", uploads.none(), async (req, res) => {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
-        $set: { [field]: { user } }
+        $set: { [field]: user }
       }
     );
     res.send(JSON.stringify({ success: true }));

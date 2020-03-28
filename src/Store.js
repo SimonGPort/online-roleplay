@@ -10,6 +10,10 @@ let reducer = (state, action) => {
     return { ...state, MasterToken: {} };
   }
 
+  if (action.type === "erasingCanvas") {
+    return { ...state, erasingCanvas: action.erasingCanvas };
+  }
+
   if (action.type === "CreationOnlineToken") {
     return { ...state, CreationOnlineToken: action.action };
   }
@@ -65,6 +69,12 @@ let reducer = (state, action) => {
   if (action.type === "isDuplicate") {
     return produce(state, draftState => {
       draftState.isDuplicateToken.action = action.isDuplicate;
+    });
+  }
+
+  if (action.type === "changeMaster") {
+    return produce(state, draftState => {
+      draftState.MasterToken.canvas.src = action.src;
     });
   }
 
@@ -268,7 +278,7 @@ const store = createStore(
     isScanning: false,
     CreationOnlineToken: false,
     MasterToken: {},
-    erasingCanvas: true
+    erasingCanvas: false
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

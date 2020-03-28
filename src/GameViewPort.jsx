@@ -2,7 +2,6 @@ import React, { Component, useState } from "react";
 import Draggable from "./Draggable.jsx";
 import { connect } from "react-redux";
 import GmBar from "./GmBar.jsx";
-
 class GameViewPort extends Component {
   constructor(props) {
     super(props);
@@ -16,15 +15,18 @@ class GameViewPort extends Component {
       canvasUrl: undefined
     };
   }
-
   componentDidMount() {
     this.canvasDrawingIni();
     window.addEventListener("resize", this.resizeCanvas);
     // this.drawCanvas(this.state.ctx);
   }
-
   componentDidUpdate() {
-    if (this.state.canvasUrl !== this.props.MasterToken.canvas.src) {
+    if (this.state.localFlag) {
+      return;
+    }
+    if (
+      this.canvasRef.current.toDataURL() !== this.props.MasterToken.canvas.src
+    ) {
       this.drawCanvas(this.state.ctx, this.state.canvas);
     }
   }
@@ -59,7 +61,6 @@ class GameViewPort extends Component {
   // componentDidMount() {
   //   this.canvasDrawingIni();
   // }
-
   canvasDrawingIni = () => {
     if (this.props.isDrawingAble === false) {
       return;
@@ -74,7 +75,6 @@ class GameViewPort extends Component {
       ctx: ctx,
       canvasUrl: canvas.toDataURL()
     });
-
     canvas.addEventListener("mousemove", evt => {
       this.findxy("move", evt);
     });
@@ -88,12 +88,10 @@ class GameViewPort extends Component {
       this.findxy("out", evt);
     });
   };
-
   canvasFill = async () => {
     const { width, height } = this.state.canvas;
     // this.state.ctx.fillStyle = "black";
     this.state.ctx.fillRect(0, 0, width, height);
-
     let data = new FormData();
     data.append("src", this.canvasRef.current.toDataURL());
     data.append("host", this.props.host);
@@ -102,29 +100,29 @@ class GameViewPort extends Component {
     data.append("clear", JSON.stringify(false));
     await fetch("/drawData", { method: "POST", body: data });
   };
-
   canvasClear = async () => {
     const { width, height } = this.state.canvas;
     // this.state.ctx.fillStyle = "blue";
     this.state.ctx.clearRect(0, 0, width, height);
     let data = new FormData();
-    data.append("src", this.canvasRef.current.toDataURL());
+    data.append("src", "");
     data.append("host", this.props.host);
-    data.append("width", this.state.canvas.width);
-    data.append("height", this.state.canvas.height);
-    data.append("clear", JSON.stringify(true));
+    data.append("width", null);
+    data.append("height", null);
+    data.append("clear", false);
     await fetch("/drawData", { method: "POST", body: data });
   };
-
   resizeCanvas = () => {
     this.state.canvas.width = window.innerWidth;
     this.state.canvas.height = window.innerHeight;
   };
-
   draw = e => {
-    // if (this.props.erasingCanvas) {
-    //   this.state.ctx.globalCompositeOperation = "destination-out";
-    // }
+    if (this.props.erasingCanvas) {
+      this.state.ctx.globalCompositeOperation = "destination-out";
+      // this.state.ctx.strokeStyle = 'transparent';
+    } else {
+      this.state.ctx.globalCompositeOperation = "source-over";
+    }
     this.state.ctx.beginPath();
     this.state.ctx.moveTo(this.state.prevX, this.state.prevY);
     this.state.ctx.lineTo(e.offsetX, e.offsetY);
@@ -133,12 +131,11 @@ class GameViewPort extends Component {
     this.state.ctx.stroke();
     this.state.ctx.closePath();
     this.setState({
-      canvasUrl: this.state.canvas.toDataURL(),
+      // canvasUrl: this.state.canvas.toDataURL(),
       prevX: e.offsetX,
       prevY: e.offsetY
     });
   };
-
   // erase = () => {
   //   var m = confirm("Want to clear");
   //   if (m) {
@@ -146,73 +143,67 @@ class GameViewPort extends Component {
   //     document.getElementById("canvasimg").style.display = "none";
   //   }
   // };
-
   findxy = async (status, e) => {
     if (this.props.typeSelection !== "Draw") {
       return;
     }
-
     if (status === "down") {
-      console.log("helloworld");
-      console.log("client", e.clientX, e.clientY);
       this.setState({
         prevX: e.offsetX,
         prevY: e.offsetY,
         localFlag: true
       });
-      // this.props.dispatch({
-      //   type: "draggingStart",
-      //   tokenIdDragged: null
-      // });
+      this.props.dispatch({
+        type: "draggingStart",
+        tokenIdDragged: null
+      });
     }
-
     if (status === "up" || status === "out") {
       if (this.state.localFlag === false) {
         return;
       }
-      this.setState({ localFlag: false });
-
       let data = new FormData();
       data.append("src", this.canvasRef.current.toDataURL());
       data.append("host", this.props.host);
       data.append("width", this.state.canvas.width);
       data.append("height", this.state.canvas.height);
-      data.append("clear", JSON.stringify(false));
+      data.append("clear", JSON.stringify(this.props.erasingCanvas));
       await fetch("/drawData", { method: "POST", body: data });
+      this.props.dispatch({
+        type: "changeMaster",
+        src: this.canvasRef.current.toDataURL()
+      });
+      this.props.dispatch({ type: "draggingEnd" });
+      this.setState({
+        localFlag: false
+      });
     }
-
     if (status === "move") {
       if (this.state.localFlag) {
         this.draw(e);
       }
     }
   };
-
   drawCanvas = async (ctx, canvas) => {
     if (!this.props.MasterToken.canvas) {
       return;
     }
     const { width, height, src, clear } = this.props.MasterToken.canvas;
     let img = new Image(width, height);
-    img.onload = () => {
-      // if (clear === true) {
-      //   const { width, height } = canvas;
-      //   ctx.clearRect(0, 0, width, height);
-      // }
+    img.onload = async () => {
+      if (clear === true) {
+        const { width, height } = canvas;
+        ctx.clearRect(0, 0, width, height);
+      }
+      ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(img, 0, 0);
+      this.props.dispatch({
+        type: "changeMaster",
+        src: this.canvasRef.current.toDataURL()
+      });
     };
     img.src = src;
-    this.setState({ canvasUrl: this.props.MasterToken.canvas.src });
-
-    let data = new FormData();
-    data.append("src", this.canvasRef.current.toDataURL());
-    data.append("host", this.props.host);
-    data.append("width", canvas.width);
-    data.append("height", canvas.height);
-    data.append("clear", JSON.stringify(false));
-    await fetch("/drawData", { method: "POST", body: data });
   };
-
   handleMouseDown = async ({ clientX, clientY }) => {
     if (this.props.isScanning === false) {
       return;
@@ -225,7 +216,6 @@ class GameViewPort extends Component {
     time.hours = today.getHours();
     time.minute = today.getMinutes();
     time.second = today.getSeconds();
-
     let data = new FormData();
     data.append("positionX", clientX);
     data.append("positionY", clientY);
@@ -245,7 +235,6 @@ class GameViewPort extends Component {
       isScanning: false
     });
   };
-
   render = () => {
     let scan = this.props.MasterToken.scan.find(scan => {
       let timeNow = {};
@@ -266,11 +255,9 @@ class GameViewPort extends Component {
         scan.time.second + 1 >= timeNow.second
       );
     });
-
     let hideProperty = token => {
       return this.props.user !== this.props.host && token.hide === true;
     };
-
     return (
       <div>
         {scan !== undefined ? (
@@ -287,7 +274,6 @@ class GameViewPort extends Component {
         ) : (
           ""
         )}
-
         <GmBar
           host={this.props.host}
           eventId={this.props.eventId}
@@ -331,7 +317,6 @@ class GameViewPort extends Component {
     );
   };
 }
-
 let mapStateToProps = state => {
   return {
     dragging: state.dragging,
@@ -346,5 +331,4 @@ let mapStateToProps = state => {
     erasingCanvas: state.erasingCanvas
   };
 };
-
 export default connect(mapStateToProps)(GameViewPort);

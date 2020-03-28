@@ -11,6 +11,7 @@ export default function GmBar(props) {
   const typeSelection = useSelector(state => state.typeSelection);
   const gmPage = useSelector(state => state.page.gmPage);
   const playersPage = useSelector(state => state.page.playersPage);
+  const erasingCanvas = useSelector(state => state.erasingCanvas);
 
   const dispatch = useDispatch();
 
@@ -54,7 +55,7 @@ export default function GmBar(props) {
             backgroundColor: isErasing === true ? "yellow" : ""
           }}
         >
-          Erase
+          Erase Token
         </button>
       </div>
       <div>
@@ -109,6 +110,20 @@ export default function GmBar(props) {
             }}
           >
             Clear
+          </button>
+          <button
+            style={{
+              display: typeSelection === "Draw" ? "block" : "none",
+              backgroundColor: erasingCanvas === true ? "yellow" : ""
+            }}
+            onClick={evt => {
+              dispatch({
+                type: "erasingCanvas",
+                erasingCanvas: !erasingCanvas
+              });
+            }}
+          >
+            Eraser
           </button>
         </div>
       </div>

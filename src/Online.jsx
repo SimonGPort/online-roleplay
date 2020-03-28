@@ -10,6 +10,8 @@ export default function Online(props) {
   const user = useSelector(state => state.user);
   const CreationToken = useSelector(state => state.CreationOnlineToken);
   const dispatch = useDispatch();
+  const gameView = useSelector(state => state.gameView);
+  const MasterToken = useSelector(state => state.MasterToken);
 
   useEffect(() => {
     const updateGameView = () => {
@@ -30,6 +32,12 @@ export default function Online(props) {
         let responseBody = await response.text();
         let body = JSON.parse(responseBody);
         if (body.success) {
+          let sameGameView = _.isEqual(gameView, body.gameViewFilter);
+          let sameMasterToken = _.isEqual(MasterToken, body.MasterToken);
+          if (sameGameView && sameMasterToken) {
+            return;
+          }
+          console.log("render");
           dispatch({
             type: "gameUpdate",
             gameView: body.gameViewFilter,
@@ -49,7 +57,7 @@ export default function Online(props) {
     return () => {
       clearInterval(interval);
     };
-  }, [dragging, page]);
+  }, [dragging, page, gameView, MasterToken]);
 
   useEffect(() => {
     // dispatch({ type: "newUserOnline", user: user });
@@ -62,22 +70,27 @@ export default function Online(props) {
         body: data
       });
     })();
-
+    window.addEventListener("beforeunload", componentCleanup);
     return () => {
-      // dispatch({ type: "newUserOffline", user: user });
-      (async () => {
-        let data = new FormData();
-        data.append("user", user);
-        data.append("host", props.host);
-        let response = await fetch("/newUserOffline", {
-          method: "POST",
-          body: data
-        });
-      })();
-
-      dispatch({ type: "removeMasterToken" });
+      window.removeEventListener("beforeunload", componentCleanup);
+      componentCleanup();
     };
   }, []);
+
+  let componentCleanup = () => {
+    // dispatch({ type: "newUserOffline", user: user });
+    (async () => {
+      let data = new FormData();
+      data.append("user", user);
+      data.append("host", props.host);
+      let response = await fetch("/newUserOffline", {
+        method: "POST",
+        body: data
+      });
+    })();
+
+    dispatch({ type: "removeMasterToken" });
+  };
 
   if (loading === false) {
     return <div>Loading...</div>;

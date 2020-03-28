@@ -32,6 +32,7 @@
     "google-map-react": "^1.1.6",
     "immer": "^5.3.6",
     "latest": "^0.2.0",
+    "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "mongodb": "^3.5.3",
     "multer": "^1.4.2",

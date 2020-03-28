@@ -57,7 +57,32 @@ class ChatOnline extends Component {
     }
   };
 
+  handleOnChanges = async (evt, user) => {
+    let data = new FormData();
+    data.append("playerinitiative", evt.target.value);
+    data.append("host", this.props.host);
+    data.append("user", JSON.stringify(user));
+    let playerIndex = this.props.onlineUsers.findIndex(onlineUser => {
+      return onlineUser.user === user.user;
+    });
+    data.append("playerIndex", JSON.stringify(playerIndex));
+    let response = await fetch("/playerinitiative", {
+      method: "POST",
+      body: data
+    });
+    const body = await response.text();
+    const parsed = JSON.parse(body);
+    if (parsed.success) {
+      console.log("playerinitiative success");
+    } else {
+      console.log("playerinitiative Failure");
+    }
+  };
+
   render = () => {
+    let userSort = this.props.onlineUsers
+      .slice()
+      .sort((a, b) => b.initiative - a.initiative);
     return (
       <div>
         <div>
@@ -77,7 +102,7 @@ class ChatOnline extends Component {
           </div>
         </div>
         <div>
-          {this.props.onlineUsers.map((user, idx) => {
+          {userSort.map((user, idx) => {
             return (
               <div key={idx}>
                 {user.user}/
@@ -85,32 +110,9 @@ class ChatOnline extends Component {
                   key={idx}
                   value={user.initiative}
                   type="number"
-                  onChange={async evt => {
-                    console.log("initiative changes");
-                    let data = new FormData();
-                    data.append("playerinitiative", evt.target.value);
-                    data.append("host", this.props.host);
-                    data.append("user", JSON.stringify(user));
-                    let playerIndex = this.props.onlineUsers.findIndex(
-                      onlineUser => {
-                        return onlineUser.user === user.user;
-                      }
-                    );
-                    data.append("playerIndex", JSON.stringify(playerIndex));
-                    let response = await fetch("/playerinitiative", {
-                      method: "POST",
-                      body: data
-                    });
-                    const body = await response.text();
-                    const parsed = JSON.parse(body);
-                    if (parsed.success) {
-                      console.log("playerinitiative success");
-                    } else {
-                      console.log("playerinitiative Failure");
-                    }
-                  }}
+                  onChange={evt => this.handleOnChanges(evt, user)}
                 />
-                {user.initiative}
+                {/* {user.initiative} */}
               </div>
             );
           })}
