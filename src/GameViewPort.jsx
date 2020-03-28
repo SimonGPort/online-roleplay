@@ -12,7 +12,9 @@ class GameViewPort extends Component {
       localFlag: false,
       ctx: undefined,
       canvas: undefined,
-      canvasUrl: undefined
+      canvasUrl: undefined,
+      penSize: 5,
+      penColor: "black"
     };
   }
   componentDidMount() {
@@ -30,37 +32,6 @@ class GameViewPort extends Component {
       this.drawCanvas(this.state.ctx, this.state.canvas);
     }
   }
-  ///// method for the canvas
-  // color = obj => {
-  //   switch (obj.id) {
-  //     case "green":
-  //       color = "green";
-  //       break;
-  //     case "blue":
-  //       color = "blue";
-  //       break;
-  //     case "red":
-  //       color = "red";
-  //       break;
-  //     case "yellow":
-  //       color = "yellow";
-  //       break;
-  //     case "orange":
-  //       color = "orange";
-  //       break;
-  //     case "black":
-  //       color = "black";
-  //       break;
-  //     case "white":
-  //       color = "white";
-  //       break;
-  //   }
-  //   if (color == "white") y = 14;
-  //   else y = 2;
-  // };
-  // componentDidMount() {
-  //   this.canvasDrawingIni();
-  // }
   canvasDrawingIni = () => {
     if (this.props.isDrawingAble === false) {
       return;
@@ -90,7 +61,7 @@ class GameViewPort extends Component {
   };
   canvasFill = async () => {
     const { width, height } = this.state.canvas;
-    // this.state.ctx.fillStyle = "black";
+    this.state.ctx.fillStyle = this.state.penColor;
     this.state.ctx.fillRect(0, 0, width, height);
     let data = new FormData();
     data.append("src", this.canvasRef.current.toDataURL());
@@ -102,7 +73,6 @@ class GameViewPort extends Component {
   };
   canvasClear = async () => {
     const { width, height } = this.state.canvas;
-    // this.state.ctx.fillStyle = "blue";
     this.state.ctx.clearRect(0, 0, width, height);
     let data = new FormData();
     data.append("src", "");
@@ -119,15 +89,14 @@ class GameViewPort extends Component {
   draw = e => {
     if (this.props.erasingCanvas) {
       this.state.ctx.globalCompositeOperation = "destination-out";
-      // this.state.ctx.strokeStyle = 'transparent';
     } else {
       this.state.ctx.globalCompositeOperation = "source-over";
     }
     this.state.ctx.beginPath();
     this.state.ctx.moveTo(this.state.prevX, this.state.prevY);
     this.state.ctx.lineTo(e.offsetX, e.offsetY);
-    this.state.ctx.strokeStyle = "black";
-    this.state.ctx.lineWidth = 5;
+    this.state.ctx.strokeStyle = this.state.penColor;
+    this.state.ctx.lineWidth = this.state.penSize;
     this.state.ctx.stroke();
     this.state.ctx.closePath();
     this.setState({
@@ -136,13 +105,7 @@ class GameViewPort extends Component {
       prevY: e.offsetY
     });
   };
-  // erase = () => {
-  //   var m = confirm("Want to clear");
-  //   if (m) {
-  //     ctx.clearRect(0, 0, w, h);
-  //     document.getElementById("canvasimg").style.display = "none";
-  //   }
-  // };
+
   findxy = async (status, e) => {
     if (this.props.typeSelection !== "Draw") {
       return;
@@ -235,6 +198,10 @@ class GameViewPort extends Component {
       isScanning: false
     });
   };
+
+  changingPenSize = e => this.setState({ penSize: e });
+  changingPenColor = e => this.setState({ penColor: e });
+
   render = () => {
     let scan = this.props.MasterToken.scan.find(scan => {
       let timeNow = {};
@@ -267,7 +234,7 @@ class GameViewPort extends Component {
             style={{
               top: `${scan.positionY}px`,
               left: `${scan.positionX}px`,
-              position: "fixed",
+              position: "fixed ",
               zIndex: 5
             }}
           />
@@ -279,6 +246,8 @@ class GameViewPort extends Component {
           eventId={this.props.eventId}
           canvasFill={this.canvasFill}
           canvasClear={this.canvasClear}
+          changingPenSize={this.changingPenSize}
+          changingPenColor={this.changingPenColor}
         />
         <div onMouseDown={this.handleMouseDown}>
           {this.props.gameView.map(token => {

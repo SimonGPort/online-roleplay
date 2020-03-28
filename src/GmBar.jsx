@@ -94,26 +94,15 @@ export default function GmBar(props) {
         >
           Hide
         </button>
-        <div>
-          <button
-            onClick={props.canvasFill}
-            style={{
-              display: typeSelection === "Draw" ? "block" : "none"
-            }}
-          >
-            Fill
-          </button>
-          <button
-            onClick={props.canvasClear}
-            style={{
-              display: typeSelection === "Draw" ? "block" : "none"
-            }}
-          >
-            Clear
-          </button>
+        <div
+          style={{
+            display: typeSelection === "Draw" ? "block" : "none"
+          }}
+        >
+          <button onClick={props.canvasFill}>Fill</button>
+          <button onClick={props.canvasClear}>Clear</button>
           <button
             style={{
-              display: typeSelection === "Draw" ? "block" : "none",
               backgroundColor: erasingCanvas === true ? "yellow" : ""
             }}
             onClick={evt => {
@@ -125,6 +114,28 @@ export default function GmBar(props) {
           >
             Eraser
           </button>
+          <label>Pen Size</label>
+          <input
+            type="number"
+            onChange={evt => {
+              props.changingPenSize(evt.target.value);
+            }}
+          />
+
+          <label>Pen Color</label>
+          <select
+            onChange={evt => {
+              props.changingPenColor(evt.target.value);
+            }}
+          >
+            <option>Black</option>
+            <option>Red</option>
+            <option>Blue</option>
+            <option>Green</option>
+            <option>Yellow</option>
+            <option>Pink</option>
+            <option>White</option>
+          </select>
         </div>
       </div>
       <div>
