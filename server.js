@@ -177,18 +177,28 @@ app.post("/dragged", uploads.none(), async (req, res) => {
 });
 
 app.post("/newPage", uploads.none(), async (req, res) => {
-  let playersPage = JSON.parse(req.body.playersPage);
-  let gmPage = JSON.parse(req.body.gmPage);
+  let playersPage = req.body.playersPage;
+  let gmPage = req.body.gmPage;
+
+  if (playersPage !== "") {
+    playersPage = JSON.parse(playersPage);
+  }
+  if (gmPage !== "") {
+    gmPage = JSON.parse(gmPage);
+  }
+
+  console.log(gmPage, playersPage);
+
   let host = req.body.host;
 
   try {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
-        $set: { page: { playersPage: playersPage, gmPage: gmPage } }
+        $set: { page: { playersPage: playersPage, gmPage } }
       }
     );
-    res.send(JSON.stringify({ success: true }));
+    res.send(JSON.stringify({ success: true, gmPage, playersPage }));
   } catch (err) {
     console.log("dragged error", err);
     res.send(JSON.stringify({ success: false }));
@@ -196,7 +206,6 @@ app.post("/newPage", uploads.none(), async (req, res) => {
   }
 });
 
-////je travail ici
 app.post("/giveOrRemovePermissionToken", uploads.none(), async (req, res) => {
   let permissionValue = JSON.parse(req.body.permissionValue);
   let user = JSON.parse(req.body.user);
@@ -212,12 +221,6 @@ app.post("/giveOrRemovePermissionToken", uploads.none(), async (req, res) => {
       $push: { permission: user }
     };
   }
-
-  // let actionType = permissionValue
-  //   ? {
-  //       $pull: { permission: user }
-  //     }
-  //   : { $push: { permission: user } };
   console.log("actionType:", actionType, permissionValue);
   try {
     await dbo.collection("tokens").updateOne({ tokenId: tokenId }, actionType);

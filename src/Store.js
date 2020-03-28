@@ -10,14 +10,42 @@ let reducer = (state, action) => {
     return { ...state, MasterToken: {} };
   }
 
-  // 'a revenir!!!!'
-  //   if (action.type === "AddOrRemovePermission") {
+  if (action.type === "changingPage") {
+    return produce(state, draftState => {
+      draftState.page.gmPage = action.gmPage;
+      draftState.page.playersPage = action.playersPage;
+    });
+  }
 
-  // if(action.shouldRemovePermission){
+  // Je travail ici
+  if (action.type === "AddOrRemovePermission") {
+    debugger;
+    const index = state.gameView.findIndex(token => {
+      return token.tokenId === action.tokenId;
+    });
 
-  //   return { ...state, MasterToken: {} };
+    let permissions = state.gameView[index].permission;
 
-  // }
+    if (action.shouldRemovePermission) {
+      permissions = permissions.filter(user => user !== action.user);
+      console.log(permissions);
+    }
+
+    if (!action.shouldRemovePermission) {
+      permissions.push(action.user);
+      console.log(permissions);
+    }
+
+    console.log(permissions, index);
+
+    // return produce(state, draftState => {
+    //   draftState.isDuplicateToken.number = action.number;
+    // });
+
+    return produce(state, draftState => {
+      draftState.gameView[index].permission = permissions;
+    });
+  }
 
   if (action.type === "erasingCanvas") {
     return { ...state, erasingCanvas: action.erasingCanvas };

@@ -170,9 +170,13 @@ export default function GmBar(props) {
               const body = await response.text();
               const parsed = JSON.parse(body);
               if (parsed.success) {
-                console.log("gmPage success");
+                dispatch({
+                  type: "changingPage",
+                  gmPage: parsed.gmPage,
+                  playersPage: parsed.playersPage
+                });
               } else {
-                alert("gmPage Failure");
+                alert("newPage Failure");
               }
             }}
           />
@@ -194,9 +198,13 @@ export default function GmBar(props) {
               const body = await response.text();
               const parsed = JSON.parse(body);
               if (parsed.success) {
-                console.log("gmPage success");
+                dispatch({
+                  type: "changingPage",
+                  gmPage: parsed.gmPage,
+                  playersPage: parsed.playersPage
+                });
               } else {
-                alert("gmPage Failure");
+                alert("newPage Failure");
               }
             }}
           />
