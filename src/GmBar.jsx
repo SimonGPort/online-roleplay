@@ -17,7 +17,6 @@ export default function GmBar(props) {
 
   return (
     <div id="GmBar">
-      <div>Hello world</div>
       <button
         onClick={() =>
           dispatch({

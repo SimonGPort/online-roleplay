@@ -196,6 +196,49 @@ app.post("/newPage", uploads.none(), async (req, res) => {
   }
 });
 
+////je travail ici
+app.post("/giveOrRemovePermissionToken", uploads.none(), async (req, res) => {
+  let permissionValue = JSON.parse(req.body.permissionValue);
+  let user = JSON.parse(req.body.user);
+  let tokenId = req.body.tokenId;
+
+  let actionType = undefined;
+  if (permissionValue) {
+    actionType = {
+      $pull: { permission: user }
+    };
+  } else {
+    actionType = {
+      $push: { permission: user }
+    };
+  }
+
+  // let actionType = permissionValue
+  //   ? {
+  //       $pull: { permission: user }
+  //     }
+  //   : { $push: { permission: user } };
+  console.log("actionType:", actionType, permissionValue);
+  try {
+    await dbo.collection("tokens").updateOne({ tokenId: tokenId }, actionType);
+    res.send(
+      JSON.stringify({
+        success: true,
+        user,
+        shouldRemovePermission: permissionValue,
+        tokenId
+      })
+    );
+  } catch (err) {
+    res.send(
+      JSON.stringify({
+        success: false
+      })
+    );
+    return;
+  }
+});
+
 app.post("/playerinitiative", uploads.none(), async (req, res) => {
   let playerinitiative = JSON.parse(req.body.playerinitiative);
   let user = JSON.parse(req.body.user);

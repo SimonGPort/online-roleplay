@@ -20,7 +20,6 @@ class GameViewPort extends Component {
   componentDidMount() {
     this.canvasDrawingIni();
     window.addEventListener("resize", this.resizeCanvas);
-    // this.drawCanvas(this.state.ctx);
   }
   componentDidUpdate() {
     if (this.state.localFlag) {
@@ -83,8 +82,11 @@ class GameViewPort extends Component {
     await fetch("/drawData", { method: "POST", body: data });
   };
   resizeCanvas = () => {
-    this.state.canvas.width = window.innerWidth;
-    this.state.canvas.height = window.innerHeight;
+    const canvas = { ...this.state.canvas };
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    this.setState({ canvas });
+    this.drawCanvas(this.state.ctx, this.state.canvas);
   };
   draw = e => {
     if (this.props.erasingCanvas) {

@@ -79,6 +79,29 @@ class ChatOnline extends Component {
     }
   };
 
+  giveOrRemovePermissionToken = async (permissionValue, user) => {
+    let data = new FormData();
+    data.append("permissionValue", permissionValue);
+    data.append("user", JSON.stringify(user));
+    data.append("tokenId", this.props.tokenId);
+    let response = await fetch("/giveOrRemovePermissionToken", {
+      method: "POST",
+      body: data
+    });
+    const body = await response.text();
+    const parsed = JSON.parse(body);
+    if (parsed.success) {
+      this.props.dispatch({
+        type: "AddOrRemovePermission",
+        user: parsed.user,
+        shouldRemovePermission: parsed.shouldRemovePermission,
+        tokenId: parsed.tokenId
+      });
+
+      this.props.dispatch({ type: "logout" });
+    }
+  };
+
   render = () => {
     let userSort = this.props.onlineUsers
       .slice()
@@ -103,6 +126,7 @@ class ChatOnline extends Component {
         </div>
         <div>
           {userSort.map((user, idx) => {
+            let permissionValue = this.props.permission.includes(user.user);
             return (
               <div key={idx}>
                 {user.user}/
@@ -112,7 +136,13 @@ class ChatOnline extends Component {
                   type="number"
                   onChange={evt => this.handleOnChanges(evt, user)}
                 />
-                {/* {user.initiative} */}
+                <button
+                  onClick={() =>
+                    this.giveOrRemovePermissionToken(permissionValue, user.user)
+                  }
+                >
+                  {permissionValue ? "Remove Control" : "Give Control"}
+                </button>
               </div>
             );
           })}
@@ -126,7 +156,9 @@ let mapStateToProps = state => {
     chat: state.MasterToken.chat,
     tokenId: state.MasterToken.tokenId,
     onlineUsers: state.MasterToken.onlineUsers,
-    user: state.user
+    user: state.user,
+    permission: state.permissionToken,
+    tokenId: state.selectedToken
   };
 };
 

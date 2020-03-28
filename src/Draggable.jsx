@@ -75,6 +75,15 @@ class Draggable extends Component {
       return;
     }
 
+    if (this.props.token.type === "Token") {
+      console.log("permission");
+      this.props.dispatch({
+        type: "permissionToken",
+        permissionToken: this.props.token.permission,
+        tokenId: this.props.token.tokenId
+      });
+    }
+
     if (
       this.props.isDuplicateToken.action &&
       this.props.typeSelection === this.props.token.type

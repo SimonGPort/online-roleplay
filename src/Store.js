@@ -10,6 +10,15 @@ let reducer = (state, action) => {
     return { ...state, MasterToken: {} };
   }
 
+  // 'a revenir!!!!'
+  //   if (action.type === "AddOrRemovePermission") {
+
+  // if(action.shouldRemovePermission){
+
+  //   return { ...state, MasterToken: {} };
+
+  // }
+
   if (action.type === "erasingCanvas") {
     return { ...state, erasingCanvas: action.erasingCanvas };
   }
@@ -29,17 +38,13 @@ let reducer = (state, action) => {
     return { ...state, events: action.events };
   }
 
-  // if (action.type === "newGmPage") {
-  //   return produce(state, draftState => {
-  //     draftState.page.gmPage = action.newGmPage;
-  //   });
-  // }
-
-  // if (action.type === "newPlayersPage") {
-  //   return produce(state, draftState => {
-  //     draftState.page.playersPage = action.newPlayersPage;
-  //   });
-  // }
+  if (action.type === "permissionToken") {
+    return {
+      ...state,
+      permissionToken: action.permissionToken,
+      selectedToken: action.tokenId
+    };
+  }
 
   if (action.type === "typeSelection") {
     return { ...state, typeSelection: action.typeSelection };
@@ -278,7 +283,9 @@ const store = createStore(
     isScanning: false,
     CreationOnlineToken: false,
     MasterToken: {},
-    erasingCanvas: false
+    erasingCanvas: false,
+    permissionToken: [],
+    selectedToken: undefined
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

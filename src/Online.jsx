@@ -37,7 +37,6 @@ export default function Online(props) {
           if (sameGameView && sameMasterToken) {
             return;
           }
-          console.log("render");
           dispatch({
             type: "gameUpdate",
             gameView: body.gameViewFilter,
