@@ -43,7 +43,7 @@ class ChatOnline extends Component {
     let data = new FormData();
     data.append("message", this.state.inputValue);
     data.append("user", this.props.user);
-    data.append("tokenId", this.props.tokenId);
+    data.append("tokenId", this.props.MasterTokenId);
     let response = await fetch("/postMessageChatOnline", {
       method: "POST",
       body: data
@@ -154,7 +154,7 @@ class ChatOnline extends Component {
 let mapStateToProps = state => {
   return {
     chat: state.MasterToken.chat,
-    tokenId: state.MasterToken.tokenId,
+    MasterTokenId: state.MasterToken.tokenId,
     onlineUsers: state.MasterToken.onlineUsers,
     user: state.user,
     permission: state.permissionToken,

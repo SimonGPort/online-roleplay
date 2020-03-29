@@ -554,6 +554,21 @@ app.post("/postMessageChatOnline", uploads.none(), async (req, res) => {
       randomNum = "(" + randomNum + ")";
       diceArray.push(randomNum);
     }
+    let thirdNumber = null;
+    if (indexOfPlus !== -1) {
+      thirdNumber = parseInt(newMessage.slice(indexOfPlus + 1));
+      diceResult = diceResult + thirdNumber;
+    } else if (indexOfMinus !== -1) {
+      thirdNumber = parseInt(newMessage.slice(indexOfMinus + 1));
+      diceResult = diceResult - thirdNumber;
+    } else if (indexOfMultiply !== -1) {
+      thirdNumber = parseInt(newMessage.slice(indexOfMultiply + 1));
+      diceResult = diceResult * thirdNumber;
+    } else if (indexOfSubtraction !== -1) {
+      thirdNumber = parseInt(newMessage.slice(indexOfSubtraction + 1));
+      diceResult = diceResult / thirdNumber;
+    }
+
     diceResult = " Result: " + diceResult;
     for (let i = 0; i < firstNumber; i++) {
       diceResult = diceResult + " " + diceArray[i];
@@ -571,12 +586,12 @@ app.post("/postMessageChatOnline", uploads.none(), async (req, res) => {
       .collection("tokens")
       .updateOne(
         { tokenId: tokenId },
-        { $push: { chat: { username: username, message: message } } }
+        { $push: { chat: { username, message } } }
       );
-    console.log("messagePost success");
+    console.log("dicePost success");
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
-    console.log("messagePost fail", err);
+    console.log("dicePost fail", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }

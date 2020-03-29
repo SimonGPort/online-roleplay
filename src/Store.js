@@ -17,9 +17,8 @@ let reducer = (state, action) => {
     });
   }
 
-  // Je travail ici
+  //  Probleme ici
   if (action.type === "AddOrRemovePermission") {
-    debugger;
     const index = state.gameView.findIndex(token => {
       return token.tokenId === action.tokenId;
     });
