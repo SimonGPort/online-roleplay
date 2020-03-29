@@ -24,7 +24,7 @@ let reducer = (state, action) => {
     });
 
     let permissions = state.gameView[index].permission;
-
+    debugger;
     if (action.shouldRemovePermission) {
       permissions = permissions.filter(user => user !== action.user);
       console.log(permissions);
@@ -105,8 +105,10 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "changeMaster") {
+    let canvasIndex = action.canvasIndex;
+
     return produce(state, draftState => {
-      draftState.MasterToken.canvas.src = action.src;
+      draftState.MasterToken.canvas[canvasIndex].src = action.src;
     });
   }
 
@@ -296,7 +298,6 @@ const store = createStore(
     sessions: [],
     dragging: false,
     tokenIdDragged: "",
-    // usersOnline: [],
     user: "",
     login: false,
     events: [],

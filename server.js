@@ -83,7 +83,8 @@ app.post("/signup", uploads.none(), async (req, res) => {
       chat: [],
       pageLocation: { gm: 1, players: 1 },
       scan: [],
-      canvas: { src: "", width: null, height: null, clear: false },
+      canvas: [],
+      // canvas: [{ page: 1, src: "", width: null, height: null, clear: false }],
       onlineUsers: []
     });
     let sessionId = "" + Math.floor(Math.random() * 1000000);
@@ -288,22 +289,47 @@ app.post("/scan", uploads.none(), async (req, res) => {
   }
 });
 
+////je travail ici
 app.post("/drawData", uploads.none(), async (req, res) => {
+  let canvas = JSON.parse(req.body.canvas);
   let src = req.body.src;
   let host = req.body.host;
-  let width = req.body.width;
-  let height = req.body.height;
+  let width = JSON.parse(req.body.width);
+  let height = JSON.parse(req.body.height);
   let clear = JSON.parse(req.body.clear);
+  let page = JSON.parse(req.body.page);
+  let index = canvas.findIndex(canvas => {
+    return canvas.page === page;
+  });
+
+  if (index === -1 || index === undefined) {
+    canvas.push({ src, width, height, clear, page });
+  } else {
+    canvas[index] = { src, width, height, clear, page };
+  }
+
+  // let tableId = req.body.tableId;
+  // let field = "conventionsGame." + tableIndex;
+  // console.log("deleteConventionEvent:", field);
+  // console.log("je test mes variables", eventId, tableIndex, tableId);
+  // try {
+  //   await dbo
+  //     .collection("events")
+  //     .update(
+  //       { eventId: eventId },
+  //       { $pull: { conventionsGame: { tableId: tableId } } }
+  //     );
 
   try {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
         $set: {
-          canvas: { src, width, height, clear }
+          canvas
         }
       }
     );
+    console.log("canvas post success");
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("dragged error", err);

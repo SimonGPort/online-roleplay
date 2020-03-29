@@ -91,6 +91,7 @@ class ChatOnline extends Component {
     const body = await response.text();
     const parsed = JSON.parse(body);
     if (parsed.success) {
+      console.log("helloworld");
       this.props.dispatch({
         type: "AddOrRemovePermission",
         user: parsed.user,
