@@ -10,9 +10,19 @@ let reducer = (state, action) => {
     return { ...state, MasterToken: {} };
   }
 
-  if (action.type === "changingPage") {
+  if (action.type === "changingGmPage") {
+    const index = state.MasterToken.canvas.findIndex(canvas => {
+      return canvas.page === action.gmPage;
+    });
+
     return produce(state, draftState => {
       draftState.page.gmPage = action.gmPage;
+      draftState.MasterToken.canvas[index].clear = true;
+    });
+  }
+
+  if (action.type === "changingPlayerPage") {
+    return produce(state, draftState => {
       draftState.page.playersPage = action.playersPage;
     });
   }

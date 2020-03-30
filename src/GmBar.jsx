@@ -171,7 +171,7 @@ export default function GmBar(props) {
               const parsed = JSON.parse(body);
               if (parsed.success) {
                 dispatch({
-                  type: "changingPage",
+                  type: "changingGmPage",
                   gmPage: parsed.gmPage,
                   playersPage: parsed.playersPage
                 });
@@ -199,7 +199,7 @@ export default function GmBar(props) {
               const parsed = JSON.parse(body);
               if (parsed.success) {
                 dispatch({
-                  type: "changingPage",
+                  type: "changingPlayerPage",
                   gmPage: parsed.gmPage,
                   playersPage: parsed.playersPage
                 });

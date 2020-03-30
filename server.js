@@ -289,7 +289,6 @@ app.post("/scan", uploads.none(), async (req, res) => {
   }
 });
 
-////je travail ici
 app.post("/drawData", uploads.none(), async (req, res) => {
   let canvas = JSON.parse(req.body.canvas);
   let src = req.body.src;
@@ -307,19 +306,6 @@ app.post("/drawData", uploads.none(), async (req, res) => {
   } else {
     canvas[index] = { src, width, height, clear, page };
   }
-
-  // let tableId = req.body.tableId;
-  // let field = "conventionsGame." + tableIndex;
-  // console.log("deleteConventionEvent:", field);
-  // console.log("je test mes variables", eventId, tableIndex, tableId);
-  // try {
-  //   await dbo
-  //     .collection("events")
-  //     .update(
-  //       { eventId: eventId },
-  //       { $pull: { conventionsGame: { tableId: tableId } } }
-  //     );
-
   try {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },

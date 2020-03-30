@@ -59,8 +59,6 @@ class GameViewPort extends Component {
     });
   };
   canvasFill = async () => {
-    console.log("fill canvas");
-    debugger;
     const { width, height } = this.state.canvas;
     this.state.ctx.fillStyle = this.state.penColor;
     this.state.ctx.fillRect(0, 0, width, height);
@@ -74,6 +72,7 @@ class GameViewPort extends Component {
     data.append("clear", JSON.stringify(false));
     await fetch("/drawData", { method: "POST", body: data });
   };
+
   canvasClear = async () => {
     const { width, height } = this.state.canvas;
     this.state.ctx.clearRect(0, 0, width, height);
@@ -82,9 +81,9 @@ class GameViewPort extends Component {
     data.append("canvas", JSON.stringify(this.props.MasterToken.canvas));
     data.append("src", "");
     data.append("host", this.props.host);
-    data.append("width", null);
-    data.append("height", null);
-    data.append("clear", false);
+    data.append("width", this.state.canvas.width);
+    data.append("height", this.state.canvas.height);
+    data.append("clear", JSON.stringify(true));
     await fetch("/drawData", { method: "POST", body: data });
   };
   resizeCanvas = () => {
@@ -194,11 +193,10 @@ class GameViewPort extends Component {
 
     const { width, height, src, clear } = canvasDisplay;
     let img = new Image(width, height);
+    if (clear === true) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
     img.onload = async () => {
-      if (clear === true) {
-        const { width, height } = canvas;
-        ctx.clearRect(0, 0, width, height);
-      }
       ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(img, 0, 0);
       this.props.dispatch({
@@ -290,6 +288,7 @@ class GameViewPort extends Component {
           canvasClear={this.canvasClear}
           changingPenSize={this.changingPenSize}
           changingPenColor={this.changingPenColor}
+          pageIndex={this.state.pageIndex}
         />
         <div onMouseDown={this.handleMouseDown}>
           {this.props.gameView.map(token => {
