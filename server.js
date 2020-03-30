@@ -177,7 +177,8 @@ app.post("/dragged", uploads.none(), async (req, res) => {
   }
 });
 
-app.post("/newPage", uploads.none(), async (req, res) => {
+///je travail ici
+app.post("/gmNewPage", uploads.none(), async (req, res) => {
   let playersPage = req.body.playersPage;
   let gmPage = req.body.gmPage;
 
@@ -187,21 +188,61 @@ app.post("/newPage", uploads.none(), async (req, res) => {
   if (gmPage !== "") {
     gmPage = JSON.parse(gmPage);
   }
-
-  console.log(gmPage, playersPage);
-
   let host = req.body.host;
+
+  let canvas = JSON.parse(req.body.canvas);
+  const index = canvas.findIndex(canvas => {
+    return canvas.page === gmPage;
+  });
+  canvas[index].clear = true;
 
   try {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
-        $set: { page: { playersPage: playersPage, gmPage } }
+        $set: {
+          page: { playersPage: playersPage, gmPage },
+          canvas
+        }
+      }
+    );
+    console.log("gmNewPage success");
+    res.send(JSON.stringify({ success: true, gmPage, playersPage }));
+  } catch (err) {
+    console.log("gmNewPage error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/playerNewPage", uploads.none(), async (req, res) => {
+  let playersPage = req.body.playersPage;
+  let gmPage = req.body.gmPage;
+  let canvas = req.body.canvas;
+
+  if (playersPage !== "") {
+    playersPage = JSON.parse(playersPage);
+  }
+  if (gmPage !== "") {
+    gmPage = JSON.parse(gmPage);
+  }
+  let host = req.body.host;
+  let canvas = JSON.parse(req.body.canvas);
+  const index = canvas.findIndex(canvas => {
+    return canvas.page === playersPage;
+  });
+  canvas[index].clear = true;
+
+  try {
+    await dbo.collection("tokens").updateOne(
+      { host: host, type: "MasterToken" },
+      {
+        $set: { page: { playersPage: playersPage, gmPage }, canvas }
       }
     );
     res.send(JSON.stringify({ success: true, gmPage, playersPage }));
   } catch (err) {
-    console.log("dragged error", err);
+    console.log("playerNewPage error", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }

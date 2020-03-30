@@ -12,6 +12,7 @@ export default function GmBar(props) {
   const gmPage = useSelector(state => state.page.gmPage);
   const playersPage = useSelector(state => state.page.playersPage);
   const erasingCanvas = useSelector(state => state.erasingCanvas);
+  const canvas = useSelector(state => state.MasterToken.canvas);
 
   const dispatch = useDispatch();
 
@@ -163,13 +164,15 @@ export default function GmBar(props) {
               data.append("gmPage", evt.target.value);
               data.append("host", props.host);
               data.append("playersPage", playersPage);
-              let response = await fetch("/newPage", {
+              data.append("canvas", JSON.stringify(canvas));
+              let response = await fetch("/gmNewPage", {
                 method: "POST",
                 body: data
               });
               const body = await response.text();
               const parsed = JSON.parse(body);
               if (parsed.success) {
+                console.log("gmNewPage succes backend, frontend res");
                 dispatch({
                   type: "changingGmPage",
                   gmPage: parsed.gmPage,
@@ -191,7 +194,8 @@ export default function GmBar(props) {
               data.append("playersPage", evt.target.value);
               data.append("host", props.host);
               data.append("gmPage", gmPage);
-              let response = await fetch("/newPage", {
+              data.append("canvas", canvas);
+              let response = await fetch("/playerNewPage", {
                 method: "POST",
                 body: data
               });
