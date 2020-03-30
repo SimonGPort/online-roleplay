@@ -2,6 +2,8 @@ import React, { Component, useState } from "react";
 import Draggable from "./Draggable.jsx";
 import { connect } from "react-redux";
 import GmBar from "./GmBar.jsx";
+import Grid from "./Grid.jsx";
+
 class GameViewPort extends Component {
   constructor(props) {
     super(props);
@@ -129,6 +131,7 @@ class GameViewPort extends Component {
       });
     }
     if (status === "up" || status === "out") {
+      console.log("up");
       if (this.state.localFlag === false) {
         return;
       }
@@ -267,6 +270,7 @@ class GameViewPort extends Component {
     };
     return (
       <div>
+        <Grid className="grid" />
         {scan !== undefined ? (
           <img
             src="/images/scan.gif"

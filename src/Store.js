@@ -15,6 +15,12 @@ let reducer = (state, action) => {
       return canvas.page === action.gmPage;
     });
 
+    if (index === -1) {
+      return produce(state, draftState => {
+        draftState.page.gmPage = action.gmPage;
+      });
+    }
+
     return produce(state, draftState => {
       draftState.page.gmPage = action.gmPage;
       draftState.MasterToken.canvas[index].clear = true;

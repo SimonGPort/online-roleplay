@@ -177,7 +177,6 @@ app.post("/dragged", uploads.none(), async (req, res) => {
   }
 });
 
-///je travail ici
 app.post("/gmNewPage", uploads.none(), async (req, res) => {
   let playersPage = req.body.playersPage;
   let gmPage = req.body.gmPage;
@@ -194,7 +193,18 @@ app.post("/gmNewPage", uploads.none(), async (req, res) => {
   const index = canvas.findIndex(canvas => {
     return canvas.page === gmPage;
   });
-  canvas[index].clear = true;
+  if (index !== -1) {
+    canvas[index].clear = true;
+  }
+  if (index === -1) {
+    canvas.push({
+      page: gmPage,
+      src: "",
+      width: null,
+      height: null,
+      clear: true
+    });
+  }
 
   try {
     await dbo.collection("tokens").updateOne(
@@ -218,7 +228,6 @@ app.post("/gmNewPage", uploads.none(), async (req, res) => {
 app.post("/playerNewPage", uploads.none(), async (req, res) => {
   let playersPage = req.body.playersPage;
   let gmPage = req.body.gmPage;
-  let canvas = req.body.canvas;
 
   if (playersPage !== "") {
     playersPage = JSON.parse(playersPage);
@@ -231,7 +240,18 @@ app.post("/playerNewPage", uploads.none(), async (req, res) => {
   const index = canvas.findIndex(canvas => {
     return canvas.page === playersPage;
   });
-  canvas[index].clear = true;
+  if (index !== -1) {
+    canvas[index].clear = true;
+  }
+  if (index === -1) {
+    canvas.push({
+      page: playersPage,
+      src: "",
+      width: null,
+      height: null,
+      clear: true
+    });
+  }
 
   try {
     await dbo.collection("tokens").updateOne(

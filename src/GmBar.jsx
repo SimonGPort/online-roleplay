@@ -194,7 +194,7 @@ export default function GmBar(props) {
               data.append("playersPage", evt.target.value);
               data.append("host", props.host);
               data.append("gmPage", gmPage);
-              data.append("canvas", canvas);
+              data.append("canvas", JSON.stringify(canvas));
               let response = await fetch("/playerNewPage", {
                 method: "POST",
                 body: data
