@@ -68,5 +68,29 @@ body {
   transform: translate(-50%, -50%);
 }
 
-/* .grid {
-} */
+.grid {
+  border: solid white 1px;
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.GameViewPort_Playfield {
+  position: absolute;
+}
+
+.grid-row {
+  display: flex;
+  pointer-events: none;
+}
+
+.grid-case {
+  border: solid black 1px;
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+}

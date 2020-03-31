@@ -10,6 +10,10 @@ let reducer = (state, action) => {
     return { ...state, MasterToken: {} };
   }
 
+  if (action.type === "thereIsGrid") {
+    return { ...state, grid: action.grid };
+  }
+
   if (action.type === "changingGmPage") {
     const index = state.MasterToken.canvas.findIndex(canvas => {
       return canvas.page === action.gmPage;
@@ -124,6 +128,7 @@ let reducer = (state, action) => {
     let canvasIndex = action.canvasIndex;
 
     return produce(state, draftState => {
+      draftState.MasterToken.canvas[canvasIndex].clear = action.clear;
       draftState.MasterToken.canvas[canvasIndex].src = action.src;
     });
   }
@@ -313,6 +318,7 @@ const store = createStore(
   {
     sessions: [],
     dragging: false,
+    grid: false,
     tokenIdDragged: "",
     user: "",
     login: false,

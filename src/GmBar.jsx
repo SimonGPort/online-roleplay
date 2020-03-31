@@ -13,6 +13,7 @@ export default function GmBar(props) {
   const playersPage = useSelector(state => state.page.playersPage);
   const erasingCanvas = useSelector(state => state.erasingCanvas);
   const canvas = useSelector(state => state.MasterToken.canvas);
+  const grid = useSelector(state => state.grid);
 
   const dispatch = useDispatch();
 
@@ -151,6 +152,20 @@ export default function GmBar(props) {
           }}
         >
           Scan {isScanning}
+        </button>
+        {/* //////je travail ici */}
+        <button
+          onClick={evt => {
+            dispatch({
+              type: "thereIsGrid",
+              grid: !grid
+            });
+          }}
+          style={{
+            backgroundColor: grid === true ? "yellow" : ""
+          }}
+        >
+          Grid
         </button>
       </div>
       <div>

@@ -144,7 +144,6 @@ class GameViewPort extends Component {
       data.append("clear", JSON.stringify(this.props.erasingCanvas));
       data.append("page", this.props.page.gmPage);
       data.append("canvas", JSON.stringify(this.props.MasterToken.canvas));
-      console.log("drawData frontEnd");
       await fetch("/drawData", { method: "POST", body: data });
 
       let pageDiplay = undefined;
@@ -159,6 +158,7 @@ class GameViewPort extends Component {
 
       this.props.dispatch({
         type: "changeMaster",
+        clear: this.props.erasingCanvas,
         src: this.canvasRef.current.toDataURL(),
         canvasIndex: canvasIndex
       });
@@ -270,7 +270,6 @@ class GameViewPort extends Component {
     };
     return (
       <div>
-        <Grid className="grid" />
         {scan !== undefined ? (
           <img
             src="/images/scan.gif"
@@ -278,7 +277,7 @@ class GameViewPort extends Component {
             style={{
               top: `${scan.positionY}px`,
               left: `${scan.positionX}px`,
-              position: "fixed ",
+              position: "absolute",
               zIndex: 5
             }}
           />
@@ -294,7 +293,10 @@ class GameViewPort extends Component {
           changingPenColor={this.changingPenColor}
           pageIndex={this.state.pageIndex}
         />
-        <div onMouseDown={this.handleMouseDown}>
+        <div
+          onMouseDown={this.handleMouseDown}
+          className="GameViewPort_Playfield"
+        >
           {this.props.gameView.map(token => {
             return (
               <div key={token.tokenId}>
@@ -326,6 +328,7 @@ class GameViewPort extends Component {
             );
           })}
           <canvas ref={this.canvasRef} id="canvas" />
+          <Grid grid={this.props.grid} />
         </div>
       </div>
     );
@@ -342,7 +345,8 @@ let mapStateToProps = state => {
     canvasFill: state.canvasFill,
     canvasClear: state.canvasClear,
     isScanning: state.isScanning,
-    erasingCanvas: state.erasingCanvas
+    erasingCanvas: state.erasingCanvas,
+    grid: state.grid
   };
 };
 export default connect(mapStateToProps)(GameViewPort);
