@@ -86,7 +86,7 @@ class CreationEvent extends Component {
     data.append("time", this.state.time);
     data.append("frequency", this.state.frequency);
     data.append("description", this.state.description);
-    data.append("location", this.state.location);
+    data.append("location", JSON.stringify(this.state.location));
     data.append("numPlayers", this.state.numPlayers);
     data.append("imgFile", this.state.imgFile);
     let response = await fetch("/hostingAEvent", {

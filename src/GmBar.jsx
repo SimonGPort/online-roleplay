@@ -13,9 +13,31 @@ export default function GmBar(props) {
   const playersPage = useSelector(state => state.page.playersPage);
   const erasingCanvas = useSelector(state => state.erasingCanvas);
   const canvas = useSelector(state => state.MasterToken.canvas);
-  const grid = useSelector(state => state.grid);
+  const grid = useSelector(state => state.MasterToken.grid);
 
   const dispatch = useDispatch();
+
+  let thereIsGrid = async () => {
+    let data = new FormData();
+    data.append("host", props.host);
+    data.append("actionGrid", !grid);
+    let response = await fetch("/thereIsGrid", {
+      method: "POST",
+      body: data
+    });
+    console.log("frontend got /thereIsGrid");
+    const body = await response.text();
+    const parsed = JSON.parse(body);
+    if (parsed.success) {
+      console.log("thereIsGrid success");
+      dispatch({
+        type: "thereIsGrid",
+        grid: !grid
+      });
+    } else {
+      alert("thereIsGrid Failure");
+    }
+  };
 
   return (
     <div id="GmBar">
@@ -153,13 +175,9 @@ export default function GmBar(props) {
         >
           Scan {isScanning}
         </button>
-        {/* //////je travail ici */}
         <button
           onClick={evt => {
-            dispatch({
-              type: "thereIsGrid",
-              grid: !grid
-            });
+            thereIsGrid();
           }}
           style={{
             backgroundColor: grid === true ? "yellow" : ""

@@ -11,7 +11,9 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "thereIsGrid") {
-    return { ...state, grid: action.grid };
+    return produce(state, draftState => {
+      draftState.MasterToken.grid = action.grid;
+    });
   }
 
   if (action.type === "changingGmPage") {
@@ -318,7 +320,6 @@ const store = createStore(
   {
     sessions: [],
     dragging: false,
-    grid: false,
     tokenIdDragged: "",
     user: "",
     login: false,

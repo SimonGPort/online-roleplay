@@ -85,7 +85,8 @@ app.post("/signup", uploads.none(), async (req, res) => {
       scan: [],
       canvas: [],
       // canvas: [{ page: 1, src: "", width: null, height: null, clear: false }],
-      onlineUsers: []
+      onlineUsers: [],
+      grid: false
     });
     let sessionId = "" + Math.floor(Math.random() * 1000000);
     sessions[sessionId] = req.body.username;
@@ -109,6 +110,22 @@ app.post("/newUserOnline", uploads.none(), async (req, res) => {
         { host: host, type: "MasterToken" },
         { $push: { onlineUsers: { user: user, initiative: "" } } }
       );
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("newUserOnline fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/thereIsGrid", uploads.none(), async (req, res) => {
+  let host = req.body.host;
+  let grid = JSON.parse(req.body.actionGrid);
+  try {
+    await dbo
+      .collection("tokens")
+      .updateOne({ host: host, type: "MasterToken" }, { $set: { grid } });
+    console.log("thereIsGrid success");
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("newUserOnline fail", err);
@@ -434,7 +451,7 @@ app.post("/deleteTheEventConvention", uploads.none(), async (req, res) => {
     return;
   }
 });
-
+///je travail ici
 app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   console.log("hostingAEvent BackEnd");
   let sessionId = req.cookies.sid;
@@ -451,7 +468,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   let conventionsGame = [];
   let frequency = req.body.frequency;
   let description = req.body.description;
-  let location = req.body.location;
+  let location = JSON.parse(req.body.location);
   let numPlayers = req.body.numPlayers;
   let img = "/uploads/" + req.file.filename;
   let eventId = "" + Math.floor(Math.random() * 1000000);

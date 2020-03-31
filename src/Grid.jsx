@@ -10,7 +10,7 @@ class Grid extends React.Component {
   }
 
   componentDidMount() {
-    // window.addEventListener("resize", this.resizeGrid);
+    window.addEventListener("resize", this.resizeGrid);
   }
 
   resizeGrid = () => {
@@ -18,8 +18,8 @@ class Grid extends React.Component {
   };
 
   render = () => {
-    let numberOfRows = Math.ceil(this.state.width / 70);
-    let numberOfCol = Math.ceil(this.state.height / 70);
+    let numberOfRows = Math.ceil(this.state.height / 70);
+    let numberOfCol = Math.ceil(this.state.width / 70);
     let gridRows = [];
     let gridCol = [];
 

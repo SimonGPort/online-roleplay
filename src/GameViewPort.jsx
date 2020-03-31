@@ -328,7 +328,7 @@ class GameViewPort extends Component {
             );
           })}
           <canvas ref={this.canvasRef} id="canvas" />
-          <Grid grid={this.props.grid} />
+          <Grid grid={this.props.MasterToken.grid} />
         </div>
       </div>
     );
