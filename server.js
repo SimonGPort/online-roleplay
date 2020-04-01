@@ -451,7 +451,7 @@ app.post("/deleteTheEventConvention", uploads.none(), async (req, res) => {
     return;
   }
 });
-///je travail ici
+
 app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   console.log("hostingAEvent BackEnd");
   let sessionId = req.cookies.sid;

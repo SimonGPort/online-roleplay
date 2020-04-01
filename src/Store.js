@@ -40,31 +40,27 @@ let reducer = (state, action) => {
   }
 
   //  Probleme ici
+
   if (action.type === "AddOrRemovePermission") {
     const index = state.gameView.findIndex(token => {
       return token.tokenId === action.tokenId;
     });
 
-    let permissions = state.gameView[index].permission;
-    debugger;
-    if (action.shouldRemovePermission) {
-      permissions = permissions.filter(user => user !== action.user);
-      console.log(permissions);
-    }
-
-    if (!action.shouldRemovePermission) {
-      permissions.push(action.user);
-      console.log(permissions);
-    }
-
-    console.log(permissions, index);
-
-    // return produce(state, draftState => {
-    //   draftState.isDuplicateToken.number = action.number;
-    // });
-
     return produce(state, draftState => {
-      draftState.gameView[index].permission = permissions;
+      if (action.shouldRemovePermission) {
+        draftState.gameView[index].permission = state.gameView[
+          index
+        ].permission.filter(user => user !== action.user);
+
+        draftState.permissionToken = state.gameView[index].permission.filter(
+          user => user !== action.user
+        );
+      }
+
+      if (!action.shouldRemovePermission) {
+        draftState.gameView[index].permission.push(action.user);
+        draftState.permissionToken.push(action.user);
+      }
     });
   }
 

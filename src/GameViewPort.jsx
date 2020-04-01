@@ -3,6 +3,7 @@ import Draggable from "./Draggable.jsx";
 import { connect } from "react-redux";
 import GmBar from "./GmBar.jsx";
 import Grid from "./Grid.jsx";
+import Scan from "./Scan.jsx";
 
 class GameViewPort extends Component {
   constructor(props) {
@@ -109,7 +110,6 @@ class GameViewPort extends Component {
     this.state.ctx.stroke();
     this.state.ctx.closePath();
     this.setState({
-      // canvasUrl: this.state.canvas.toDataURL(),
       prevX: e.offsetX,
       prevY: e.offsetY
     });
@@ -197,7 +197,7 @@ class GameViewPort extends Component {
     const { width, height, src, clear } = canvasDisplay;
     let img = new Image(width, height);
     if (clear === true) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     }
     img.onload = async () => {
       ctx.globalCompositeOperation = "source-over";
@@ -210,7 +210,8 @@ class GameViewPort extends Component {
     };
     img.src = src;
   };
-  handleMouseDown = async ({ clientX, clientY }) => {
+  handleMouseDown = async evt => {
+    console.log(evt);
     if (this.props.isScanning === false) {
       return;
     }
@@ -223,8 +224,8 @@ class GameViewPort extends Component {
     time.minute = today.getMinutes();
     time.second = today.getSeconds();
     let data = new FormData();
-    data.append("positionX", clientX);
-    data.append("positionY", clientY);
+    data.append("positionX", evt.pageX);
+    data.append("positionY", evt.pageY);
     data.append("time", JSON.stringify(time));
     data.append("user", this.props.user);
     data.append("host", this.props.host);
@@ -262,7 +263,7 @@ class GameViewPort extends Component {
         scan.time.hours === timeNow.hours &&
         scan.time.minute === timeNow.minute &&
         scan.time.second <= timeNow.second &&
-        scan.time.second + 1 >= timeNow.second
+        scan.time.second + 2 >= timeNow.second
       );
     });
     let hideProperty = token => {
@@ -270,20 +271,8 @@ class GameViewPort extends Component {
     };
     return (
       <div>
-        {scan !== undefined ? (
-          <img
-            src="/images/scan.gif"
-            className="scan"
-            style={{
-              top: `${scan.positionY}px`,
-              left: `${scan.positionX}px`,
-              position: "absolute",
-              zIndex: 5
-            }}
-          />
-        ) : (
-          ""
-        )}
+        {scan && <Scan scan={scan} />}
+
         <GmBar
           host={this.props.host}
           eventId={this.props.eventId}

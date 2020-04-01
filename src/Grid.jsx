@@ -35,8 +35,6 @@ class Grid extends React.Component {
       );
     }
 
-    console.log("grid", gridRows);
-
     return (
       <div
         className="grid"
