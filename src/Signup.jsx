@@ -47,17 +47,29 @@ class Signup extends Component {
   render = () => {
     return (
       <form onSubmit={this.submitHandler} className="modalPage">
-        <div>
+        <div className="modalElement">
           Username
-          <input type="text" onChange={this.usernameChange} />
+          <input
+            type="text"
+            onChange={this.usernameChange}
+            className="inputModal"
+          />
         </div>
-        <div>
+        <div className="modalElement">
           Email
-          <input type="text" onChange={this.emailChange} />
+          <input
+            type="text"
+            onChange={this.emailChange}
+            className="inputModal"
+          />
         </div>
-        <div>
+        <div className="modalElement">
           Password
-          <input type="text" onChange={this.passwordChange} />
+          <input
+            type="text"
+            onChange={this.passwordChange}
+            className="inputModal"
+          />
         </div>
         <input type="submit" value="signup" className="modalPageSubmit" />
       </form>

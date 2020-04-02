@@ -1,10 +1,16 @@
 import React, { Component, useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import LoginModal from "./LoginModal.jsx";
+import SignupModal from "./SignupModal.jsx";
 
 class NavbarLoginSection extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      loginModal: false,
+      signupModal: false
+    };
   }
 
   handleLogout = async () => {
@@ -17,17 +23,45 @@ class NavbarLoginSection extends Component {
     }
   };
 
+  removeLoginModal = () => {
+    this.setState({ loginModal: false });
+  };
+
+  addLoginModal = () => {
+    this.setState({ loginModal: true });
+  };
+
+  removeSignupModal = () => {
+    this.setState({ signupModal: false });
+  };
+
+  addSignupModal = () => {
+    this.setState({ signupModal: true });
+  };
+
   render = () => (
     <>
       {this.props.login === false ? (
         <div>
-          <Link to="/login">Log in</Link>
-          <Link to="/signup">Sign up</Link>
+          {this.state.loginModal === true && (
+            <LoginModal removeLoginModal={this.removeLoginModal} />
+          )}
+          {this.state.signupModal === true && (
+            <SignupModal removeSignupModal={this.removeSignupModal} />
+          )}
+          <button onClick={this.addLoginModal} className="navbar-button">
+            Log in
+          </button>
+          <button onClick={this.addSignupModal} className="navbar-button">
+            Sign up
+          </button>
         </div>
       ) : (
         <div>
-          <Link to="/profil">Profil</Link>
-          <Link to="/" onClick={this.handleLogout}>
+          <Link to="/profil" className="navbar-button">
+            Option
+          </Link>
+          <Link to="/" onClick={this.handleLogout} className="navbar-button">
             Log out
           </Link>
         </div>
