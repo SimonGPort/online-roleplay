@@ -153,6 +153,7 @@ export default function GmBar(props) {
             </button>
             <label>Background Width-Squares</label>
             <input
+              readOnly
               value={props.widthSquares}
               type="number"
               style={{ backgroundColor: "grey" }}
@@ -160,6 +161,7 @@ export default function GmBar(props) {
             <label>X </label>
             <label>Background Height-Squares</label>
             <input
+              readOnly
               value={props.heightSquares}
               type="number"
               style={{ backgroundColor: "grey" }}

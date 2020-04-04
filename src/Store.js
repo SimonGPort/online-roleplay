@@ -133,8 +133,13 @@ let reducer = (state, action) => {
   if (action.type === "changeMaster") {
     let canvasIndex = action.canvasIndex;
 
+    if (action.clear) {
+      return produce(state, (draftState) => {
+        draftState.MasterToken.canvas[canvasIndex].clear = action.clear;
+        draftState.MasterToken.canvas[canvasIndex].src = action.src;
+      });
+    }
     return produce(state, (draftState) => {
-      draftState.MasterToken.canvas[canvasIndex].clear = action.clear;
       draftState.MasterToken.canvas[canvasIndex].src = action.src;
     });
   }
