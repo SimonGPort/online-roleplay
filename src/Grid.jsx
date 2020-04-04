@@ -18,7 +18,7 @@ class Grid extends React.Component {
   // };
 
   render = () => {
-    let numberOfRows = Math.floor(this.props.height / 72);
+    let numberOfRows = Math.floor(this.props.height / 70);
     let numberOfCol = Math.floor(this.props.width / 70);
     let gridRows = [];
     let gridCol = [];
@@ -39,7 +39,7 @@ class Grid extends React.Component {
       <div
         className="grid"
         style={{
-          display: this.props.grid === true ? "block" : "none"
+          display: this.props.grid === true ? "block" : "none",
         }}
       >
         {gridRows}

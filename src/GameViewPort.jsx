@@ -17,7 +17,7 @@ class GameViewPort extends Component {
       canvas: undefined,
       canvasUrl: undefined,
       penSize: 5,
-      penColor: "black"
+      penColor: "black",
     };
   }
   componentDidMount() {
@@ -50,18 +50,18 @@ class GameViewPort extends Component {
       height: canvas.height,
       width: canvas.width,
       ctx: ctx,
-      canvasUrl: canvas.toDataURL()
+      canvasUrl: canvas.toDataURL(),
     });
-    canvas.addEventListener("mousemove", evt => {
+    canvas.addEventListener("mousemove", (evt) => {
       this.findxy("move", evt);
     });
-    canvas.addEventListener("mousedown", evt => {
+    canvas.addEventListener("mousedown", (evt) => {
       this.findxy("down", evt);
     });
-    canvas.addEventListener("mouseup", evt => {
+    canvas.addEventListener("mouseup", (evt) => {
       this.findxy("up", evt);
     });
-    canvas.addEventListener("mouseout", evt => {
+    canvas.addEventListener("mouseout", (evt) => {
       this.findxy("out", evt);
     });
   };
@@ -108,7 +108,7 @@ class GameViewPort extends Component {
     } else {
       pageDiplay = this.props.page.playersPage;
     }
-    let canvasDisplay = this.props.MasterToken.canvas.find(canvas => {
+    let canvasDisplay = this.props.MasterToken.canvas.find((canvas) => {
       return canvas.page === pageDiplay;
     });
 
@@ -129,7 +129,7 @@ class GameViewPort extends Component {
     this.drawCanvas(this.state.ctx, this.state.canvas);
   };
 
-  draw = e => {
+  draw = (e) => {
     if (this.props.erasingCanvas) {
       this.state.ctx.globalCompositeOperation = "destination-out";
     } else {
@@ -144,7 +144,7 @@ class GameViewPort extends Component {
     this.state.ctx.closePath();
     this.setState({
       prevX: e.offsetX,
-      prevY: e.offsetY
+      prevY: e.offsetY,
     });
   };
 
@@ -156,11 +156,11 @@ class GameViewPort extends Component {
       this.setState({
         prevX: e.offsetX,
         prevY: e.offsetY,
-        localFlag: true
+        localFlag: true,
       });
       this.props.dispatch({
         type: "draggingStart",
-        tokenIdDragged: null
+        tokenIdDragged: null,
       });
     }
     if (status === "up" || status === "out") {
@@ -185,7 +185,7 @@ class GameViewPort extends Component {
       } else {
         pageDiplay = this.props.page.playersPage;
       }
-      let canvasIndex = this.props.MasterToken.canvas.findIndex(canvas => {
+      let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
         return canvas.page === pageDiplay;
       });
 
@@ -193,11 +193,11 @@ class GameViewPort extends Component {
         type: "changeMaster",
         clear: this.props.erasingCanvas,
         src: this.canvasRef.current.toDataURL(),
-        canvasIndex: canvasIndex
+        canvasIndex: canvasIndex,
       });
       this.props.dispatch({ type: "draggingEnd" });
       this.setState({
-        localFlag: false
+        localFlag: false,
       });
     }
     if (status === "move") {
@@ -217,10 +217,10 @@ class GameViewPort extends Component {
       pageDiplay = this.props.page.playersPage;
     }
 
-    let canvasIndex = this.props.MasterToken.canvas.findIndex(canvas => {
+    let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
       return canvas.page === pageDiplay;
     });
-    let canvasDisplay = this.props.MasterToken.canvas.find(canvas => {
+    let canvasDisplay = this.props.MasterToken.canvas.find((canvas) => {
       return canvas.page === pageDiplay;
     });
     if (canvasDisplay === undefined) {
@@ -240,12 +240,12 @@ class GameViewPort extends Component {
       this.props.dispatch({
         type: "changeMaster",
         src: this.canvasRef.current.toDataURL(),
-        canvasIndex: canvasIndex
+        canvasIndex: canvasIndex,
       });
     };
     img.src = src;
   };
-  handleMouseDown = async evt => {
+  handleMouseDown = async (evt) => {
     console.log(evt);
     if (this.props.isScanning === false) {
       return;
@@ -274,15 +274,15 @@ class GameViewPort extends Component {
     }
     this.props.dispatch({
       type: "isScanning",
-      isScanning: false
+      isScanning: false,
     });
   };
 
-  changingPenSize = e => this.setState({ penSize: e });
-  changingPenColor = e => this.setState({ penColor: e });
+  changingPenSize = (e) => this.setState({ penSize: e });
+  changingPenColor = (e) => this.setState({ penColor: e });
 
   render = () => {
-    let scan = this.props.MasterToken.scan.find(scan => {
+    let scan = this.props.MasterToken.scan.find((scan) => {
       let timeNow = {};
       let today = new Date();
       timeNow.year = today.getFullYear();
@@ -301,9 +301,13 @@ class GameViewPort extends Component {
         scan.time.second + 2 >= timeNow.second
       );
     });
-    let hideProperty = token => {
+    let hideProperty = (token) => {
       return this.props.user !== this.props.host && token.hide === true;
     };
+
+    let widthSquares = this.state.width / 70;
+    let heightSquares = this.state.height / 70;
+
     return (
       <div>
         {scan && <Scan scan={scan} />}
@@ -318,12 +322,14 @@ class GameViewPort extends Component {
           pageIndex={this.state.pageIndex}
           height={this.state.height}
           width={this.state.width}
+          widthSquares={widthSquares}
+          heightSquares={heightSquares}
         />
         <div
           onMouseDown={this.handleMouseDown}
           className="GameViewPort_Playfield"
         >
-          {this.props.gameView.map(token => {
+          {this.props.gameView.map((token) => {
             return (
               <div key={token.tokenId}>
                 <Draggable token={token}>
@@ -346,7 +352,7 @@ class GameViewPort extends Component {
                       resize:
                         this.props.user === this.props.host ? "both" : "none",
                       display: hideProperty(token) ? "none" : "block",
-                      opacity: token.hide === true ? "0.5" : "1"
+                      opacity: token.hide === true ? "0.5" : "1",
                     }}
                   />
                 </Draggable>
@@ -364,7 +370,7 @@ class GameViewPort extends Component {
     );
   };
 }
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
     dragging: state.dragging,
     gameView: state.gameView,
@@ -376,7 +382,7 @@ let mapStateToProps = state => {
     canvasClear: state.canvasClear,
     isScanning: state.isScanning,
     erasingCanvas: state.erasingCanvas,
-    grid: state.grid
+    grid: state.grid,
   };
 };
 export default connect(mapStateToProps)(GameViewPort);

@@ -11,30 +11,30 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "thereIsGrid") {
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.MasterToken.grid = action.grid;
     });
   }
 
   if (action.type === "changingGmPage") {
-    const index = state.MasterToken.canvas.findIndex(canvas => {
+    const index = state.MasterToken.canvas.findIndex((canvas) => {
       return canvas.page === action.gmPage;
     });
 
     if (index === -1) {
-      return produce(state, draftState => {
+      return produce(state, (draftState) => {
         draftState.page.gmPage = action.gmPage;
       });
     }
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.page.gmPage = action.gmPage;
       draftState.MasterToken.canvas[index].clear = true;
     });
   }
 
   if (action.type === "changingPlayerPage") {
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.page.playersPage = action.playersPage;
     });
   }
@@ -42,18 +42,18 @@ let reducer = (state, action) => {
   //  Probleme ici
 
   if (action.type === "AddOrRemovePermission") {
-    const index = state.gameView.findIndex(token => {
+    const index = state.gameView.findIndex((token) => {
       return token.tokenId === action.tokenId;
     });
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       if (action.shouldRemovePermission) {
         draftState.gameView[index].permission = state.gameView[
           index
-        ].permission.filter(user => user !== action.user);
+        ].permission.filter((user) => user !== action.user);
 
         draftState.permissionToken = state.gameView[index].permission.filter(
-          user => user !== action.user
+          (user) => user !== action.user
         );
       }
 
@@ -87,7 +87,7 @@ let reducer = (state, action) => {
     return {
       ...state,
       permissionToken: action.permissionToken,
-      selectedToken: action.tokenId
+      selectedToken: action.tokenId,
     };
   }
 
@@ -111,13 +111,21 @@ let reducer = (state, action) => {
       action.number = 1;
     }
     console.log(action.number);
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.isDuplicateToken.number = action.number;
     });
   }
 
+  if (action.type === "changingTheBackgroundSize") {
+    let index = action.index;
+    return produce(state, (draftState) => {
+      draftState.MasterToken.canvas[index].width = action.backgroundWidth;
+      draftState.MasterToken.canvas[index].height = action.backgroundHeight;
+    });
+  }
+
   if (action.type === "isDuplicate") {
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.isDuplicateToken.action = action.isDuplicate;
     });
   }
@@ -125,7 +133,7 @@ let reducer = (state, action) => {
   if (action.type === "changeMaster") {
     let canvasIndex = action.canvasIndex;
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.MasterToken.canvas[canvasIndex].clear = action.clear;
       draftState.MasterToken.canvas[canvasIndex].src = action.src;
     });
@@ -139,7 +147,7 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "gameUpdate") {
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.gameView = action.gameView;
       draftState.MasterToken = action.MasterToken;
       draftState.page.gmPage = action.MasterToken.page.gmPage;
@@ -151,11 +159,11 @@ let reducer = (state, action) => {
     let eventId = action.eventId;
     let messages = action.messages;
 
-    const index = state.events.findIndex(event => {
+    const index = state.events.findIndex((event) => {
       return event.eventId === eventId;
     });
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[index].chat = messages;
     });
   }
@@ -165,16 +173,16 @@ let reducer = (state, action) => {
     let messages = action.messages;
     let tableId = action.tableId;
 
-    const eventIndex = state.events.findIndex(event => {
+    const eventIndex = state.events.findIndex((event) => {
       return event.eventId === eventId;
     });
     const tableIndex = state.events[eventIndex].conventionsGame.findIndex(
-      table => {
+      (table) => {
         return table.tableId === tableId;
       }
     );
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[eventIndex].conventionsGame[tableIndex].chat = messages;
     });
   }
@@ -184,7 +192,7 @@ let reducer = (state, action) => {
     let user = action.user;
     let tableIndex = action.tableIndex;
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[eventIndex].conventionsGame[tableIndex].gm = user;
     });
   }
@@ -194,11 +202,11 @@ let reducer = (state, action) => {
     let positionX = action.positionX;
     let positionY = action.positionY;
 
-    const tokenIndex = state.gameView.findIndex(token => {
+    const tokenIndex = state.gameView.findIndex((token) => {
       return token.tokenId === tokenId;
     });
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.gameView[tokenIndex].positionX = positionX;
       draftState.gameView[tokenIndex].positionY = positionY;
     });
@@ -207,10 +215,10 @@ let reducer = (state, action) => {
   if (action.type === "gameAcceptedConvention") {
     let eventId = action.eventId;
     let tableIndex = action.tableIndex;
-    let eventIndex = state.events.findIndex(event => {
+    let eventIndex = state.events.findIndex((event) => {
       return event.eventId === eventId;
     });
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[eventIndex].conventionsGame[tableIndex].visibility =
         "NotRestricted";
     });
@@ -220,7 +228,7 @@ let reducer = (state, action) => {
     let eventIndex = action.eventIndex;
     let user = action.user;
     let tableIndex = action.tableIndex;
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[eventIndex].conventionsGame[tableIndex].gm = user;
     });
   }
@@ -229,7 +237,7 @@ let reducer = (state, action) => {
     let eventIndex = action.eventIndex;
     let user = action.user;
     let tableIndex = action.tableIndex;
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[eventIndex].conventionsGame[tableIndex].players.push(
         user
       );
@@ -242,10 +250,10 @@ let reducer = (state, action) => {
     let tableIndex = action.tableIndex;
     const indexPlayer = state.events[eventIndex].conventionsGame[
       tableIndex
-    ].players.findIndex(player => {
+    ].players.findIndex((player) => {
       return player === user;
     });
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[eventIndex].conventionsGame[tableIndex].players.splice(
         indexPlayer,
         1
@@ -256,7 +264,7 @@ let reducer = (state, action) => {
   if (action.type === "DeleteEventConvention") {
     let eventIndex = action.eventIndex;
     let tableIndex = action.tableIndex;
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[eventIndex].conventionsGame.splice(tableIndex, 1);
     });
   }
@@ -265,10 +273,10 @@ let reducer = (state, action) => {
     let eventId = action.id;
     let user = action.user;
 
-    const index = state.events.findIndex(event => {
+    const index = state.events.findIndex((event) => {
       return event.eventId === eventId;
     });
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[index].players.push(user);
     });
   }
@@ -278,16 +286,16 @@ let reducer = (state, action) => {
     user.user = action.user;
     user.initiative = null;
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.MasterToken.onlineUsers.push(user);
     });
   }
 
   if (action.type === "newUserOffline") {
     console.log(action.user);
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.MasterToken.onlineUsers = draftState.MasterToken.onlineUsers.filter(
-        user => user.user !== action.user
+        (user) => user.user !== action.user
       );
     });
   }
@@ -296,14 +304,14 @@ let reducer = (state, action) => {
     let eventId = action.id;
     let user = action.user;
 
-    const indexEvent = state.events.findIndex(event => {
+    const indexEvent = state.events.findIndex((event) => {
       return event.eventId === eventId;
     });
-    const indexPlayer = state.events[indexEvent].players.findIndex(player => {
+    const indexPlayer = state.events[indexEvent].players.findIndex((player) => {
       return player === user;
     });
 
-    return produce(state, draftState => {
+    return produce(state, (draftState) => {
       draftState.events[indexEvent].players.splice(indexPlayer, 1);
     });
   }
@@ -332,7 +340,7 @@ const store = createStore(
     MasterToken: {},
     erasingCanvas: false,
     permissionToken: [],
-    selectedToken: undefined
+    selectedToken: undefined,
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

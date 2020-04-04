@@ -3,23 +3,20 @@ import { useDispatch, useSelector } from "react-redux";
 import ChatOnline from "./ChatOnline.jsx";
 
 export default function GmBar(props) {
-  const selection = useSelector(state => state.typeSelection);
-  const isErasing = useSelector(state => state.isErasingToken);
-  const isDuplicate = useSelector(state => state.isDuplicateToken);
-  const isHiding = useSelector(state => state.isHidingToken);
-  const isScanning = useSelector(state => state.isScanning);
-  const typeSelection = useSelector(state => state.typeSelection);
-  const gmPage = useSelector(state => state.page.gmPage);
-  const playersPage = useSelector(state => state.page.playersPage);
-  const erasingCanvas = useSelector(state => state.erasingCanvas);
-  const canvas = useSelector(state => state.MasterToken.canvas);
-  const grid = useSelector(state => state.MasterToken.grid);
-  let backgroundWitdhIni = Math.floor(props.width / 70);
-  let backgroundHeightIni = Math.floor(props.height / 70);
-  // let [backgroundWitdh, setBackgroundWitdh] = useState(14);
-  let [backgroundWitdh, setBackgroundWitdh] = useState(backgroundWitdhIni);
-  // let [backgroundHeight, setBackgroundHeight] = useState(14);
-  let [backgroundHeight, setBackgroundHeight] = useState(backgroundHeightIni);
+  const selection = useSelector((state) => state.typeSelection);
+  const isErasing = useSelector((state) => state.isErasingToken);
+  const isDuplicate = useSelector((state) => state.isDuplicateToken);
+  const isHiding = useSelector((state) => state.isHidingToken);
+  const isScanning = useSelector((state) => state.isScanning);
+  const typeSelection = useSelector((state) => state.typeSelection);
+  const gmPage = useSelector((state) => state.page.gmPage);
+  const playersPage = useSelector((state) => state.page.playersPage);
+  const erasingCanvas = useSelector((state) => state.erasingCanvas);
+  const canvas = useSelector((state) => state.MasterToken.canvas);
+  const grid = useSelector((state) => state.MasterToken.grid);
+  const [buttonBackgroundSize, setButtonBackgroundSize] = useState(false);
+  const [backgroundWidth, setBackgroundWidth] = useState("");
+  const [backgroundHeight, setBackgroundHeight] = useState("");
 
   const dispatch = useDispatch();
 
@@ -29,7 +26,7 @@ export default function GmBar(props) {
     data.append("actionGrid", !grid);
     let response = await fetch("/thereIsGrid", {
       method: "POST",
-      body: data
+      body: data,
     });
     console.log("frontend got /thereIsGrid");
     const body = await response.text();
@@ -38,10 +35,36 @@ export default function GmBar(props) {
       console.log("thereIsGrid success");
       dispatch({
         type: "thereIsGrid",
-        grid: !grid
+        grid: !grid,
       });
     } else {
       alert("thereIsGrid Failure");
+    }
+  };
+
+  let changeBackgroundSize = async () => {
+    let data = new FormData();
+    data.append("backgroundWidth", JSON.stringify(backgroundWidth));
+    data.append("backgroundHeight", JSON.stringify(backgroundHeight));
+    data.append("host", props.host);
+    data.append("gmPage", JSON.stringify(gmPage));
+    data.append("canvas", JSON.stringify(canvas));
+    let response = await fetch("/changingTheBackgroundSize", {
+      method: "POST",
+      body: data,
+    });
+    const body = await response.text();
+    const parsed = JSON.parse(body);
+    if (parsed.success) {
+      console.log("dispatch changingTheBackgroundSize");
+      dispatch({
+        type: "changingTheBackgroundSize",
+        backgroundWidth: parsed.backgroundWidth,
+        backgroundHeight: parsed.backgroundHeight,
+        index: parsed.index,
+      });
+    } else {
+      alert("changingTheBackgroundSize Failure");
     }
   };
 
@@ -51,7 +74,7 @@ export default function GmBar(props) {
         onClick={() =>
           dispatch({
             type: "CreationOnlineToken",
-            action: true
+            action: true,
           })
         }
       >
@@ -60,10 +83,10 @@ export default function GmBar(props) {
       <div>
         <select
           value={selection}
-          onChange={evt => {
+          onChange={(evt) => {
             dispatch({
               type: "typeSelection",
-              typeSelection: evt.target.value
+              typeSelection: evt.target.value,
             });
           }}
         >
@@ -74,70 +97,87 @@ export default function GmBar(props) {
       </div>
       <div>
         <button
-          onClick={evt => {
+          onClick={(evt) => {
             dispatch({
               type: "isErasingToken",
-              isErasingToken: !isErasing
+              isErasingToken: !isErasing,
             });
           }}
           style={{
-            backgroundColor: isErasing === true ? "yellow" : ""
+            backgroundColor: isErasing === true ? "yellow" : "",
           }}
         >
           Erase Token
         </button>
       </div>
+
       <div>
-        {/* ////je travail ici */}
-        <label>Background Squares Width</label>
-        <input
-          value={backgroundWitdh}
-          type="number"
-          onChange={evt => setBackgroundWitdh(evt)}
-        />
-        <label>Background Squares Height</label>
-        <input
-          value={backgroundHeight}
-          type="number"
-          onChange={evt => setBackgroundHeight(evt)}
-        />
-        <button
-          onClick={async evt => {
-            let data = new FormData();
-            data.append("backgroundWitdh", JSON.stringify(backgroundWitdh));
-            data.append("backgroundHeight", JSON.stringify(backgroundHeight));
-            data.append("host", props.host);
-            data.append("gmPage", JSON.stringify(gmPage));
-            data.append("canvas", JSON.stringify(canvas));
-            let response = await fetch("/changingTheBackgroundSize", {
-              method: "POST",
-              body: data
-            });
-            // const body = await response.text();
-            // const parsed = JSON.parse(body);
-            // if (parsed.success) {
-            //   console.log("gmNewPage succes backend, frontend res");
-            //   dispatch({
-            //     type: "changingGmPage",
-            //     gmPage: parsed.gmPage,
-            //     playersPage: parsed.playersPage
-            //   });
-            // } else {
-            //   alert("changingTheBackgroundSize Failure");
-            // }
-          }}
-        />
+        {buttonBackgroundSize ? (
+          <>
+            <button
+              style={{ backgroundColor: "yellow" }}
+              onClick={() => {
+                changeBackgroundSize();
+                setButtonBackgroundSize(false);
+              }}
+            >
+              Save Background-Size
+            </button>
+            <label>Background Width-Squares</label>
+            <input
+              value={backgroundWidth}
+              type="number"
+              onChange={({ target: { value } }) => {
+                setBackgroundWidth(parseInt(value));
+              }}
+            />
+            <label>Background Height-Squares</label>
+            <input
+              value={backgroundHeight}
+              type="number"
+              onChange={({ target: { value } }) =>
+                setBackgroundHeight(parseInt(value))
+              }
+            />
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => {
+                setButtonBackgroundSize(true);
+                setBackgroundWidth(props.widthSquares);
+                setBackgroundHeight(props.heightSquares);
+              }}
+            >
+              Edit Background-Size
+            </button>
+            <label>Background Width-Squares</label>
+            <input
+              value={props.widthSquares}
+              type="number"
+              style={{ backgroundColor: "grey" }}
+            />
+            <label>X </label>
+            <label>Background Height-Squares</label>
+            <input
+              value={props.heightSquares}
+              type="number"
+              style={{ backgroundColor: "grey" }}
+            />
+          </>
+        )}
       </div>
+
       <div>
         <button
-          onClick={evt => {
+          onClick={(evt) => {
             dispatch({
               type: "isDuplicate",
-              isDuplicate: !isDuplicate.action
+              isDuplicate: !isDuplicate.action,
             });
           }}
           style={{
-            backgroundColor: isDuplicate.action === true ? "yellow" : ""
+            backgroundColor: isDuplicate.action === true ? "yellow" : "",
           }}
         >
           duplicate
@@ -145,40 +185,40 @@ export default function GmBar(props) {
         <input
           type="number"
           value={isDuplicate.number}
-          onChange={evt => {
+          onChange={(evt) => {
             dispatch({ type: "duplicateNumber", number: evt.target.value });
           }}
         ></input>
       </div>
       <div>
         <button
-          onClick={evt => {
+          onClick={(evt) => {
             dispatch({
               type: "isHidingToken",
-              isHidingToken: !isHiding
+              isHidingToken: !isHiding,
             });
           }}
           style={{
-            backgroundColor: isHiding === true ? "yellow" : ""
+            backgroundColor: isHiding === true ? "yellow" : "",
           }}
         >
           Hide
         </button>
         <div
           style={{
-            display: typeSelection === "Draw" ? "block" : "none"
+            display: typeSelection === "Draw" ? "block" : "none",
           }}
         >
           <button onClick={props.canvasFill}>Fill</button>
           <button onClick={props.canvasClear}>Clear</button>
           <button
             style={{
-              backgroundColor: erasingCanvas === true ? "yellow" : ""
+              backgroundColor: erasingCanvas === true ? "yellow" : "",
             }}
-            onClick={evt => {
+            onClick={(evt) => {
               dispatch({
                 type: "erasingCanvas",
-                erasingCanvas: !erasingCanvas
+                erasingCanvas: !erasingCanvas,
               });
             }}
           >
@@ -187,14 +227,14 @@ export default function GmBar(props) {
           <label>Pen Size</label>
           <input
             type="number"
-            onChange={evt => {
+            onChange={(evt) => {
               props.changingPenSize(evt.target.value);
             }}
           />
 
           <label>Pen Color</label>
           <select
-            onChange={evt => {
+            onChange={(evt) => {
               props.changingPenColor(evt.target.value);
             }}
           >
@@ -210,24 +250,24 @@ export default function GmBar(props) {
       </div>
       <div>
         <button
-          onClick={evt => {
+          onClick={(evt) => {
             dispatch({
               type: "isScanning",
-              isScanning: !isScanning
+              isScanning: !isScanning,
             });
           }}
           style={{
-            backgroundColor: isScanning === true ? "yellow" : ""
+            backgroundColor: isScanning === true ? "yellow" : "",
           }}
         >
           Scan {isScanning}
         </button>
         <button
-          onClick={evt => {
+          onClick={(evt) => {
             thereIsGrid();
           }}
           style={{
-            backgroundColor: grid === true ? "yellow" : ""
+            backgroundColor: grid === true ? "yellow" : "",
           }}
         >
           Grid
@@ -239,7 +279,7 @@ export default function GmBar(props) {
           <input
             value={gmPage}
             type="number"
-            onChange={async evt => {
+            onChange={async (evt) => {
               let data = new FormData();
               data.append("gmPage", evt.target.value);
               data.append("host", props.host);
@@ -247,7 +287,7 @@ export default function GmBar(props) {
               data.append("canvas", JSON.stringify(canvas));
               let response = await fetch("/gmNewPage", {
                 method: "POST",
-                body: data
+                body: data,
               });
               const body = await response.text();
               const parsed = JSON.parse(body);
@@ -256,7 +296,7 @@ export default function GmBar(props) {
                 dispatch({
                   type: "changingGmPage",
                   gmPage: parsed.gmPage,
-                  playersPage: parsed.playersPage
+                  playersPage: parsed.playersPage,
                 });
               } else {
                 alert("newPage Failure");
@@ -269,7 +309,7 @@ export default function GmBar(props) {
           <input
             value={playersPage}
             type="number"
-            onChange={async evt => {
+            onChange={async (evt) => {
               let data = new FormData();
               data.append("playersPage", evt.target.value);
               data.append("host", props.host);
@@ -277,7 +317,7 @@ export default function GmBar(props) {
               data.append("canvas", JSON.stringify(canvas));
               let response = await fetch("/playerNewPage", {
                 method: "POST",
-                body: data
+                body: data,
               });
               const body = await response.text();
               const parsed = JSON.parse(body);
@@ -285,7 +325,7 @@ export default function GmBar(props) {
                 dispatch({
                   type: "changingPlayerPage",
                   gmPage: parsed.gmPage,
-                  playersPage: parsed.playersPage
+                  playersPage: parsed.playersPage,
                 });
               } else {
                 alert("newPage Failure");

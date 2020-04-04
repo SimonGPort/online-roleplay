@@ -3,7 +3,7 @@ let app = express();
 let reloadMagic = require("./reload-magic.js");
 let multer = require("multer");
 let uploads = multer({
-  dest: __dirname + "/uploads"
+  dest: __dirname + "/uploads",
 });
 let mongodb = require("mongodb");
 let MongoClient = mongodb.MongoClient;
@@ -13,10 +13,10 @@ let dbo = undefined;
 let url =
   "mongodb+srv://bob:bobsue@cluster0-moshr.azure.mongodb.net/test?retryWrites=true&w=majority";
 MongoClient.connect(url, { useUnifiedTopology: true })
-  .then(client => {
+  .then((client) => {
     dbo = client.db("Roleplay");
   })
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
@@ -86,7 +86,7 @@ app.post("/signup", uploads.none(), async (req, res) => {
       canvas: [],
       // canvas: [{ page: 1, src: "", width: null, height: null, clear: false }],
       onlineUsers: [],
-      grid: false
+      grid: false,
     });
     let sessionId = "" + Math.floor(Math.random() * 1000000);
     sessions[sessionId] = req.body.username;
@@ -182,8 +182,8 @@ app.post("/dragged", uploads.none(), async (req, res) => {
           positionX: positionX,
           positionY: positionY,
           width: width,
-          height: height
-        }
+          height: height,
+        },
       }
     );
     res.send(JSON.stringify({ success: true }));
@@ -195,17 +195,19 @@ app.post("/dragged", uploads.none(), async (req, res) => {
 });
 ///je travail ici
 app.post("/changingTheBackgroundSize", uploads.none(), async (req, res) => {
-  let backgroundWitdh = JSON.parse(req.body.backgroundWitdh);
+  let backgroundWidth = JSON.parse(req.body.backgroundWidth);
   let backgroundHeight = JSON.parse(req.body.backgroundHeight);
+  backgroundWidth = backgroundWidth * 70;
+  backgroundHeight = backgroundHeight * 70;
   let host = req.body.host;
   let gmPage = JSON.parse(req.body.gmPage);
   let canvas = JSON.parse(req.body.canvas);
 
-  const index = canvas.findIndex(canvas => {
+  const index = canvas.findIndex((canvas) => {
     return canvas.page === gmPage;
   });
 
-  canvas[index].width = backgroundWitdh;
+  canvas[index].width = backgroundWidth;
   canvas[index].height = backgroundHeight;
 
   try {
@@ -213,13 +215,18 @@ app.post("/changingTheBackgroundSize", uploads.none(), async (req, res) => {
       { host: host, type: "MasterToken" },
       {
         $set: {
-          canvas
-        }
+          canvas,
+        },
       }
     );
     console.log("changingTheBackgroundSize success");
     res.send(
-      JSON.stringify({ success: true, backgroundWitdh, backgroundHeight })
+      JSON.stringify({
+        success: true,
+        backgroundWidth,
+        index,
+        backgroundHeight,
+      })
     );
   } catch (err) {
     console.log("changingTheBackgroundSize error", err);
@@ -241,7 +248,7 @@ app.post("/gmNewPage", uploads.none(), async (req, res) => {
   let host = req.body.host;
 
   let canvas = JSON.parse(req.body.canvas);
-  const index = canvas.findIndex(canvas => {
+  const index = canvas.findIndex((canvas) => {
     return canvas.page === gmPage;
   });
   if (index !== -1) {
@@ -252,8 +259,8 @@ app.post("/gmNewPage", uploads.none(), async (req, res) => {
       page: gmPage,
       src: "",
       width: 1400,
-      height: 1440,
-      clear: true
+      height: 1400,
+      clear: true,
     });
   }
 
@@ -263,8 +270,8 @@ app.post("/gmNewPage", uploads.none(), async (req, res) => {
       {
         $set: {
           page: { playersPage: playersPage, gmPage },
-          canvas
-        }
+          canvas,
+        },
       }
     );
     console.log("gmNewPage success");
@@ -288,7 +295,7 @@ app.post("/playerNewPage", uploads.none(), async (req, res) => {
   }
   let host = req.body.host;
   let canvas = JSON.parse(req.body.canvas);
-  const index = canvas.findIndex(canvas => {
+  const index = canvas.findIndex((canvas) => {
     return canvas.page === playersPage;
   });
   if (index !== -1) {
@@ -300,7 +307,7 @@ app.post("/playerNewPage", uploads.none(), async (req, res) => {
       src: "",
       width: 1400,
       height: 1440,
-      clear: true
+      clear: true,
     });
   }
 
@@ -308,7 +315,7 @@ app.post("/playerNewPage", uploads.none(), async (req, res) => {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
-        $set: { page: { playersPage: playersPage, gmPage }, canvas }
+        $set: { page: { playersPage: playersPage, gmPage }, canvas },
       }
     );
     res.send(JSON.stringify({ success: true, gmPage, playersPage }));
@@ -327,11 +334,11 @@ app.post("/giveOrRemovePermissionToken", uploads.none(), async (req, res) => {
   let actionType = undefined;
   if (permissionValue) {
     actionType = {
-      $pull: { permission: user }
+      $pull: { permission: user },
     };
   } else {
     actionType = {
-      $push: { permission: user }
+      $push: { permission: user },
     };
   }
   console.log("actionType:", actionType, permissionValue);
@@ -342,13 +349,13 @@ app.post("/giveOrRemovePermissionToken", uploads.none(), async (req, res) => {
         success: true,
         user,
         shouldRemovePermission: permissionValue,
-        tokenId
+        tokenId,
       })
     );
   } catch (err) {
     res.send(
       JSON.stringify({
-        success: false
+        success: false,
       })
     );
     return;
@@ -367,7 +374,7 @@ app.post("/playerinitiative", uploads.none(), async (req, res) => {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
-        $set: { [field]: user }
+        $set: { [field]: user },
       }
     );
     res.send(JSON.stringify({ success: true }));
@@ -389,8 +396,8 @@ app.post("/scan", uploads.none(), async (req, res) => {
       { host: host, type: "MasterToken" },
       {
         $push: {
-          scan: { positionX, positionY, time, user }
-        }
+          scan: { positionX, positionY, time, user },
+        },
       }
     );
     res.send(JSON.stringify({ success: true }));
@@ -409,7 +416,7 @@ app.post("/drawData", uploads.none(), async (req, res) => {
   let height = JSON.parse(req.body.height);
   let clear = JSON.parse(req.body.clear);
   let page = JSON.parse(req.body.page);
-  let index = canvas.findIndex(canvas => {
+  let index = canvas.findIndex((canvas) => {
     return canvas.page === page;
   });
 
@@ -423,8 +430,8 @@ app.post("/drawData", uploads.none(), async (req, res) => {
       { host: host, type: "MasterToken" },
       {
         $set: {
-          canvas
-        }
+          canvas,
+        },
       }
     );
     console.log("canvas post success");
@@ -530,7 +537,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
       time: time,
       frequency: frequency,
       location: location,
-      numPlayers: numPlayers
+      numPlayers: numPlayers,
     });
     console.log("The event has been register");
     res.send(JSON.stringify({ success: true }));
@@ -552,7 +559,7 @@ app.post("/autoLogin", async (req, res) => {
     res.send(
       JSON.stringify({
         success: true,
-        username: username
+        username: username,
       })
     );
   }
@@ -587,10 +594,10 @@ app.get("/fetchGameView", async (req, res) => {
       return res.send(JSON.stringify({ success: false }));
     }
 
-    let MasterToken = gameView.find(token => {
+    let MasterToken = gameView.find((token) => {
       return token.type === "MasterToken";
     });
-    let gameViewFilter = gameView.filter(token => {
+    let gameViewFilter = gameView.filter((token) => {
       return token.page === page;
     });
 
@@ -743,9 +750,9 @@ app.post("/postMessageConvention", uploads.none(), async (req, res) => {
         $push: {
           [field]: {
             username: username,
-            message: message
-          }
-        }
+            message: message,
+          },
+        },
       }
     );
     console.log("messagePost success");
@@ -774,8 +781,8 @@ app.post("/requestToJoinConventionEvent", uploads.none(), async (req, res) => {
       { eventId: eventId },
       {
         $push: {
-          [field]: user
-        }
+          [field]: user,
+        },
       }
     );
     console.log("messagePost success");
@@ -804,8 +811,8 @@ app.post("/leaveTheQueueConvention", uploads.none(), async (req, res) => {
       { eventId: eventId },
       {
         $pull: {
-          [field]: user
-        }
+          [field]: user,
+        },
       }
     );
     console.log("messagePost success");
@@ -833,8 +840,8 @@ app.post("/gameAcceptedForConvention", uploads.none(), async (req, res) => {
       { eventId: eventId },
       {
         $set: {
-          [field]: "Unrestricted"
-        }
+          [field]: "Unrestricted",
+        },
       }
     );
     console.log("gameAcceptedForConvention success");
@@ -865,8 +872,8 @@ app.post("/newGmEventConvention", uploads.none(), async (req, res) => {
       { eventId: eventId },
       {
         $set: {
-          [field]: username
-        }
+          [field]: username,
+        },
       }
     );
     console.log("newGmEventConvention success");
@@ -925,7 +932,7 @@ app.post(
       frequency: frequency,
       description: description,
       numPlayers: numPlayers,
-      img: img
+      img: img,
     };
     try {
       await dbo
@@ -981,7 +988,7 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
           permission: permission,
           height: height,
           width: width,
-          hide: true
+          hide: true,
         };
       })
     );
@@ -995,10 +1002,7 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
 
 app.get("/fetchEvents", async (req, res) => {
   try {
-    const events = await dbo
-      .collection("events")
-      .find({})
-      .toArray();
+    const events = await dbo.collection("events").find({}).toArray();
     res.send(JSON.stringify({ success: true, events: events }));
   } catch (err) {
     console.log("Can't fetch the events in the database", err);
@@ -1098,7 +1102,7 @@ app.post("/duplicateToken", uploads.none(), async (req, res) => {
           permission: permission,
           height: height,
           width: width,
-          hide: hide
+          hide: hide,
         };
       })
     );
