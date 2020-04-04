@@ -3,23 +3,23 @@ import React, { Component } from "react";
 class Grid extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      width: window.innerWidth,
-      height: window.innerHeight
-    };
+    // this.state = {
+    //   width: window.innerWidth,
+    //   height: window.innerHeight
+    // };
   }
 
-  componentDidMount() {
-    window.addEventListener("resize", this.resizeGrid);
-  }
+  // componentDidMount() {
+  //   window.addEventListener("resize", this.resizeGrid);
+  // }
 
-  resizeGrid = () => {
-    this.setState({ width: window.innerWidth, height: window.innerHeight });
-  };
+  // resizeGrid = () => {
+  //   this.setState({ width: window.innerWidth, height: window.innerHeight });
+  // };
 
   render = () => {
-    let numberOfRows = Math.ceil(this.state.height / 70);
-    let numberOfCol = Math.ceil(this.state.width / 70);
+    let numberOfRows = Math.floor(this.props.height / 72);
+    let numberOfCol = Math.floor(this.props.width / 70);
     let gridRows = [];
     let gridCol = [];
 

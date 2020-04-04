@@ -193,6 +193,40 @@ app.post("/dragged", uploads.none(), async (req, res) => {
     return;
   }
 });
+///je travail ici
+app.post("/changingTheBackgroundSize", uploads.none(), async (req, res) => {
+  let backgroundWitdh = JSON.parse(req.body.backgroundWitdh);
+  let backgroundHeight = JSON.parse(req.body.backgroundHeight);
+  let host = req.body.host;
+  let gmPage = JSON.parse(req.body.gmPage);
+  let canvas = JSON.parse(req.body.canvas);
+
+  const index = canvas.findIndex(canvas => {
+    return canvas.page === gmPage;
+  });
+
+  canvas[index].width = backgroundWitdh;
+  canvas[index].height = backgroundHeight;
+
+  try {
+    await dbo.collection("tokens").updateOne(
+      { host: host, type: "MasterToken" },
+      {
+        $set: {
+          canvas
+        }
+      }
+    );
+    console.log("changingTheBackgroundSize success");
+    res.send(
+      JSON.stringify({ success: true, backgroundWitdh, backgroundHeight })
+    );
+  } catch (err) {
+    console.log("changingTheBackgroundSize error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
 
 app.post("/gmNewPage", uploads.none(), async (req, res) => {
   let playersPage = req.body.playersPage;
@@ -217,8 +251,8 @@ app.post("/gmNewPage", uploads.none(), async (req, res) => {
     canvas.push({
       page: gmPage,
       src: "",
-      width: null,
-      height: null,
+      width: 1400,
+      height: 1440,
       clear: true
     });
   }
@@ -264,8 +298,8 @@ app.post("/playerNewPage", uploads.none(), async (req, res) => {
     canvas.push({
       page: playersPage,
       src: "",
-      width: null,
-      height: null,
+      width: 1400,
+      height: 1440,
       clear: true
     });
   }

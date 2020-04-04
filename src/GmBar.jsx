@@ -14,6 +14,12 @@ export default function GmBar(props) {
   const erasingCanvas = useSelector(state => state.erasingCanvas);
   const canvas = useSelector(state => state.MasterToken.canvas);
   const grid = useSelector(state => state.MasterToken.grid);
+  let backgroundWitdhIni = Math.floor(props.width / 70);
+  let backgroundHeightIni = Math.floor(props.height / 70);
+  // let [backgroundWitdh, setBackgroundWitdh] = useState(14);
+  let [backgroundWitdh, setBackgroundWitdh] = useState(backgroundWitdhIni);
+  // let [backgroundHeight, setBackgroundHeight] = useState(14);
+  let [backgroundHeight, setBackgroundHeight] = useState(backgroundHeightIni);
 
   const dispatch = useDispatch();
 
@@ -80,6 +86,47 @@ export default function GmBar(props) {
         >
           Erase Token
         </button>
+      </div>
+      <div>
+        {/* ////je travail ici */}
+        <label>Background Squares Width</label>
+        <input
+          value={backgroundWitdh}
+          type="number"
+          onChange={evt => setBackgroundWitdh(evt)}
+        />
+        <label>Background Squares Height</label>
+        <input
+          value={backgroundHeight}
+          type="number"
+          onChange={evt => setBackgroundHeight(evt)}
+        />
+        <button
+          onClick={async evt => {
+            let data = new FormData();
+            data.append("backgroundWitdh", JSON.stringify(backgroundWitdh));
+            data.append("backgroundHeight", JSON.stringify(backgroundHeight));
+            data.append("host", props.host);
+            data.append("gmPage", JSON.stringify(gmPage));
+            data.append("canvas", JSON.stringify(canvas));
+            let response = await fetch("/changingTheBackgroundSize", {
+              method: "POST",
+              body: data
+            });
+            // const body = await response.text();
+            // const parsed = JSON.parse(body);
+            // if (parsed.success) {
+            //   console.log("gmNewPage succes backend, frontend res");
+            //   dispatch({
+            //     type: "changingGmPage",
+            //     gmPage: parsed.gmPage,
+            //     playersPage: parsed.playersPage
+            //   });
+            // } else {
+            //   alert("changingTheBackgroundSize Failure");
+            // }
+          }}
+        />
       </div>
       <div>
         <button

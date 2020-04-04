@@ -22,9 +22,10 @@ class GameViewPort extends Component {
   }
   componentDidMount() {
     this.canvasDrawingIni();
-    window.addEventListener("resize", this.resizeCanvas);
+    // window.addEventListener("resize", this.resizeCanvas);
   }
   componentDidUpdate() {
+    this.resizeCanvasDimensions();
     if (this.state.localFlag) {
       return;
     }
@@ -39,12 +40,15 @@ class GameViewPort extends Component {
       return;
     }
     let canvas = this.canvasRef.current;
+    let rect = canvas.getBoundingClientRect();
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    console.log("window size", canvas.width, canvas.height);
+    canvas.height = window.innerHeight - rect.y - 6;
     let ctx = canvas.getContext("2d");
+
     this.setState({
       canvas: canvas,
+      height: canvas.height,
+      width: canvas.width,
       ctx: ctx,
       canvasUrl: canvas.toDataURL()
     });
@@ -89,13 +93,42 @@ class GameViewPort extends Component {
     data.append("clear", JSON.stringify(true));
     await fetch("/drawData", { method: "POST", body: data });
   };
-  resizeCanvas = () => {
-    const canvas = { ...this.state.canvas };
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    this.setState({ canvas });
+  // resizeCanvas = () => {
+  //   const canvas = { ...this.state.canvas };
+  //   canvas.width = window.innerWidth;
+  //   canvas.height = window.innerHeight;
+  //   this.setState({ canvas });
+  //   this.drawCanvas(this.state.ctx, this.state.canvas);
+  // };
+
+  resizeCanvasDimensions = () => {
+    let pageDiplay = undefined;
+    if (this.props.user === this.props.host) {
+      pageDiplay = this.props.page.gmPage;
+    } else {
+      pageDiplay = this.props.page.playersPage;
+    }
+    let canvasDisplay = this.props.MasterToken.canvas.find(canvas => {
+      return canvas.page === pageDiplay;
+    });
+
+    if (canvasDisplay === undefined) {
+      return;
+    }
+
+    if (
+      canvasDisplay.width === this.state.canvas.width &&
+      canvasDisplay.height === this.state.canvas.height
+    ) {
+      return;
+    }
+    const canvas = this.canvasRef.current;
+    canvas.width = canvasDisplay.width;
+    canvas.height = canvasDisplay.height;
+    this.setState({ canvas, height: canvas.height, width: canvas.width });
     this.drawCanvas(this.state.ctx, this.state.canvas);
   };
+
   draw = e => {
     if (this.props.erasingCanvas) {
       this.state.ctx.globalCompositeOperation = "destination-out";
@@ -195,9 +228,11 @@ class GameViewPort extends Component {
     }
 
     const { width, height, src, clear } = canvasDisplay;
+
     let img = new Image(width, height);
     if (clear === true) {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      let rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.x, rect.y);
     }
     img.onload = async () => {
       ctx.globalCompositeOperation = "source-over";
@@ -281,6 +316,8 @@ class GameViewPort extends Component {
           changingPenSize={this.changingPenSize}
           changingPenColor={this.changingPenColor}
           pageIndex={this.state.pageIndex}
+          height={this.state.height}
+          width={this.state.width}
         />
         <div
           onMouseDown={this.handleMouseDown}
@@ -317,7 +354,11 @@ class GameViewPort extends Component {
             );
           })}
           <canvas ref={this.canvasRef} id="canvas" />
-          <Grid grid={this.props.MasterToken.grid} />
+          <Grid
+            grid={this.props.MasterToken.grid}
+            height={this.state.height}
+            width={this.state.width}
+          />
         </div>
       </div>
     );
