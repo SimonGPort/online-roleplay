@@ -81,7 +81,6 @@ app.post("/signup", uploads.none(), async (req, res) => {
       width: null,
       hide: null,
       chat: [],
-      pageLocation: { gm: 1, players: 1 },
       scan: [],
       canvas: [],
       // canvas: [{ page: 1, src: "", width: null, height: null, clear: false }],
@@ -193,7 +192,7 @@ app.post("/dragged", uploads.none(), async (req, res) => {
     return;
   }
 });
-///je travail ici
+
 app.post("/changingTheBackgroundSize", uploads.none(), async (req, res) => {
   let backgroundWidth = JSON.parse(req.body.backgroundWidth);
   let backgroundHeight = JSON.parse(req.body.backgroundHeight);
@@ -235,33 +234,63 @@ app.post("/changingTheBackgroundSize", uploads.none(), async (req, res) => {
   }
 });
 
-app.post("/gmNewPage", uploads.none(), async (req, res) => {
-  let playersPage = req.body.playersPage;
-  let gmPage = req.body.gmPage;
-
-  if (playersPage !== "") {
-    playersPage = JSON.parse(playersPage);
-  }
-  if (gmPage !== "") {
-    gmPage = JSON.parse(gmPage);
-  }
+app.post("/ChangingThePage", uploads.none(), async (req, res) => {
+  let goingToThisGmPage = JSON.parse(req.body.newGmPage);
+  let goingTothisPlayersPage = JSON.parse(req.body.newPlayersPage);
+  let prevGmPage = JSON.parse(req.body.prevGmPage);
+  let prevPlayersPage = JSON.parse(req.body.prevPlayersPage);
   let host = req.body.host;
-
   let canvas = JSON.parse(req.body.canvas);
-  const index = canvas.findIndex((canvas) => {
-    return canvas.page === gmPage;
-  });
-  if (index !== -1) {
-    canvas[index].clear = true;
-  }
-  if (index === -1) {
-    canvas.push({
-      page: gmPage,
-      src: "",
-      width: 1400,
-      height: 1400,
-      clear: true,
+
+  isChangingTheGmPage = goingToThisGmPage !== prevGmPage;
+  isChangingThePlayersPage = goingTothisPlayersPage !== prevPlayersPage;
+
+  let indexGmPage = undefined;
+  let indexPlayersPage = undefined;
+  let doesGoingToThisGmPageExist = undefined;
+  let doesgoingTothisPlayersPageExist = undefined;
+
+  if (isChangingTheGmPage) {
+    indexGmPage = canvas.findIndex((canvas) => {
+      return canvas.page === goingToThisGmPage;
     });
+
+    indexGmPage === -1
+      ? (doesGoingToThisGmPageExist = false)
+      : (doesGoingToThisGmPageExist = true);
+
+    if (doesGoingToThisGmPageExist) {
+      canvas[indexGmPage].clear = true;
+    } else {
+      canvas.push({
+        page: goingToThisGmPage,
+        src: "",
+        width: 1400,
+        height: 1400,
+        clear: true,
+      });
+    }
+  }
+
+  if (isChangingThePlayersPage) {
+    indexPlayersPage = canvas.findIndex((canvas) => {
+      return canvas.page === goingTothisPlayersPage;
+    });
+    indexPlayersPage === -1
+      ? (doesgoingTothisPlayersPageExist = false)
+      : (doesgoingTothisPlayersPageExist = true);
+
+    if (doesgoingTothisPlayersPageExist) {
+      canvas[indexPlayersPage].clear = true;
+    } else {
+      canvas.push({
+        page: goingTothisPlayersPage,
+        src: "",
+        width: 1400,
+        height: 1400,
+        clear: true,
+      });
+    }
   }
 
   try {
@@ -269,58 +298,30 @@ app.post("/gmNewPage", uploads.none(), async (req, res) => {
       { host: host, type: "MasterToken" },
       {
         $set: {
-          page: { playersPage: playersPage, gmPage },
+          page: {
+            playersPage: goingTothisPlayersPage,
+            gmPage: goingToThisGmPage,
+          },
           canvas,
         },
       }
     );
-    console.log("gmNewPage success");
-    res.send(JSON.stringify({ success: true, gmPage, playersPage }));
-  } catch (err) {
-    console.log("gmNewPage error", err);
-    res.send(JSON.stringify({ success: false }));
-    return;
-  }
-});
-
-app.post("/playerNewPage", uploads.none(), async (req, res) => {
-  let playersPage = req.body.playersPage;
-  let gmPage = req.body.gmPage;
-
-  if (playersPage !== "") {
-    playersPage = JSON.parse(playersPage);
-  }
-  if (gmPage !== "") {
-    gmPage = JSON.parse(gmPage);
-  }
-  let host = req.body.host;
-  let canvas = JSON.parse(req.body.canvas);
-  const index = canvas.findIndex((canvas) => {
-    return canvas.page === playersPage;
-  });
-  if (index !== -1) {
-    canvas[index].clear = true;
-  }
-  if (index === -1) {
-    canvas.push({
-      page: playersPage,
-      src: "",
-      width: 1400,
-      height: 1440,
-      clear: true,
-    });
-  }
-
-  try {
-    await dbo.collection("tokens").updateOne(
-      { host: host, type: "MasterToken" },
-      {
-        $set: { page: { playersPage: playersPage, gmPage }, canvas },
-      }
+    console.log("ChangingThePage success");
+    res.send(
+      JSON.stringify({
+        success: true,
+        goingToThisGmPage,
+        goingTothisPlayersPage,
+        indexGmPage,
+        indexPlayersPage,
+        isChangingTheGmPage,
+        isChangingThePlayersPage,
+        doesGoingToThisGmPageExist,
+        doesgoingTothisPlayersPageExist,
+      })
     );
-    res.send(JSON.stringify({ success: true, gmPage, playersPage }));
   } catch (err) {
-    console.log("playerNewPage error", err);
+    console.log("ChangingThePage error", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }

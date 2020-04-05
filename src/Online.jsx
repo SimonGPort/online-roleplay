@@ -5,13 +5,13 @@ import CreationOnlineToken from "./CreationOnlineToken.jsx";
 
 export default function Online(props) {
   const [loading, setLoading] = useState(false);
-  const dragging = useSelector(state => state.dragging);
-  const page = useSelector(state => state.page);
-  const user = useSelector(state => state.user);
-  const CreationToken = useSelector(state => state.CreationOnlineToken);
+  const dragging = useSelector((state) => state.dragging);
+  const page = useSelector((state) => state.page);
+  const user = useSelector((state) => state.user);
+  const CreationToken = useSelector((state) => state.CreationOnlineToken);
   const dispatch = useDispatch();
-  const gameView = useSelector(state => state.gameView);
-  const MasterToken = useSelector(state => state.MasterToken);
+  const gameView = useSelector((state) => state.gameView);
+  const MasterToken = useSelector((state) => state.MasterToken);
 
   useEffect(() => {
     const updateGameView = () => {
@@ -40,7 +40,7 @@ export default function Online(props) {
           dispatch({
             type: "gameUpdate",
             gameView: body.gameViewFilter,
-            MasterToken: body.MasterToken
+            MasterToken: body.MasterToken,
           });
           setLoading(true);
           return;
@@ -66,7 +66,7 @@ export default function Online(props) {
       data.append("host", props.host);
       let response = await fetch("/newUserOnline", {
         method: "POST",
-        body: data
+        body: data,
       });
     })();
     window.addEventListener("beforeunload", componentCleanup);
@@ -84,7 +84,7 @@ export default function Online(props) {
       data.append("host", props.host);
       let response = await fetch("/newUserOffline", {
         method: "POST",
-        body: data
+        body: data,
       });
     })();
 

@@ -18,6 +18,10 @@ export default function GmBar(props) {
   const [backgroundWidth, setBackgroundWidth] = useState("");
   const [backgroundHeight, setBackgroundHeight] = useState("");
 
+  const [buttonPageChange, setButtonPageChange] = useState(false);
+  const [gmPageInput, setGmPageInput] = useState("");
+  const [playersPageInput, setPlayersPageInput] = useState("");
+
   const dispatch = useDispatch();
 
   let thereIsGrid = async () => {
@@ -65,6 +69,43 @@ export default function GmBar(props) {
       });
     } else {
       alert("changingTheBackgroundSize Failure");
+    }
+  };
+  ////je travail ici pour la method
+  let ChangingPageHandler = async () => {
+    let data = new FormData();
+    data.append("newGmPage", JSON.stringify(gmPageInput));
+    data.append("newPlayersPage", JSON.stringify(playersPageInput));
+    data.append("prevGmPage", JSON.stringify(gmPage));
+    data.append("prevPlayersPage", JSON.stringify(playersPage));
+    data.append("host", props.host);
+    data.append("canvas", JSON.stringify(canvas));
+    let response = await fetch("/ChangingThePage", {
+      method: "POST",
+      body: data,
+    });
+    const body = await response.text();
+    const parsed = JSON.parse(body);
+    console.log("backend work changing page");
+    if (parsed.success) {
+      console.log("ChangingThePage succes backend, frontend res");
+      if (parsed.isChangingTheGmPage) {
+        dispatch({
+          type: "changingGmPage",
+          index: parsed.indexGmPage,
+          gmPage: parsed.goingToThisGmPage,
+          doesGoingToThisGmPageExist: parsed.doesGoingToThisGmPageExist,
+        });
+      }
+
+      if (parsed.isChangingThePlayersPage) {
+        dispatch({
+          type: "changingPlayerPage",
+          playersPage: parsed.goingTothisPlayersPage,
+        });
+      }
+    } else {
+      console.log("backend changingPage error");
     }
   };
 
@@ -276,64 +317,65 @@ export default function GmBar(props) {
         </button>
       </div>
       <div>
+        {/* je travail ici */}
+        {/* exemple */}
         <div>
-          <label>GM's page</label>
-          <input
-            value={gmPage}
-            type="number"
-            onChange={async (evt) => {
-              let data = new FormData();
-              data.append("gmPage", evt.target.value);
-              data.append("host", props.host);
-              data.append("playersPage", playersPage);
-              data.append("canvas", JSON.stringify(canvas));
-              let response = await fetch("/gmNewPage", {
-                method: "POST",
-                body: data,
-              });
-              const body = await response.text();
-              const parsed = JSON.parse(body);
-              if (parsed.success) {
-                console.log("gmNewPage succes backend, frontend res");
-                dispatch({
-                  type: "changingGmPage",
-                  gmPage: parsed.gmPage,
-                  playersPage: parsed.playersPage,
-                });
-              } else {
-                alert("newPage Failure");
-              }
-            }}
-          />
-        </div>
-        <div>
-          <label>Players's page</label>
-          <input
-            value={playersPage}
-            type="number"
-            onChange={async (evt) => {
-              let data = new FormData();
-              data.append("playersPage", evt.target.value);
-              data.append("host", props.host);
-              data.append("gmPage", gmPage);
-              data.append("canvas", JSON.stringify(canvas));
-              let response = await fetch("/playerNewPage", {
-                method: "POST",
-                body: data,
-              });
-              const body = await response.text();
-              const parsed = JSON.parse(body);
-              if (parsed.success) {
-                dispatch({
-                  type: "changingPlayerPage",
-                  gmPage: parsed.gmPage,
-                  playersPage: parsed.playersPage,
-                });
-              } else {
-                alert("newPage Failure");
-              }
-            }}
-          />
+          {buttonPageChange ? (
+            <>
+              <button
+                style={{ backgroundColor: "yellow" }}
+                onClick={() => {
+                  ChangingPageHandler();
+                  setButtonPageChange(false);
+                }}
+              >
+                Save Pages
+              </button>
+              <label>Gm's Page</label>
+              <input
+                value={gmPageInput}
+                type="number"
+                onChange={({ target: { value } }) => {
+                  setGmPageInput(parseInt(value));
+                }}
+              />
+              <label>Players's Page</label>
+              <input
+                value={playersPageInput}
+                type="number"
+                onChange={({ target: { value } }) =>
+                  setPlayersPageInput(parseInt(value))
+                }
+              />
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => {
+                  setButtonPageChange(true);
+                  setGmPageInput(gmPage);
+                  setPlayersPageInput(playersPage);
+                }}
+              >
+                Edit Pages
+              </button>
+              <label>Gm's Page</label>
+              <input
+                readOnly
+                value={gmPage}
+                type="number"
+                style={{ backgroundColor: "grey" }}
+              />
+              <label>X </label>
+              <label>Players's Page</label>
+              <input
+                readOnly
+                value={playersPage}
+                type="number"
+                style={{ backgroundColor: "grey" }}
+              />
+            </>
+          )}
         </div>
       </div>
       <div>

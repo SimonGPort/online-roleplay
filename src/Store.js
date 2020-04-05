@@ -17,19 +17,15 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "changingGmPage") {
-    const index = state.MasterToken.canvas.findIndex((canvas) => {
-      return canvas.page === action.gmPage;
-    });
-
-    if (index === -1) {
+    if (action.doesGoingToThisGmPageExist) {
       return produce(state, (draftState) => {
         draftState.page.gmPage = action.gmPage;
+        draftState.MasterToken.canvas[action.index].clear = true;
       });
     }
 
     return produce(state, (draftState) => {
       draftState.page.gmPage = action.gmPage;
-      draftState.MasterToken.canvas[index].clear = true;
     });
   }
 
@@ -38,8 +34,6 @@ let reducer = (state, action) => {
       draftState.page.playersPage = action.playersPage;
     });
   }
-
-  //  Probleme ici
 
   if (action.type === "AddOrRemovePermission") {
     const index = state.gameView.findIndex((token) => {
