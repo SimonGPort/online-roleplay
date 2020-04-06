@@ -584,7 +584,10 @@ app.get("/fetchMessages", async (req, res) => {
 
 app.get("/fetchGameView", async (req, res) => {
   let host = req.query.host;
-  let page = JSON.parse(req.query.page);
+  // let page = JSON.parse(req.query.page);
+  let user = req.query.user;
+
+  amITheGm = host === user;
 
   try {
     const gameView = await dbo
@@ -599,7 +602,13 @@ app.get("/fetchGameView", async (req, res) => {
       return token.type === "MasterToken";
     });
     let gameViewFilter = gameView.filter((token) => {
-      return token.page === page;
+      if (amITheGm) {
+        return token.page === MasterToken.page.gmPage;
+      } else {
+        return token.page === MasterToken.page.playersPage;
+      }
+
+      // return token.page === page;
     });
 
     res.send(JSON.stringify({ success: true, gameViewFilter, MasterToken }));

@@ -24,7 +24,6 @@ class GameViewPort extends Component {
   }
   componentDidMount() {
     this.canvasDrawingIni();
-    // window.addEventListener("resize", this.resizeCanvas);
   }
   componentDidUpdate() {
     this.resizeCanvasDimensions();
@@ -177,12 +176,12 @@ class GameViewPort extends Component {
       let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
         return canvas.page === pageDiplay;
       });
-      this.props.dispatch({
-        type: "changeMaster",
-        clear: this.props.erasingCanvas,
-        src: this.canvasRef.current.toDataURL(),
-        canvasIndex: canvasIndex,
-      });
+      // this.props.dispatch({
+      //   type: "changeMaster",
+      //   clear: this.props.erasingCanvas,
+      //   src: this.canvasRef.current.toDataURL(),
+      //   canvasIndex: canvasIndex,
+      // });
 
       let data = new FormData();
       data.append("src", this.canvasRef.current.toDataURL());
@@ -231,12 +230,12 @@ class GameViewPort extends Component {
     img.onload = async () => {
       ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(img, 0, 0);
-      this.props.dispatch({
-        type: "changeMaster",
-        src: this.canvasRef.current.toDataURL(),
-        clear: undefined,
-        canvasIndex: canvasIndex,
-      });
+      // this.props.dispatch({
+      //   type: "changeMaster",
+      //   src: this.canvasRef.current.toDataURL(),
+      //   clear: undefined,
+      //   canvasIndex: canvasIndex,
+      // });
     };
     img.src = src;
   };

@@ -9,7 +9,7 @@ class NavbarLoginSection extends Component {
     super(props);
     this.state = {
       loginModal: false,
-      signupModal: false
+      signupModal: false,
     };
   }
 
@@ -58,9 +58,17 @@ class NavbarLoginSection extends Component {
         </div>
       ) : (
         <div>
-          <Link to="/profil" className="navbar-button">
+          <button className="navbar-button option-menu">
             Option
-          </Link>
+            <div className="sub-option">
+              <ul>
+                <Link to="/new-event" className="noLinkDecoration">
+                  <li>Create event</li>
+                </Link>
+                <li>My online game</li>
+              </ul>
+            </div>
+          </button>
           <Link to="/" onClick={this.handleLogout} className="navbar-button">
             Log out
           </Link>
@@ -70,9 +78,9 @@ class NavbarLoginSection extends Component {
   );
 }
 
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
-    login: state.login
+    login: state.login,
   };
 };
 

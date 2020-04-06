@@ -146,6 +146,7 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "gameUpdate") {
+    console.log("dragging", action.dragging);
     return produce(state, (draftState) => {
       draftState.gameView = action.gameView;
       draftState.MasterToken = action.MasterToken;

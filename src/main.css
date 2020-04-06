@@ -31,7 +31,7 @@ body {
   grid-template-columns: auto 1fr auto;
   grid-template-rows: 1fr;
   height: 55px;
-  border-bottom: 3px solid #5a5a5a;
+  /* border-bottom: 3px solid #5a5a5a; */
   background-color: #5b7b9b;
   align-items: center;
   font-family: "Rubik", sans-serif;
@@ -180,4 +180,69 @@ body {
 .inputModal {
   margin-left: 10px;
   float: right;
+}
+.sub-option {
+  display: none;
+  /* display: block;
+  position: absolute;
+  margin-top: 10px;
+  margin-left: -15px;
+  background-color: #5b7b9b;
+  z-index: 20;
+  color: black; */
+}
+
+.sub-option li {
+  list-style-type: none;
+  padding: 10px;
+  margin: 5px;
+  text-decoration: none;
+}
+
+.noLinkDecoration {
+  text-decoration: none;
+  color: black;
+}
+
+.sub-option ul {
+  padding: 0px;
+}
+
+.sub-option li:hover {
+  background-color: #3b6c9c;
+  font-size: 15px;
+  border-radius: 3px;
+  /* padding: 7px; */
+  margin: 5px;
+  color: white;
+  font-family: "Rubik", sans-serif;
+  padding: 10px;
+}
+.option-menu:hover .sub-option {
+  display: block;
+  position: absolute;
+  margin-top: 10px;
+  margin-left: -15px;
+  background-color: #5b7b9b;
+  z-index: 20;
+  color: black;
+
+  /* float: right;
+  border: 3px solid #5a5a5a;
+  display: block;
+  position: absolute;
+  margin-top: 10px;
+  margin-left: -15px;
+  background-color: #5b7b9b;
+  z-index: 20;
+  color: black; */
+}
+
+.sub-option:hover {
+  display: block;
+  position: absolute;
+  margin-top: 10px;
+  margin-left: -15px;
+  background-color: #5b7b9b;
+  z-index: 20;
 }

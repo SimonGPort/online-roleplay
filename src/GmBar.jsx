@@ -71,7 +71,7 @@ export default function GmBar(props) {
       alert("changingTheBackgroundSize Failure");
     }
   };
-  ////je travail ici pour la method
+
   let ChangingPageHandler = async () => {
     let data = new FormData();
     data.append("newGmPage", JSON.stringify(gmPageInput));
@@ -317,8 +317,6 @@ export default function GmBar(props) {
         </button>
       </div>
       <div>
-        {/* je travail ici */}
-        {/* exemple */}
         <div>
           {buttonPageChange ? (
             <>

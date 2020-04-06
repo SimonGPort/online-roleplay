@@ -16,9 +16,7 @@ export default class Navbar extends Component {
             <img src="/images/DnD logo.jpg" className="navbar-logo" />
           </Link>
         </div>
-        <div>
-          <Link to="/new-event">Create an event</Link>
-        </div>
+        <div></div>
         <NavbarLoginSection />
       </div>
     );
