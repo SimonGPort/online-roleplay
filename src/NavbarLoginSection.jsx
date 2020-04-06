@@ -1,5 +1,6 @@
 import React, { Component, useState } from "react";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal.jsx";
 import SignupModal from "./SignupModal.jsx";
@@ -39,6 +40,10 @@ class NavbarLoginSection extends Component {
     this.setState({ signupModal: true });
   };
 
+  onlineAccess = () => {
+    this.props.history.push(`/online/${this.props.user}/GM`);
+  };
+
   render = () => (
     <>
       {this.props.login === false ? (
@@ -65,7 +70,7 @@ class NavbarLoginSection extends Component {
                 <Link to="/new-event" className="noLinkDecoration">
                   <li>Create event</li>
                 </Link>
-                <li>My online game</li>
+                <li onClick={this.onlineAccess}>My online game</li>
               </ul>
             </div>
           </button>
@@ -81,7 +86,8 @@ class NavbarLoginSection extends Component {
 let mapStateToProps = (state) => {
   return {
     login: state.login,
+    user: state.user,
   };
 };
 
-export default connect(mapStateToProps)(NavbarLoginSection);
+export default withRouter(connect(mapStateToProps)(NavbarLoginSection));
