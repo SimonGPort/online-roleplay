@@ -12,8 +12,9 @@ export default class Navbar extends Component {
     return (
       <div id="navbar">
         <div>
-          <Link to="/">
-            <img src="/images/DnD logo.jpg" className="navbar-logo" />
+          <Link to="/" className="logo-container noLinkDecoration">
+            <img src="/images/logo dice20 final.png" className="navbar-logo" />
+            <div className="navbar-logo-text">RollPlay </div>
           </Link>
         </div>
         <div></div>

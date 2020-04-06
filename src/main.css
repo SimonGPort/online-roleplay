@@ -25,16 +25,18 @@ body {
 .navbar-logo {
   width: 50px;
   height: 50px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 #navbar {
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-template-rows: 1fr;
   height: 55px;
-  /* border-bottom: 3px solid #5a5a5a; */
+  border-bottom: 3px solid #5a5a5a;
   background-color: #5b7b9b;
   align-items: center;
-  font-family: "Rubik", sans-serif;
+  /* font-family: "Rubik", sans-serif; */
 }
 .main-page {
   display: grid;
@@ -183,13 +185,6 @@ body {
 }
 .sub-option {
   display: none;
-  /* display: block;
-  position: absolute;
-  margin-top: 10px;
-  margin-left: -15px;
-  background-color: #5b7b9b;
-  z-index: 20;
-  color: black; */
 }
 
 .sub-option li {
@@ -212,7 +207,6 @@ body {
   background-color: #3b6c9c;
   font-size: 15px;
   border-radius: 3px;
-  /* padding: 7px; */
   margin: 5px;
   color: white;
   font-family: "Rubik", sans-serif;
@@ -226,16 +220,6 @@ body {
   background-color: #5b7b9b;
   z-index: 20;
   color: black;
-
-  /* float: right;
-  border: 3px solid #5a5a5a;
-  display: block;
-  position: absolute;
-  margin-top: 10px;
-  margin-left: -15px;
-  background-color: #5b7b9b;
-  z-index: 20;
-  color: black; */
 }
 
 .sub-option:hover {
@@ -245,4 +229,28 @@ body {
   margin-left: -15px;
   background-color: #5b7b9b;
   z-index: 20;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-left: 10px; */
+}
+
+.logo-container:hover .navbar-logo {
+  transform: translate(90px, 0);
+  margin-left: 0px;
+  transition-duration: 0.5s;
+}
+.logo-container:hover .navbar-logo-text {
+  transform: translate(-50px, 0);
+  margin-left: 5px;
+  transition-duration: 0.5s;
+  font-family: "Do Hyeon", sans-serif;
+}
+
+.navbar-logo-text {
+  font-family: "Do Hyeon", sans-serif;
+  font-size: 20px;
 }
