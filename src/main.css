@@ -27,13 +27,14 @@ body {
   height: 50px;
   margin-left: 10px;
   margin-right: 10px;
+  z-index: 2;
 }
 #navbar {
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-template-rows: 1fr;
   height: 55px;
-  border-bottom: 3px solid #5a5a5a;
+  border-bottom: 3px solid #97cda9;
   background-color: #5b7b9b;
   align-items: center;
   /* font-family: "Rubik", sans-serif; */
@@ -47,8 +48,67 @@ body {
   justify-content: space-evenly;
 }
 .card {
+  border: 1px solid #97cda9;
+  border-radius: 5px;
+  background-color: #5b7b9b;
+  padding: 10px;
+}
+
+.card-sponsored {
+  border: 1px solid #97cda9;
+  border-radius: 0 0 5px 5px;
+  background-color: #5b7b9b;
+  padding: 10px;
+}
+
+.card-info {
+  color: white;
+  display: flex;
+}
+.card-title {
+  font-size: 22px;
+}
+.card-img {
+  widows: 350px;
+  height: 350px;
+  object-fit: cover;
+  border: 3px solid #97cda9;
+}
+.card-info-space {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.card-img-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 5px;
+}
+
+.card-enter {
+  width: 120px;
+  height: 80px;
+  color: black;
+  /* background-color: #a33236; */
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 24px;
+  transition: 0.2s;
+  font-family: "Do Hyeon", sans-serif;
   border: 1px solid black;
 }
+
+.card-enter:hover {
+  color: white;
+  background: #a33236;
+  box-shadow: 0 0 10px #a33236, 0 0 40px #a33236, 0 0 80px #a33236;
+  font-family: "Do Hyeon", sans-serif;
+}
+
 .event-infos {
   border: 1px solid black;
 }
@@ -239,9 +299,9 @@ body {
 }
 
 .logo-container:hover .navbar-logo {
-  transform: translate(90px, 0);
+  transform: translate(90px, 0) rotate(360deg);
   margin-left: 0px;
-  transition-duration: 0.5s;
+  transition-duration: 0.7s;
 }
 .logo-container:hover .navbar-logo-text {
   transform: translate(-50px, 0);
@@ -253,4 +313,16 @@ body {
 .navbar-logo-text {
   font-family: "Do Hyeon", sans-serif;
   font-size: 20px;
+}
+
+.event-sponsored-banner {
+  background-color: #97cda9;
+  display: flex;
+  justify-content: center;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  font-size: 22px;
+}
+.announcements-zone {
+  margin: 10px;
 }

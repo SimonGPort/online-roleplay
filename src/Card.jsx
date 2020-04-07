@@ -8,7 +8,7 @@ class Card extends Component {
   }
 
   cardEvent() {
-    return this.props.events.find(event => {
+    return this.props.events.find((event) => {
       return event.eventId === this.props.eventId;
     });
   }
@@ -16,25 +16,31 @@ class Card extends Component {
   render = () => {
     let cardEvent = this.cardEvent();
     return (
-      <div className="card">
+      <div className={this.props.Sponsored ? "card-sponsored" : "card"}>
         <div>
-          {this.props.eventId}
-
-          <div>{cardEvent.title}</div>
-          <div>{cardEvent.type}</div>
-          <div>{cardEvent.when}</div>
-          <div>{cardEvent.location}</div>
-          <div>{cardEvent.system}</div>
+          <div className="card-info">
+            <div>{cardEvent.when}</div>
+            <div className="card-info-space">{cardEvent.time}</div>
+            <div className="card-info-space">{cardEvent.type}</div>
+            <div className="card-info-space">{cardEvent.system}</div>
+          </div>
+          <div className="card-title">{cardEvent.title}</div>
+          <div className="card-info">{cardEvent.location}</div>
+          <div className="card-img-container">
+            <Link to={`/event/${this.props.eventId}`} className="card-enter">
+              Enter
+            </Link>{" "}
+            <img src={cardEvent.img} className="card-img" />
+          </div>
         </div>
-        <Link to={`/event/${this.props.eventId}`}>Enter</Link>
       </div>
     );
   };
 }
 
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
-    events: state.events
+    events: state.events,
   };
 };
 
