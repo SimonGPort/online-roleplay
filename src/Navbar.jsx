@@ -13,7 +13,7 @@ export default class Navbar extends Component {
       <div id="navbar">
         <div>
           <Link to="/" className="logo-container noLinkDecoration">
-            <img src="/images/logo dice20 final.png" className="navbar-logo" />
+            <img src="/images/dice20 logo3.png" className="navbar-logo" />
             <div className="navbar-logo-text">RollPlay </div>
           </Link>
         </div>

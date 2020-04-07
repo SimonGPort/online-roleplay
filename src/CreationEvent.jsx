@@ -20,48 +20,48 @@ class CreationEvent extends Component {
       description: "",
       location: {},
       numPlayers: 5,
-      imgFile: ""
+      imgFile: "",
     };
   }
 
-  titleInput = evt => {
+  titleInput = (evt) => {
     this.setState({ title: evt.target.value });
   };
-  typeInput = evt => {
+  typeInput = (evt) => {
     this.setState({ type: evt.target.value });
   };
-  themeInput = evt => {
+  themeInput = (evt) => {
     this.setState({ theme: evt.target.value });
   };
-  systemInput = evt => {
+  systemInput = (evt) => {
     this.setState({ system: evt.target.value });
   };
-  languageInput = evt => {
+  languageInput = (evt) => {
     this.setState({ language: evt.target.value });
   };
-  whenInput = evt => {
+  whenInput = (evt) => {
     this.setState({ when: evt.target.value });
   };
-  timeInput = evt => {
+  timeInput = (evt) => {
     this.setState({ time: evt.target.value });
   };
-  frequencyInput = evt => {
+  frequencyInput = (evt) => {
     this.setState({ frequency: evt.target.value });
   };
-  descriptionInput = evt => {
+  descriptionInput = (evt) => {
     this.setState({ description: evt.target.value });
   };
-  numPlayersInput = evt => {
+  numPlayersInput = (evt) => {
     this.setState({ numPlayers: evt.target.value });
   };
-  locationInput = location => {
+  locationInput = (location) => {
     this.setState({ location });
   };
-  pictureInput = e => {
+  pictureInput = (e) => {
     this.setState({ imgFile: e.target.files[0] });
   };
 
-  submitHandler = async evt => {
+  submitHandler = async (evt) => {
     evt.preventDefault();
     if (
       this.state.title === "" ||
@@ -91,7 +91,7 @@ class CreationEvent extends Component {
     data.append("imgFile", this.state.imgFile);
     let response = await fetch("/hostingAEvent", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -103,133 +103,181 @@ class CreationEvent extends Component {
     }
   };
 
+  accessDenied = () => {
+    alert("you need to login");
+    this.props.history.push("/");
+  };
+
   render = () => {
+    if (this.props.login === false) {
+      this.accessDenied();
+    }
+
     return (
-      <div>
-        {this.props.login === false ? (
-          <div>
-            <Link to="/login">Log in</Link>
-            <Link to="/signup">Sign up</Link>
+      <div className="creation-event-page">
+        <div></div>
+        <form onSubmit={this.submitHandler}>
+          <div className="creation-event-category creation-event-welcome">
+            Create an event
           </div>
-        ) : (
-          <div>
-            <form onSubmit={this.submitHandler}>
-              <label>Event's name</label>
-              <input onChange={this.titleInput} />
-              <label>Type</label>
-              <select onChange={this.typeInput}>
-                <option>Event</option>
-                <option>Convention</option>
-                <option>Online</option>
-              </select>
-              <label>System</label>
-              <select onChange={this.systemInput}>
-                <option></option>
-                <option>Call of cthulhu</option>
-                <option>Burning wheel</option>
-                <option>Conan</option>
-                <option>Cyberpunk</option>
-                <option>D&D 1/2E</option>
-                <option>D&D 3E</option>
-                <option>Mystery</option>
-                <option>D&D 4E</option>
-                <option>D&D 5E</option>
-                <option>Dungeon world</option>
-                <option>Fiasco</option>
-                <option>GURPS</option>
-                <option>Pathfinder</option>
-                <option>Pathfinder 2E</option>
-                <option>Runequest</option>
-                <option>Starwars FFG</option>
-                <option>Stars without number</option>
-                <option>Shadowrun</option>
-                <option>Dungeon world</option>
-                <option>Pokemon</option>
-                <option>The witcher</option>
-                <option>Warhammer</option>
-                <option>World of darkness</option>
-                <option>Other</option>
-              </select>
-              <label>Theme</label>
-              <select onChange={this.themeInput}>
-                <option></option>
-                <option>Cyberpunk</option>
-                <option>Fantastic</option>
-                <option>Futuristic</option>
-                <option>Historic</option>
-                <option>Horror</option>
-                <option>Modern</option>
-                <option>Mystery</option>
-              </select>
-              <label>Language</label>
-              <select onChange={this.languageInput}>
-                <option>English</option>
-                <option>French</option>
-              </select>
-              <label>When</label>
-              <input type="date" onChange={this.whenInput} />
-              <label>Time</label>
-              <input type="time" onChange={this.timeInput} />
-              <label>How often do you want to host this</label>
+          <div className="creation-event-category">
+            <div>
+              <label>Title</label>
+            </div>
+            <input
+              onChange={this.titleInput}
+              className="creation-event-input"
+            />
+          </div>
+          <div className="creation-event-category">
+            <label>Type</label>
+            <select
+              onChange={this.typeInput}
+              className="creation-event-scrollmenu"
+            >
+              <option>Event</option>
+              <option>Convention</option>
+              <option>Online</option>
+            </select>
+            <label>Language</label>
+            <select
+              onChange={this.languageInput}
+              className="creation-event-scrollmenu"
+            >
+              <option>English</option>
+              <option>French</option>
+            </select>
+            {this.state.type !== "Convention" && (
+              <>
+                <label>Number of attendees</label>
+                <select
+                  onChange={this.numPlayersInput}
+                  value={this.state.numPlayers}
+                  className="creation-event-scrollmenu"
+                >
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                </select>
+              </>
+            )}
+          </div>
+          <div className="creation-event-category">
+            <label>System</label>
+            <select
+              onChange={this.systemInput}
+              className="creation-event-scrollmenu"
+            >
+              <option></option>
+              <option>Call of cthulhu</option>
+              <option>Burning wheel</option>
+              <option>Conan</option>
+              <option>Cyberpunk</option>
+              <option>D&D 1/2E</option>
+              <option>D&D 3E</option>
+              <option>Mystery</option>
+              <option>D&D 4E</option>
+              <option>D&D 5E</option>
+              <option>Dungeon world</option>
+              <option>Fiasco</option>
+              <option>GURPS</option>
+              <option>Pathfinder</option>
+              <option>Pathfinder 2E</option>
+              <option>Runequest</option>
+              <option>Starwars FFG</option>
+              <option>Stars without number</option>
+              <option>Shadowrun</option>
+              <option>Dungeon world</option>
+              <option>Pokemon</option>
+              <option>The witcher</option>
+              <option>Warhammer</option>
+              <option>World of darkness</option>
+              <option>Other</option>
+            </select>
+            <label>Theme</label>
+            <select
+              onChange={this.themeInput}
+              className="creation-event-scrollmenu"
+            >
+              <option></option>
+              <option>Cyberpunk</option>
+              <option>Fantastic</option>
+              <option>Futuristic</option>
+              <option>Historic</option>
+              <option>Horror</option>
+              <option>Modern</option>
+              <option>Mystery</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div className="creation-event-category">
+            <label>When</label>
+            <input
+              type="date"
+              onChange={this.whenInput}
+              className="creation-event-scrollmenu"
+            />
+            <label>Time</label>
+            <input
+              type="time"
+              onChange={this.timeInput}
+              className="creation-event-scrollmenu"
+            />
+          </div>
+          {/* <label>How often do you want to host this</label>
               <select onChange={this.frequencyInput}>
                 <option>Just once</option>
                 <option>Every week</option>
                 <option>Every 2 weeks</option>
                 <option>Every month</option>
-              </select>
-              <label>Picture</label>
-              <input type="file" onChange={this.pictureInput} />
-              <label>Description</label>
-              <textarea
-                rows="6"
-                cols="20"
-                maxLength="500"
-                onChange={this.descriptionInput}
-              ></textarea>
-              {this.state.type !== "Convention" && (
-                <>
-                  <label>How many players on your table?</label>
-                  <select
-                    onChange={this.numPlayersInput}
-                    value={this.state.numPlayers}
-                  >
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                    <option>6</option>
-                    <option>7</option>
-                  </select>
-                </>
-              )}
-
-              {this.state.type !== "Online" && (
-                <>
-                  <div>
-                    <label>Address</label>
-                    {/* onChange={this.locationInput}  */}
-                    <SearchLocation setLocation={this.locationInput} />
-                  </div>
-                  <div>
-                    <SimpleMap
-                      lat={this.state.location.lat}
-                      lng={this.state.location.lng}
-                    />
-                  </div>
-                </>
-              )}
-              <input type="submit" value="Submit" />
-            </form>
+              </select> */}
+          <div className="creation-event-category">
+            <label>Picture</label>
+            <input type="file" onChange={this.pictureInput} />
           </div>
-        )}
+          <div className="creation-event-category">
+            <div>
+              <label>Description</label>
+            </div>
+            <textarea
+              rows="6"
+              cols="20"
+              maxLength="500"
+              onChange={this.descriptionInput}
+              className="creation-event-input"
+            ></textarea>
+          </div>
+          {this.state.type !== "Online" && (
+            <div className="creation-event-category">
+              <div>
+                <label>Address</label>
+                {/* onChange={this.locationInput}  */}
+                <SearchLocation setLocation={this.locationInput} />
+              </div>
+              <div>
+                <SimpleMap
+                  lat={this.state.location.lat}
+                  lng={this.state.location.lng}
+                />
+              </div>
+            </div>
+          )}
+          <div className="creation-event-enter-container">
+            <input type="submit" value="Submit" className="card-enter " />
+          </div>
+        </form>
+        <div></div>
       </div>
     );
   };
 }
 
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
     login: state.login,
-    user: state.user
+    user: state.user,
   };
 };
 

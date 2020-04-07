@@ -1,7 +1,7 @@
 import React from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
-  getLatLng
+  getLatLng,
 } from "react-places-autocomplete";
 
 class SearchLocation extends React.Component {
@@ -10,11 +10,11 @@ class SearchLocation extends React.Component {
     this.state = { address: "" };
   }
 
-  handleChange = address => {
+  handleChange = (address) => {
     this.setState({ address });
   };
 
-  handleSelect = async address => {
+  handleSelect = async (address) => {
     const results = await geocodeByAddress(address);
     const latlng = await getLatLng(results[0]);
     console.log(latlng);
@@ -33,12 +33,13 @@ class SearchLocation extends React.Component {
             <input
               {...getInputProps({
                 placeholder: "Search Places ...",
-                className: "location-search-input"
+                className: "location-search-input",
               })}
+              className="creation-event-input"
             />
             <div className="autocomplete-dropdown-container">
               {loading && <div>Loading...</div>}
-              {suggestions.map(suggestion => {
+              {suggestions.map((suggestion) => {
                 const className = suggestion.active
                   ? "suggestion-item--active"
                   : "suggestion-item";
@@ -50,7 +51,7 @@ class SearchLocation extends React.Component {
                   <div
                     {...getSuggestionItemProps(suggestion, {
                       className,
-                      style
+                      style,
                     })}
                   >
                     <span>{suggestion.description}</span>

@@ -302,6 +302,7 @@ body {
   transform: translate(90px, 0) rotate(360deg);
   margin-left: 0px;
   transition-duration: 0.7s;
+  z-index: 2;
 }
 .logo-container:hover .navbar-logo-text {
   transform: translate(-50px, 0);
@@ -325,4 +326,34 @@ body {
 }
 .announcements-zone {
   margin: 10px;
+}
+.creation-event-page {
+  grid-template-columns: auto auto auto;
+  display: grid;
+  justify-content: space-around;
+}
+
+.creation-event-category {
+  padding: 5px;
+  margin: 20px;
+  border-bottom: 3px solid #97cda9;
+}
+
+.creation-event-welcome {
+  font-family: "Do Hyeon", sans-serif;
+  font-size: 20px;
+}
+.creation-event-scrollmenu {
+  margin-left: 5px;
+  margin-right: 15px;
+}
+.creation-event-input {
+  width: -webkit-fill-available;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+.creation-event-enter-container {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
 }

@@ -21,6 +21,7 @@ class Card extends Component {
           <div className="card-info">
             <div>{cardEvent.when}</div>
             <div className="card-info-space">{cardEvent.time}</div>
+            <div className="card-info-space">{cardEvent.language}</div>
             <div className="card-info-space">{cardEvent.type}</div>
             <div className="card-info-space">{cardEvent.system}</div>
           </div>
@@ -29,7 +30,7 @@ class Card extends Component {
           <div className="card-img-container">
             <Link to={`/event/${this.props.eventId}`} className="card-enter">
               Enter
-            </Link>{" "}
+            </Link>
             <img src={cardEvent.img} className="card-img" />
           </div>
         </div>
