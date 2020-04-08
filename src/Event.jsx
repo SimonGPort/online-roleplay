@@ -3,10 +3,14 @@ import Chat from "./Chat.jsx";
 import { connect } from "react-redux";
 import Queue from "./Queue.jsx";
 import { withRouter } from "react-router-dom";
+import MapModal from "./MapModal.jsx";
 
 class Event extends Component {
   constructor() {
     super();
+    this.state = {
+      mapModal: false,
+    };
   }
 
   accessToTheOnlineGame = () => {
@@ -49,49 +53,99 @@ class Event extends Component {
     }
   };
 
+  addMapModal = () => {
+    this.setState({ mapModal: true });
+  };
+
+  removeMapModal = () => {
+    this.setState({ mapModal: false });
+  };
+
   render = () => {
     let event = this.props.events.find((element) => {
       return element.eventId === this.props.eventId;
     });
 
     return (
-      <div className="event-page">
-        <div>
-          <Chat
-            id={this.props.eventId}
-            user={this.props.user}
-            chat={event.chat}
-          />
-        </div>
-        <div className="event-center-section">
-          <div className="card-title">{event.title}</div>
-          <div>Game Master: {event.host}</div>
+      <>
+        {this.state.mapModal === true && (
           <div>
-            <img src={event.img} className="card-img" />
+            <MapModal
+              removeMapModal={this.removeMapModal}
+              location={event.location}
+            />
           </div>
-          <div>{event.descrition}</div>
-          {event.type === "Online" && (
-            <div>
-              <button onClick={() => this.accessToTheOnlineGame()}>
-                Access to the online game
-              </button>
-              <div>{event.time}</div>
+        )}
+        <div className="event-page">
+          <div className="event-info-section-container">
+            <div className="event-info-top-section">
+              <div className="event-information">Information</div>
+              <div className="event-info">
+                <div>{event.when}</div>
+                <div className="event-info-space">{event.time}</div>
+                <div className="event-info-space">{event.language}</div>
+                <div className="event-info-space">{event.type}</div>
+                <div className="event-info-space">{event.system}</div>
+              </div>
+              {event.type !== "Online" ? (
+                <div className="event-info">
+                  <div className="event-info-address">{event.address}</div>
+                  <div className="event-info-space">
+                    <img
+                      className="event-map-button"
+                      src="/images/explore-24px.svg"
+                      onClick={this.addMapModal}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="access-to-online-game-button-container">
+                  <button
+                    onClick={() => this.accessToTheOnlineGame()}
+                    className="access-to-online-game-button"
+                  >
+                    Access to the online game
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+            <Queue
+              id={this.props.eventId}
+              type={event.type}
+              players={event.players}
+              numPlayers={event.numPlayers}
+              conventionsGame={event.conventionsGame}
+              host={event.host}
+              login={this.props.login}
+              user={this.props.user}
+            />
+          </div>
+          <div className="event-center-section">
+            <div className="card-title">{event.title}</div>
+            <div>Game Master: {event.host}</div>
+            <div>
+              <img src={event.img} className="card-img" />
+            </div>
+
+            {event.description === "" ? (
+              ""
+            ) : (
+              <div className="event-description-section">
+                <div className="event-information">Description</div>
+
+                <div className="event-description">{event.description}</div>
+              </div>
+            )}
+          </div>
+          <div>
+            <Chat
+              id={this.props.eventId}
+              user={this.props.user}
+              chat={event.chat}
+            />
+          </div>
         </div>
-        <div className="event-right-section">
-          <Queue
-            id={this.props.eventId}
-            type={event.type}
-            players={event.players}
-            numPlayers={event.numPlayers}
-            conventionsGame={event.conventionsGame}
-            host={event.host}
-            login={this.props.login}
-            user={this.props.user}
-          />
-        </div>
-      </div>
+      </>
     );
   };
 }

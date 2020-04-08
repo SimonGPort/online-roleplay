@@ -59,18 +59,27 @@ class Chat extends Component {
   render = () => {
     return (
       <div className="chat-section">
-        {this.props.chat.map((msg, idx) => {
-          return (
-            <div key={idx}>
-              {msg.username}: {msg.message}
-            </div>
-          );
-        })}
-
+        <div className="event-information">Chat</div>
+        <div className="chat-message-list">
+          {this.props.chat.map((msg, idx) => {
+            return (
+              <div key={idx}>
+                {msg.username}: {msg.message}
+              </div>
+            );
+          })}
+        </div>
         <div>
           <form onSubmit={this.submitHandler} className="chat-form">
-            <input value={this.state.inputValue} onChange={this.chatInput} />
-            <input type="submit" />
+            <input
+              value={this.state.inputValue}
+              onChange={this.chatInput}
+              className="chat-input"
+            />
+            <button type="submit" className="event-chat-submit">
+              {" "}
+              Chat
+            </button>
           </form>
         </div>
       </div>

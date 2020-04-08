@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Card from "./Card.jsx";
+import { connect } from "react-redux";
 
 ///Mettre l'ID de l'eventSponsored dans un array, exemple: ["255215"]
 const eventSponsored = "904373";
@@ -44,4 +45,10 @@ class Announcements extends Component {
   };
 }
 
-export default Announcements;
+let mapStateToProps = (state) => {
+  return {
+    announcements: state.selectionEvent,
+  };
+};
+
+export default connect(mapStateToProps)(Announcements);

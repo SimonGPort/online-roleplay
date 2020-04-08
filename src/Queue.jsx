@@ -7,7 +7,7 @@ class Queue extends Component {
   constructor() {
     super();
   }
-  requestToJoin = async evt => {
+  requestToJoin = async (evt) => {
     if (this.props.login === false) {
       return alert("you need to login");
     }
@@ -16,7 +16,7 @@ class Queue extends Component {
     data.append("user", this.props.user);
     let response = await fetch("/requestToJoin", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -24,20 +24,20 @@ class Queue extends Component {
       this.props.dispatch({
         type: "joinEvent",
         user: this.props.user,
-        id: this.props.id
+        id: this.props.id,
       });
     } else {
       alert("you can't join this event");
     }
   };
 
-  leaveTheQueue = async evt => {
+  leaveTheQueue = async (evt) => {
     let data = new FormData();
     data.append("id", this.props.id);
     data.append("user", this.props.user);
     let response = await fetch("/leaveTheQueue", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -45,27 +45,27 @@ class Queue extends Component {
       this.props.dispatch({
         type: "leaveEvent",
         user: this.props.user,
-        id: this.props.id
+        id: this.props.id,
       });
     } else {
       alert("error, you can't leave this event");
     }
   };
 
-  deleteEvent = async evt => {
+  deleteEvent = async (evt) => {
     if (window.confirm("Do you really want to delete the event?")) {
       let data = new FormData();
       data.append("id", this.props.id);
       let response = await fetch("/deleteTheEvent", {
         method: "POST",
-        body: data
+        body: data,
       });
       let body = await response.text();
       body = JSON.parse(body);
       if (body.success) {
         this.props.dispatch({
           type: "DeleteEvent",
-          id: this.props.id
+          id: this.props.id,
         });
         this.props.history.push("/");
       } else {
@@ -90,35 +90,50 @@ class Queue extends Component {
     return (
       <div>
         <div>
-          number of persons {parseInt(this.props.players.length) + 1}/
-          {parseInt(this.props.numPlayers) + 1}
-        </div>
-        <div>
           {this.props.user === this.props.host ? (
-            <div>
-              Delete the event
-              <button onClick={this.deleteEvent} />
+            <div className="event-attend-section">
+              <button onClick={this.deleteEvent} className="card-enter">
+                Delete the event
+              </button>
+              <div>
+                Spots available {parseInt(this.props.players.length) + 1}/
+                {parseInt(this.props.numPlayers) + 1}
+              </div>
             </div>
           ) : this.props.players.includes(this.props.user) ? (
-            <div>
-              Leave the queue
-              <button onClick={this.leaveTheQueue} />
+            <div className="event-attend-section">
+              <button onClick={this.leaveTheQueue} className="card-enter">
+                Leave the queue
+              </button>
+              <div>
+                Spots available {parseInt(this.props.players.length) + 1}/
+                {parseInt(this.props.numPlayers) + 1}
+              </div>
             </div>
           ) : (
-            <div>
-              Request to join
-              <button onClick={this.requestToJoin} />
+            <div className="event-attend-section">
+              <button onClick={this.requestToJoin} className="card-enter">
+                Attend
+              </button>
+              <div>
+                Spots available {parseInt(this.props.players.length) + 1}/
+                {parseInt(this.props.numPlayers) + 1}
+              </div>
             </div>
           )}
         </div>
-        <div>Game Master: {this.props.host} </div>
         <div>
-          {this.props.players.map((player, idx) => {
-            if (idx <= this.props.players.length) {
-              return <div>Attendees: {player}</div>;
-            }
-            return <div>On the waiting list: {player}</div>;
-          })}
+          <div>Game Master: {this.props.host} </div>
+          <div>
+            {this.props.players.map((player, idx) => {
+              if (idx <= this.props.players.length) {
+                return <div className="Attendees">Attendees: {player}</div>;
+              }
+              return (
+                <div className="Attendees">On the waiting list: {player}</div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );

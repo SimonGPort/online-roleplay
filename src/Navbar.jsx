@@ -3,16 +3,26 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import NavbarLoginSection from "./NavbarLoginSection.jsx";
 
-export default class Navbar extends Component {
+class Navbar extends Component {
   constructor(props) {
     super(props);
   }
+
+  removeSelectionEvent = () => {
+    this.props.dispatch({
+      type: "removeSelectionEvent",
+    });
+  };
 
   render = () => {
     return (
       <div id="navbar">
         <div>
-          <Link to="/" className="logo-container noLinkDecoration">
+          <Link
+            to="/"
+            className="logo-container noLinkDecoration"
+            onClick={this.removeSelectionEvent}
+          >
             <img src="/images/dice20 logo3.png" className="navbar-logo" />
             <div className="navbar-logo-text">RollPlay </div>
           </Link>
@@ -23,3 +33,5 @@ export default class Navbar extends Component {
     );
   };
 }
+
+export default connect()(Navbar);

@@ -6,6 +6,14 @@ let reducer = (state, action) => {
     return { ...state, login: action.login, user: "" };
   }
 
+  if (action.type === "addSelectionEvent") {
+    return { ...state, selectionEvent: action.selection };
+  }
+
+  if (action.type === "removeSelectionEvent") {
+    return { ...state, selectionEvent: [] };
+  }
+
   if (action.type === "removeMasterToken") {
     return { ...state, MasterToken: {} };
   }
@@ -349,6 +357,7 @@ const store = createStore(
     permissionToken: [],
     selectedToken: undefined,
     postingData: false,
+    selectionEvent: [],
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

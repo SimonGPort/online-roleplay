@@ -10,7 +10,7 @@ class CreationEvent extends Component {
     super(props);
     this.state = {
       title: "",
-      type: "Event",
+      type: "Traditional",
       theme: "",
       system: "",
       language: "English",
@@ -70,7 +70,7 @@ class CreationEvent extends Component {
     evt.preventDefault();
     if (
       this.state.title === "" ||
-      this.state.theme === "" ||
+      // this.state.theme === "" ||
       this.state.system === "" ||
       this.state.imgFile === "" ||
       this.state.when === "" ||
@@ -141,7 +141,7 @@ class CreationEvent extends Component {
               onChange={this.typeInput}
               className="creation-event-scrollmenu"
             >
-              <option>Event</option>
+              <option>Traditional</option>
               <option>Convention</option>
               <option>Online</option>
             </select>
@@ -202,7 +202,7 @@ class CreationEvent extends Component {
               <option>World of darkness</option>
               <option>Other</option>
             </select>
-            <label>Theme</label>
+            {/* <label>Theme</label>
             <select
               onChange={this.themeInput}
               className="creation-event-scrollmenu"
@@ -216,7 +216,7 @@ class CreationEvent extends Component {
               <option>Modern</option>
               <option>Mystery</option>
               <option>Other</option>
-            </select>
+            </select> */}
           </div>
           <div className="creation-event-category">
             <label>When</label>

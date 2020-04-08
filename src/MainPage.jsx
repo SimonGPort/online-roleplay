@@ -14,10 +14,6 @@ const localizer = momentLocalizer(moment); // or globalizeLocalizer
 class MainPage extends Component {
   constructor() {
     super();
-    this.state = {
-      selection: [],
-      myEventsList: []
-    };
   }
 
   componentDidMount() {
@@ -32,16 +28,20 @@ class MainPage extends Component {
     if (body.success) {
       this.props.dispatch({
         type: "fetchEvents",
-        events: body.events
+        events: body.events,
       });
     } else {
       console.log("fetchEvents error");
     }
   };
 
-  handleSubmit = evt => {
-    console.log("evt:", evt);
-    this.setState({ selection: evt.resource });
+  handleSubmit = (evt) => {
+    this.props.dispatch({
+      type: "addSelectionEvent",
+      selection: evt.resource,
+    });
+    // console.log("evt:", evt);
+    // this.setState({ selection: evt.resource });
   };
 
   render = () => {
@@ -62,7 +62,7 @@ class MainPage extends Component {
     }
     return (
       <div className="main-page">
-        <Announcements announcements={this.state.selection} />
+        <Announcements announcements={this.props.selection} />
         <Calendar
           localizer={localizer}
           events={this.props.events}
@@ -77,9 +77,9 @@ class MainPage extends Component {
   };
 }
 
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   const reducedList = state.events.reduce((accumulator, eventToAdd) => {
-    const eventFound = accumulator.find(event => {
+    const eventFound = accumulator.find((event) => {
       return event.when === eventToAdd.when && event.type === eventToAdd.type;
     });
     if (eventFound) {
@@ -90,7 +90,7 @@ let mapStateToProps = state => {
     return [...accumulator, { ...eventToAdd, eventId: [eventToAdd.eventId] }];
   }, []);
 
-  let eventsReformatted = reducedList.map(event => {
+  let eventsReformatted = reducedList.map((event) => {
     let eventTransform = {};
     eventTransform.title = event.type + " (" + event.eventId.length + ")";
     eventTransform.resource = event.eventId;
@@ -105,7 +105,7 @@ let mapStateToProps = state => {
   });
 
   return {
-    events: eventsReformatted
+    events: eventsReformatted,
   };
 };
 

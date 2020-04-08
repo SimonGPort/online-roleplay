@@ -45,7 +45,7 @@ body {
 }
 .event-page {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 1fr 1fr 1fr;
   padding: 10px;
   height: calc(100vh - 58px);
   box-sizing: border-box;
@@ -91,9 +91,8 @@ body {
 
 .card-enter {
   width: 120px;
-  height: 80px;
+  height: 60px;
   color: black;
-  /* background-color: #a33236; */
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -107,8 +106,9 @@ body {
 
 .card-enter:hover {
   color: white;
-  background: #a33236;
-  box-shadow: 0 0 10px #a33236, 0 0 40px #a33236, 0 0 80px #a33236;
+  /* background: #a33236; */
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
   font-family: "Do Hyeon", sans-serif;
 }
 
@@ -177,6 +177,7 @@ body {
   text-decoration: none;
   border: 0;
   font-family: "Rubik", sans-serif;
+  cursor: pointer;
 }
 
 .navbar-button:hover {
@@ -361,6 +362,9 @@ body {
 .chat-form {
   position: absolute;
   bottom: 20px;
+  display: grid;
+  grid-template-columns: 80% 20%;
+  width: calc(100% - 20px);
 }
 
 .chat-section {
@@ -370,16 +374,125 @@ body {
   box-sizing: border-box;
   height: 100%;
   position: relative;
+  display: grid;
+  grid-template-rows: 6% 86% 8%;
 }
 
 .event-center-section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
-.event-right-section {
+.chat-message-list {
+  overflow: scroll;
+}
+.chat-input {
+  border-radius: 5px;
+}
+.event-description-section {
+  overflow: sc;
+  width: 100%;
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+}
+.event-description {
+  overflow: scroll;
+  height: calc(100% - 20px);
+}
+
+.event-queue-section {
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+  display: grid;
+  grid-template-rows: 92% 8%;
+}
+
+.event-chat-submit {
+  border-radius: 5px;
+  border: 3px solid #97cda9;
+}
+.event-info-space {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.event-info {
+  color: black;
   display: flex;
-  flex-direction: column;
+  margin-bottom: 15px;
+}
+.event-info-top-section {
+  border-bottom: 3px solid #97cda9;
+  padding-bottom: 5px;
+}
+.event-info-section-container {
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+}
+.event-info-address {
+  padding-right: 10px;
+}
+
+.event-map-button:hover {
+  box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
+  cursor: pointer;
+}
+.map-modal-simple-map {
+  background-color: white;
+  border-radius: 5px;
+  z-index: 20;
+  margin: 30px;
+  opacity: 1;
+  border: 3px solid #5a5a5a;
+  width: 70%;
+}
+.event-attend-section {
+  display: grid;
   align-items: center;
+  grid-template-columns: 50% 50%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.Attendees {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.access-to-online-game-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.access-to-online-game-button {
+  height: 30px;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid black;
+}
+
+.access-to-online-game-button:hover {
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: white;
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+}
+
+.event-information {
+  font-size: x-large;
 }
