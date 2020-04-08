@@ -11,6 +11,8 @@ class SearchLocation extends React.Component {
   }
 
   handleChange = (address) => {
+    console.log("typeof", typeof address);
+    this.props.setAddress(address);
     this.setState({ address });
   };
 
@@ -19,11 +21,14 @@ class SearchLocation extends React.Component {
     const latlng = await getLatLng(results[0]);
     console.log(latlng);
     this.props.setLocation(latlng);
+    this.props.setAddress(address);
+    this.setState({ address });
   };
 
   render() {
     return (
       <PlacesAutocomplete
+        // value={this.props.addressLocation}
         value={this.state.address}
         onChange={this.handleChange}
         onSelect={this.handleSelect}

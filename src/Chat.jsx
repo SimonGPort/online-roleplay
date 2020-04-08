@@ -6,7 +6,7 @@ class Chat extends Component {
     super();
     this.state = {
       inputValue: "",
-      password: ""
+      password: "",
     };
   }
   componentDidMount() {
@@ -30,22 +30,22 @@ class Chat extends Component {
     this.props.dispatch({
       type: "set-messages",
       messages: parsed.chat,
-      eventId: this.props.id
+      eventId: this.props.id,
     });
   };
 
-  chatInput = evt => {
+  chatInput = (evt) => {
     this.setState({ inputValue: evt.target.value });
   };
 
-  submitHandler = async evt => {
+  submitHandler = async (evt) => {
     evt.preventDefault();
     let data = new FormData();
     data.append("message", this.state.inputValue);
     data.append("eventId", this.props.id);
     let response = await fetch("/postMessage", {
       method: "POST",
-      body: data
+      body: data,
     });
     const body = await response.text();
     const parsed = JSON.parse(body);
@@ -58,7 +58,7 @@ class Chat extends Component {
 
   render = () => {
     return (
-      <>
+      <div className="chat-section">
         {this.props.chat.map((msg, idx) => {
           return (
             <div key={idx}>
@@ -68,12 +68,12 @@ class Chat extends Component {
         })}
 
         <div>
-          <form onSubmit={this.submitHandler}>
+          <form onSubmit={this.submitHandler} className="chat-form">
             <input value={this.state.inputValue} onChange={this.chatInput} />
             <input type="submit" />
           </form>
         </div>
-      </>
+      </div>
     );
   };
 }

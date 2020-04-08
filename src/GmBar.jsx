@@ -67,6 +67,7 @@ export default function GmBar(props) {
         backgroundHeight: parsed.backgroundHeight,
         index: parsed.index,
       });
+      setButtonBackgroundSize(false);
     } else {
       alert("changingTheBackgroundSize Failure");
     }
@@ -96,6 +97,7 @@ export default function GmBar(props) {
           gmPage: parsed.goingToThisGmPage,
           doesGoingToThisGmPageExist: parsed.doesGoingToThisGmPageExist,
         });
+        setButtonPageChange(false);
       }
 
       if (parsed.isChangingThePlayersPage) {
@@ -159,7 +161,6 @@ export default function GmBar(props) {
               style={{ backgroundColor: "yellow" }}
               onClick={() => {
                 changeBackgroundSize();
-                setButtonBackgroundSize(false);
               }}
             >
               Save Background-Size
@@ -324,7 +325,6 @@ export default function GmBar(props) {
                 style={{ backgroundColor: "yellow" }}
                 onClick={() => {
                   ChangingPageHandler();
-                  setButtonPageChange(false);
                 }}
               >
                 Save Pages

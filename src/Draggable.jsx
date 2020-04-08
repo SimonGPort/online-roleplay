@@ -9,7 +9,7 @@ class Draggable extends Component {
       isDragging: false,
       prevPositionX: 0,
       prevPositionY: 0,
-      isResizing: false
+      isResizing: false,
     };
   }
   componentWillUnmount() {
@@ -17,12 +17,12 @@ class Draggable extends Component {
     window.removeEventListener("mouseup", this.handleMouseUp);
   }
 
-  eraseToken = async evt => {
+  eraseToken = async (evt) => {
     let data = new FormData();
     data.append("tokenId", this.props.token.tokenId);
     let response = await fetch("/eraseToken", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -31,13 +31,13 @@ class Draggable extends Component {
     }
   };
 
-  hideToken = async evt => {
+  hideToken = async (evt) => {
     let data = new FormData();
     console.log(this.props.token);
     data.append("token", JSON.stringify(this.props.token));
     let response = await fetch("/hideToken", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -46,21 +46,21 @@ class Draggable extends Component {
     }
   };
 
-  duplicateToken = async evt => {
+  duplicateToken = async (evt) => {
     let data = new FormData();
     console.log(this.props.token);
     data.append("number", this.props.isDuplicateToken.number);
     data.append("token", JSON.stringify(this.props.token));
     let response = await fetch("/duplicateToken", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
     if (body.success) {
       this.props.dispatch({
         type: "isDuplicate",
-        isDuplicate: false
+        isDuplicate: false,
       });
       console.log("the token is duplicate");
     }
@@ -80,7 +80,7 @@ class Draggable extends Component {
       this.props.dispatch({
         type: "permissionToken",
         permissionToken: this.props.token.permission,
-        tokenId: this.props.token.tokenId
+        tokenId: this.props.token.tokenId,
       });
     }
 
@@ -117,11 +117,11 @@ class Draggable extends Component {
     this.setState({
       isDragging: true,
       prevPositionX: clientX,
-      prevPositionY: clientY
+      prevPositionY: clientY,
     });
     this.props.dispatch({
       type: "draggingStart",
-      tokenIdDragged: this.props.token.tokenId
+      tokenIdDragged: this.props.token.tokenId,
     });
   };
 
@@ -144,11 +144,11 @@ class Draggable extends Component {
       type: "MouseMoveToken",
       positionX: Number(this.props.token.positionX) + differenceX,
       positionY: Number(this.props.token.positionY) + differenceY,
-      tokenId: this.props.token.tokenId
+      tokenId: this.props.token.tokenId,
     });
     this.setState({
       prevPositionX: clientX,
-      prevPositionY: clientY
+      prevPositionY: clientY,
     });
   };
 
@@ -157,10 +157,10 @@ class Draggable extends Component {
     window.removeEventListener("mouseup", this.handleMouseUp);
     const child = document.getElementById(this.props.token.tokenId);
     this.setState({
-      isDragging: false
+      isDragging: false,
     });
     this.props.dispatch({
-      type: "draggingEnd"
+      type: "draggingEnd",
     });
 
     this.dragged(
@@ -178,7 +178,19 @@ class Draggable extends Component {
     data.append("width", width);
     data.append("height", height);
     data.append("tokenId", this.props.token.tokenId);
-    await fetch("/dragged", { method: "POST", body: data });
+
+    this.props.dispatch({
+      type: "startPostingData",
+    });
+
+    let response = await fetch("/dragged", { method: "POST", body: data });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      this.props.dispatch({
+        type: "endPostingData",
+      });
+    }
   };
 
   render() {
@@ -191,7 +203,7 @@ class Draggable extends Component {
           style={{
             position: "absolute",
             top: `${this.props.token.positionY}px`,
-            left: `${this.props.token.positionX}px`
+            left: `${this.props.token.positionX}px`,
           }}
           onMouseDown={this.handleMouseDown}
         >
@@ -202,13 +214,13 @@ class Draggable extends Component {
   }
 }
 
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
     typeSelection: state.typeSelection,
     isErasingToken: state.isErasingToken,
     user: state.user,
     isDuplicateToken: state.isDuplicateToken,
-    isHidingToken: state.isHidingToken
+    isHidingToken: state.isHidingToken,
   };
 };
 

@@ -62,6 +62,14 @@ let reducer = (state, action) => {
     return { ...state, erasingCanvas: action.erasingCanvas };
   }
 
+  if (action.type === "startPostingData") {
+    return { ...state, postingData: true };
+  }
+
+  if (action.type === "endPostingData") {
+    return { ...state, postingData: false };
+  }
+
   if (action.type === "CreationOnlineToken") {
     return { ...state, CreationOnlineToken: action.action };
   }
@@ -146,7 +154,6 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "gameUpdate") {
-    console.log("dragging", action.dragging);
     return produce(state, (draftState) => {
       draftState.gameView = action.gameView;
       draftState.MasterToken = action.MasterToken;
@@ -341,6 +348,7 @@ const store = createStore(
     erasingCanvas: false,
     permissionToken: [],
     selectedToken: undefined,
+    postingData: false,
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

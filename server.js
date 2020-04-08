@@ -495,7 +495,6 @@ app.post("/deleteTheEventConvention", uploads.none(), async (req, res) => {
 });
 
 app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
-  console.log("hostingAEvent BackEnd");
   let sessionId = req.cookies.sid;
   let host = sessions[sessionId];
   let title = req.body.title;
@@ -510,6 +509,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   let conventionsGame = [];
   let frequency = req.body.frequency;
   let description = req.body.description;
+  let address = req.body.address;
   let location = JSON.parse(req.body.location);
   let numPlayers = req.body.numPlayers;
   let img = "/uploads/" + req.file.filename;
@@ -537,6 +537,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
       when: when,
       time: time,
       frequency: frequency,
+      address: address,
       location: location,
       numPlayers: numPlayers,
     });
@@ -587,7 +588,7 @@ app.get("/fetchGameView", async (req, res) => {
   // let page = JSON.parse(req.query.page);
   let user = req.query.user;
 
-  amITheGm = host === user;
+  let amITheGm = host === user;
 
   try {
     const gameView = await dbo

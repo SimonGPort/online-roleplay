@@ -19,6 +19,7 @@ class CreationEvent extends Component {
       frequency: "Just once",
       description: "",
       location: {},
+      address: "",
       numPlayers: 5,
       imgFile: "",
     };
@@ -61,6 +62,10 @@ class CreationEvent extends Component {
     this.setState({ imgFile: e.target.files[0] });
   };
 
+  addressInput = (evt) => {
+    this.setState({ address: evt });
+  };
+
   submitHandler = async (evt) => {
     evt.preventDefault();
     if (
@@ -86,6 +91,7 @@ class CreationEvent extends Component {
     data.append("time", this.state.time);
     data.append("frequency", this.state.frequency);
     data.append("description", this.state.description);
+    data.append("address", this.state.address);
     data.append("location", JSON.stringify(this.state.location));
     data.append("numPlayers", this.state.numPlayers);
     data.append("imgFile", this.state.imgFile);
@@ -235,7 +241,11 @@ class CreationEvent extends Component {
               </select> */}
           <div className="creation-event-category">
             <label>Picture</label>
-            <input type="file" onChange={this.pictureInput} />
+            <input
+              type="file"
+              onChange={this.pictureInput}
+              className="creation-event-scrollmenu"
+            />
           </div>
           <div className="creation-event-category">
             <div>
@@ -253,8 +263,11 @@ class CreationEvent extends Component {
             <div className="creation-event-category">
               <div>
                 <label>Address</label>
-                {/* onChange={this.locationInput}  */}
-                <SearchLocation setLocation={this.locationInput} />
+                <SearchLocation
+                  setLocation={this.locationInput}
+                  setAddress={this.addressInput}
+                  addressLocation={this.state.address}
+                />
               </div>
               <div>
                 <SimpleMap

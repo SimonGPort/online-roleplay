@@ -18,6 +18,7 @@ class Card extends Component {
     return (
       <div className={this.props.Sponsored ? "card-sponsored" : "card"}>
         <div>
+          <div className="card-title">{cardEvent.title}</div>
           <div className="card-info">
             <div>{cardEvent.when}</div>
             <div className="card-info-space">{cardEvent.time}</div>
@@ -25,8 +26,7 @@ class Card extends Component {
             <div className="card-info-space">{cardEvent.type}</div>
             <div className="card-info-space">{cardEvent.system}</div>
           </div>
-          <div className="card-title">{cardEvent.title}</div>
-          <div className="card-info">{cardEvent.location}</div>
+          <div className="card-info">{cardEvent.address}</div>
           <div className="card-img-container">
             <Link to={`/event/${this.props.eventId}`} className="card-enter">
               Enter

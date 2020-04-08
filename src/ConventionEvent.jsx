@@ -11,17 +11,17 @@ class ConventionEvent extends Component {
   }
 
   render = () => {
-    let event = this.props.events.find(element => {
+    let event = this.props.events.find((element) => {
       return element.eventId === this.props.eventId;
     });
-    let table = event.conventionsGame.find(element => {
+    let table = event.conventionsGame.find((element) => {
       return element.tableId === this.props.tableId;
     });
 
-    let eventIndex = this.props.events.findIndex(event => {
+    let eventIndex = this.props.events.findIndex((event) => {
       return event.eventId === this.props.eventId;
     });
-    let tableIndex = event.conventionsGame.findIndex(table => {
+    let tableIndex = event.conventionsGame.findIndex((table) => {
       return table.tableId === this.props.tableId;
     });
 
@@ -30,14 +30,14 @@ class ConventionEvent extends Component {
     ) : (
       <div className="event-page">
         <div>
-          <div className="event-infos">
-            <div>{table.title}</div>
-            <div>{table.descrition}</div>
+          <div>
+            <div className="card-title">{table.title}</div>
             <div>Game Master: {table.gm}</div>
             <div>Convention's organiser: {event.host}</div>
             <div>
-              <img src={table.img} />
+              <img src={table.img} className="card-img" />
             </div>
+            <div>{table.descrition}</div>
           </div>
 
           <div>
@@ -66,11 +66,11 @@ class ConventionEvent extends Component {
   };
 }
 
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
     events: state.events,
     login: state.login,
-    user: state.user
+    user: state.user,
   };
 };
 export default connect(mapStateToProps)(ConventionEvent);

@@ -44,8 +44,11 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 .event-page {
-  display: flex;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+  height: calc(100vh - 58px);
+  box-sizing: border-box;
 }
 .card {
   border: 1px solid #97cda9;
@@ -66,7 +69,7 @@ body {
   display: flex;
 }
 .card-title {
-  font-size: 22px;
+  font-size: 30px;
 }
 .card-img {
   widows: 350px;
@@ -109,9 +112,6 @@ body {
   font-family: "Do Hyeon", sans-serif;
 }
 
-.event-infos {
-  border: 1px solid black;
-}
 .markerOnMap {
   width: 30px;
   height: 30px;
@@ -356,4 +356,30 @@ body {
   display: flex;
   justify-content: center;
   margin: 15px;
+}
+
+.chat-form {
+  position: absolute;
+  bottom: 20px;
+}
+
+.chat-section {
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+}
+
+.event-center-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.event-right-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

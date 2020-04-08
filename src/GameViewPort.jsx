@@ -222,9 +222,7 @@ class GameViewPort extends Component {
 
     const { width, height, src, clear } = canvasDisplay;
     let img = new Image(width, height);
-    console.log("clear", clear);
     if (clear) {
-      console.log("inside if clear");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
     img.onload = async () => {

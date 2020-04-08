@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import GameViewPort from "./GameViewPort.jsx";
 import CreationOnlineToken from "./CreationOnlineToken.jsx";
+
+let count = 0;
 
 export default function Online(props) {
   const [loading, setLoading] = useState(false);
@@ -12,34 +14,40 @@ export default function Online(props) {
   const dispatch = useDispatch();
   const MasterToken = useSelector((state) => state.MasterToken);
   const gameView = useSelector((state) => state.gameView);
+  const postingData = useSelector((state) => state.postingData);
+  const interval = useRef();
 
   useEffect(() => {
     let updateGameView = () => {
+      count++;
+
       if (dragging === true) {
         return;
       }
+      console.log("count:", count);
       (async () => {
-        let myPage = "";
-        if (user === props.host) {
-          myPage = page.gmPage;
-        } else {
-          myPage = page.playersPage;
-        }
-        console.log("myPage:", myPage);
-        myPage = JSON.stringify(myPage);
+        // let myPage = "";
+        // if (user === props.host) {
+        //   myPage = page.gmPage;
+        // } else {
+        //   myPage = page.playersPage;
+        // }
         let response = await fetch(
-          "/fetchGameView?host=" + props.host + "&page=" + myPage
+          "/fetchGameView?host=" + props.host + "&user=" + user
         );
         let responseBody = await response.text();
         let body = JSON.parse(responseBody);
         if (body.success) {
-          let sameGameView =
-            JSON.stringify(gameView) === JSON.stringify(body.gameViewFilter);
-          let sameMasterToken =
-            JSON.stringify(MasterToken) === JSON.stringify(body.MasterToken);
-          if (sameGameView && sameMasterToken) {
-            return;
-          }
+          // let sameGameView =
+          //   JSON.stringify(gameView) === JSON.stringify(body.gameViewFilter);
+          // let sameMasterToken =
+          //   JSON.stringify(MasterToken) === JSON.stringify(body.MasterToken);
+          // let sameScan =
+          //   JSON.stringify(MasterToken.scan) ===
+          //   JSON.stringify(body.MasterToken.scan);
+          // if (sameGameView && sameMasterToken && sameScan) {
+          //   return;
+          // }
 
           console.log("difference gameView", gameView, body.gameViewFilter);
           console.log("gameView avantDispatch", body.gameViewFilter);
@@ -56,14 +64,31 @@ export default function Online(props) {
       })();
     };
 
-    let interval = setInterval(updateGameView, 500);
-    if (dragging === true) {
-      clearInterval(interval);
+    if (
+      dragging === false &&
+      interval.current === undefined &&
+      postingData === false
+    ) {
+      interval.current = setInterval(updateGameView, 1000);
+      console.log("nouvel interval");
     }
+
+    if (dragging === true) {
+      console.log("intervalClear");
+      IntervalCleanup();
+    }
+
+    window.addEventListener("beforeunload", IntervalCleanup);
     return () => {
-      clearInterval(interval);
+      window.removeEventListener("beforeunload", IntervalCleanup);
+      IntervalCleanup();
     };
   }, [dragging, page, gameView, MasterToken]);
+
+  let IntervalCleanup = () => {
+    clearInterval(interval.current);
+    interval.current = undefined;
+  };
 
   useEffect(() => {
     // dispatch({ type: "newUserOnline", user: user });

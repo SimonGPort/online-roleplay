@@ -10,7 +10,7 @@ class Event extends Component {
   }
 
   accessToTheOnlineGame = () => {
-    let event = this.props.events.find(element => {
+    let event = this.props.events.find((element) => {
       return element.eventId === this.props.eventId;
     });
 
@@ -50,39 +50,36 @@ class Event extends Component {
   };
 
   render = () => {
-    let event = this.props.events.find(element => {
+    let event = this.props.events.find((element) => {
       return element.eventId === this.props.eventId;
     });
 
     return (
       <div className="event-page">
         <div>
-          <div className="event-infos">
-            <div>{event.title}</div>
-            <div>{event.descrition}</div>
-            <div>Organiser of this event: {event.host}</div>
-            <div>
-              <img src={event.img} />
-            </div>
-            {event.type === "Online" && (
-              <div>
-                <button onClick={() => this.accessToTheOnlineGame()}>
-                  Access to the online game
-                </button>
-                <div>{event.time}</div>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <Chat
-              id={this.props.eventId}
-              user={this.props.user}
-              chat={event.chat}
-            />
-          </div>
+          <Chat
+            id={this.props.eventId}
+            user={this.props.user}
+            chat={event.chat}
+          />
         </div>
-        <div>
+        <div className="event-center-section">
+          <div className="card-title">{event.title}</div>
+          <div>Game Master: {event.host}</div>
+          <div>
+            <img src={event.img} className="card-img" />
+          </div>
+          <div>{event.descrition}</div>
+          {event.type === "Online" && (
+            <div>
+              <button onClick={() => this.accessToTheOnlineGame()}>
+                Access to the online game
+              </button>
+              <div>{event.time}</div>
+            </div>
+          )}
+        </div>
+        <div className="event-right-section">
           <Queue
             id={this.props.eventId}
             type={event.type}
@@ -99,11 +96,11 @@ class Event extends Component {
   };
 }
 
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
     events: state.events,
     login: state.login,
-    user: state.user
+    user: state.user,
   };
 };
 export default withRouter(connect(mapStateToProps)(Event));
