@@ -203,12 +203,16 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "newGmEventConvention") {
-    let eventId = action.eventId;
     let user = action.user;
-    let tableIndex = action.tableIndex;
+    let numPlayers = action.numPlayers - 1;
 
     return produce(state, (draftState) => {
-      draftState.events[eventIndex].conventionsGame[tableIndex].gm = user;
+      draftState.events[action.eventIndex].conventionsGame[
+        action.tableIndex
+      ].gm = user;
+      draftState.events[action.eventIndex].conventionsGame[
+        action.tableIndex
+      ].numPlayers = numPlayers;
     });
   }
 

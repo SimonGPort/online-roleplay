@@ -462,7 +462,7 @@ body {
 .event-attend-section {
   display: grid;
   align-items: center;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 33% 33% 33%;
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -495,4 +495,80 @@ body {
 
 .event-information {
   font-size: x-large;
+}
+
+.convention-createANewTable-button {
+  height: 30px;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid black;
+  padding: 3px;
+  text-decoration: none;
+}
+
+.convention-createANewTable-button:hover {
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: white;
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+  text-decoration: none;
+}
+
+.ReturnToTheConvention-button-container {
+  margin-bottom: 10px;
+}
+.convention-createANewTable-button-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.convention-BecomeTheGm-button {
+  height: 30px;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid black;
+  padding: 3px;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.convention-BecomeTheGm-button:hover {
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: white;
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.AcceptThisGame-button {
+  height: 30px;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid black;
+  padding: 3px;
+  text-decoration: none;
+  margin-left: 10px;
+}
+.AcceptThisGame-button:hover {
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: white;
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.convention-game-button {
+  text-decoration: none;
+  color: black;
+}
+.convention-game-button:hover {
+  text-decoration: none;
+  color: #97cda9;
 }

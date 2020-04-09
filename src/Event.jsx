@@ -104,7 +104,7 @@ class Event extends Component {
                     onClick={() => this.accessToTheOnlineGame()}
                     className="access-to-online-game-button"
                   >
-                    Access to the online game
+                    Access the online game
                   </button>
                 </div>
               )}
@@ -122,7 +122,11 @@ class Event extends Component {
           </div>
           <div className="event-center-section">
             <div className="card-title">{event.title}</div>
-            <div>Game Master: {event.host}</div>
+            {event.type !== "Convention" ? (
+              <div>Game Master: {event.host}</div>
+            ) : (
+              <div>Convention's organizer: {event.host}</div>
+            )}
             <div>
               <img src={event.img} className="card-img" />
             </div>

@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 
 class ConventionQueueOfOneEvent extends Component {
   constructor() {
     super();
   }
-  requestToJoin = async evt => {
+  requestToJoin = async (evt) => {
     if (this.props.login === false) {
       return alert("you need to login");
     }
@@ -16,7 +16,7 @@ class ConventionQueueOfOneEvent extends Component {
     data.append("tableIndex", this.props.tableIndex);
     let response = await fetch("/requestToJoinConventionEvent", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -25,20 +25,20 @@ class ConventionQueueOfOneEvent extends Component {
         type: "joinEventConvention",
         user: this.props.user,
         eventIndex: this.props.eventIndex,
-        tableIndex: this.props.tableIndex
+        tableIndex: this.props.tableIndex,
       });
     } else {
       alert("you can't join this event");
     }
   };
 
-  leaveTheQueue = async evt => {
+  leaveTheQueue = async (evt) => {
     let data = new FormData();
     data.append("eventId", this.props.eventId);
     data.append("tableIndex", this.props.tableIndex);
     let response = await fetch("/leaveTheQueueConvention", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -47,14 +47,14 @@ class ConventionQueueOfOneEvent extends Component {
         type: "leaveEventConvention",
         user: this.props.user,
         eventIndex: this.props.eventIndex,
-        tableIndex: this.props.tableIndex
+        tableIndex: this.props.tableIndex,
       });
     } else {
       alert("error, you can't leave this event");
     }
   };
 
-  newGm = async evt => {
+  newGm = async (evt) => {
     if (this.props.login === false) {
       return alert("you need to login");
     }
@@ -64,23 +64,25 @@ class ConventionQueueOfOneEvent extends Component {
     data.append("tableIndex", this.props.tableIndex);
     let response = await fetch("/newGmEventConvention", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
     if (body.success) {
+      console.log("success newGM");
       this.props.dispatch({
         type: "newGmEventConvention",
         eventIndex: this.props.eventIndex,
         user: this.props.user,
-        tableIndex: this.props.tableIndex
+        tableIndex: this.props.tableIndex,
+        numPlayers: this.props.table.numPlayers,
       });
     } else {
-      alert("error, you can't delete this event");
+      alert("error, newGmEventConvention");
     }
   };
 
-  deleteEvent = async evt => {
+  deleteEvent = async (evt) => {
     if (window.confirm("Do you really want to delete the event?")) {
       let data = new FormData();
       data.append("eventIndex", this.props.eventIndex);
@@ -89,7 +91,7 @@ class ConventionQueueOfOneEvent extends Component {
       data.append("eventId", this.props.eventId);
       let response = await fetch("/deleteTheEventConvention", {
         method: "POST",
-        body: data
+        body: data,
       });
       let body = await response.text();
       body = JSON.parse(body);
@@ -98,7 +100,7 @@ class ConventionQueueOfOneEvent extends Component {
         this.props.dispatch({
           type: "DeleteEventConvention",
           eventIndex: this.props.eventIndex,
-          tableIndex: this.props.tableIndex
+          tableIndex: this.props.tableIndex,
         });
       } else {
         alert("error, you can't delete this event");
@@ -109,46 +111,47 @@ class ConventionQueueOfOneEvent extends Component {
   render = () => {
     return (
       <div>
-        <div>
-          <Link to={`/event/${this.props.eventId}`}>
-            Return to the convention's page
-          </Link>
-        </div>
-        <div>
-          {"Number of persons "}
-          {this.props.table.gm === ""
-            ? Number(parseInt(this.props.table.players.length)) +
-              "/" +
-              Number(parseInt(this.props.table.numPlayers))
-            : Number(parseInt(this.props.table.players.length) + 1) +
-              "/" +
-              Number(parseInt(this.props.table.numPlayers) + 1)}
-        </div>
-        <div>
+        <div className="event-attend-section">
           {this.props.user === this.props.host ||
           this.props.user === this.props.table.tableCreator ? (
             <div>
-              Delete the event
-              <button onClick={this.deleteEvent} />
+              <button onClick={this.deleteEvent} className="card-enter">
+                Delete the event
+              </button>
             </div>
-          ) : this.props.table.players.includes(this.props.user) ? (
+          ) : (
+            ""
+          )}
+          {this.props.table.players.includes(this.props.user) ? (
             <div>
-              Leave the queue
-              <button onClick={this.leaveTheQueue} />
+              <button onClick={this.leaveTheQueue} className="card-enter">
+                Leave the queue
+              </button>
             </div>
           ) : (
             <div>
-              Request to join
-              <button onClick={this.requestToJoin} />
+              <button onClick={this.requestToJoin} className="card-enter">
+                Attend
+              </button>
             </div>
           )}
+          <div>
+            Spots available{" "}
+            {this.props.table.gm === ""
+              ? Number(parseInt(this.props.table.players.length)) +
+                "/" +
+                Number(parseInt(this.props.table.numPlayers))
+              : Number(parseInt(this.props.table.players.length) + 1) +
+                "/" +
+                Number(parseInt(this.props.table.numPlayers) + 1)}
+          </div>
         </div>
         <div>
-          Game Master:{" "}
+          Game Master:
           {this.props.table.gm !== "" ? (
             this.props.table.gm
           ) : (
-            <button onClick={this.newGm}>
+            <button onClick={this.newGm} class="convention-BecomeTheGm-button">
               Become the Game Master of this table
             </button>
           )}

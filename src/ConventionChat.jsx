@@ -6,7 +6,7 @@ class ConventionChat extends Component {
     super();
     this.state = {
       inputValue: "",
-      password: ""
+      password: "",
     };
   }
   componentDidMount() {
@@ -34,15 +34,15 @@ class ConventionChat extends Component {
       type: "set-messages-convention",
       messages: parsed.chat,
       eventId: this.props.eventId,
-      tableId: this.props.tableId
+      tableId: this.props.tableId,
     });
   };
 
-  chatInput = evt => {
+  chatInput = (evt) => {
     this.setState({ inputValue: evt.target.value });
   };
 
-  submitHandler = async evt => {
+  submitHandler = async (evt) => {
     evt.preventDefault();
     let data = new FormData();
     data.append("message", this.state.inputValue);
@@ -50,7 +50,7 @@ class ConventionChat extends Component {
     data.append("tableIndex", this.props.tableIndex);
     let response = await fetch("/postMessageConvention", {
       method: "POST",
-      body: data
+      body: data,
     });
     const body = await response.text();
     const parsed = JSON.parse(body);
@@ -63,22 +63,48 @@ class ConventionChat extends Component {
 
   render = () => {
     return (
-      <>
-        {this.props.chat.map((msg, idx) => {
-          return (
-            <div key={idx}>
-              {msg.username}: {msg.message}
-            </div>
-          );
-        })}
-
+      <div className="chat-section">
+        <div className="event-information">Chat</div>
+        <div className="chat-message-list">
+          {this.props.chat.map((msg, idx) => {
+            return (
+              <div key={idx}>
+                {msg.username}: {msg.message}
+              </div>
+            );
+          })}
+        </div>
         <div>
-          <form onSubmit={this.submitHandler}>
-            <input value={this.state.inputValue} onChange={this.chatInput} />
-            <input type="submit" />
+          <form onSubmit={this.submitHandler} className="chat-form">
+            <input
+              value={this.state.inputValue}
+              onChange={this.chatInput}
+              className="chat-input"
+            />
+            <button type="submit" className="event-chat-submit">
+              Chat
+            </button>
           </form>
         </div>
-      </>
+      </div>
+
+      ////vieux
+      // <>
+      //   {this.props.chat.map((msg, idx) => {
+      //     return (
+      //       <div key={idx}>
+      //         {msg.username}: {msg.message}
+      //       </div>
+      //     );
+      //   })}
+
+      //   <div>
+      //     <form onSubmit={this.submitHandler}>
+      //       <input value={this.state.inputValue} onChange={this.chatInput} />
+      //       <input type="submit" />
+      //     </form>
+      //   </div>
+      // </>
     );
   };
 }

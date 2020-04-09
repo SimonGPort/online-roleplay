@@ -7,13 +7,13 @@ class ConventionQueue extends Component {
     super();
   }
 
-  gameAccepted = async idx => {
+  gameAccepted = async (idx) => {
     let data = new FormData();
     data.append("tableIndex", idx);
     data.append("eventId", this.props.eventId);
     let response = await fetch("/gameAcceptedForConvention", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -21,7 +21,7 @@ class ConventionQueue extends Component {
       this.props.dispatch({
         type: "gameAcceptedConvention",
         eventId: this.props.eventId,
-        tableIndex: idx
+        tableIndex: idx,
       });
     } else {
       alert("error, you can't accept this event");
@@ -31,7 +31,7 @@ class ConventionQueue extends Component {
   render = () => {
     return (
       <div>
-        <div>//// la liste des parties disponible a faire</div>
+        <div className="event-information">List of the games</div>
         <div>
           {this.props.conventionsGame.map((game, idx) => {
             if (game.visibility !== "Restricted") {
@@ -53,11 +53,15 @@ class ConventionQueue extends Component {
                 <div key={idx}>
                   <Link
                     to={`/convention-event/${this.props.eventId}/${game.tableId}`}
+                    className="convention-game-button"
                   >
                     {game.title}
                   </Link>
                   {this.props.host === this.props.user ? (
-                    <button onClick={() => this.gameAccepted(idx)}>
+                    <button
+                      onClick={() => this.gameAccepted(idx)}
+                      className="AcceptThisGame-button"
+                    >
                       Accept this game
                     </button>
                   ) : (
@@ -68,8 +72,11 @@ class ConventionQueue extends Component {
             }
           })}
         </div>
-        <div>
-          <Link to={`/creation-convention-table/${this.props.eventId}`}>
+        <div className="convention-createANewTable-button-container">
+          <Link
+            to={`/creation-convention-table/${this.props.eventId}`}
+            className="convention-createANewTable-button"
+          >
             Create a new table
           </Link>
         </div>

@@ -111,7 +111,12 @@ class CreationConventionTable extends Component {
       alert("Can't post your event");
     }
   };
-  ////nouveau stock ici
+
+  accessDenied = () => {
+    alert("you need to login");
+    this.props.history.push("/");
+  };
+
   render = () => {
     if (this.props.login === false) {
       this.accessDenied();
@@ -122,7 +127,7 @@ class CreationConventionTable extends Component {
         <div></div>
         <form onSubmit={this.submitHandler}>
           <div className="creation-event-category creation-event-welcome">
-            Create an event
+            Create a new table for the convention
           </div>
           <div className="creation-event-category">
             <div>

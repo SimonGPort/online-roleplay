@@ -77,7 +77,6 @@ class Chat extends Component {
               className="chat-input"
             />
             <button type="submit" className="event-chat-submit">
-              {" "}
               Chat
             </button>
           </form>

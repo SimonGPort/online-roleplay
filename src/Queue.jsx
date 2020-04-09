@@ -67,6 +67,9 @@ class Queue extends Component {
           type: "DeleteEvent",
           id: this.props.id,
         });
+        this.props.dispatch({
+          type: "removeSelectionEvent",
+        });
         this.props.history.push("/");
       } else {
         alert("error, you can't delete this event");
