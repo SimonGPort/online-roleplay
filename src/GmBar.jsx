@@ -25,6 +25,10 @@ export default function GmBar(props) {
   const dispatch = useDispatch();
 
   let thereIsGrid = async () => {
+    dispatch({
+      type: "startPostingData",
+    });
+
     let data = new FormData();
     data.append("host", props.host);
     data.append("actionGrid", !grid);
@@ -44,6 +48,9 @@ export default function GmBar(props) {
     } else {
       alert("thereIsGrid Failure");
     }
+    dispatch({
+      type: "endPostingData",
+    });
   };
 
   let changeBackgroundSize = async () => {
@@ -71,9 +78,16 @@ export default function GmBar(props) {
     } else {
       alert("changingTheBackgroundSize Failure");
     }
+    dispatch({
+      type: "endPostingData",
+    });
   };
 
   let ChangingPageHandler = async () => {
+    // dispatch({
+    //   type: "startPostingData",
+    // });
+
     let data = new FormData();
     data.append("newGmPage", JSON.stringify(gmPageInput));
     data.append("newPlayersPage", JSON.stringify(playersPageInput));
@@ -91,13 +105,13 @@ export default function GmBar(props) {
     if (parsed.success) {
       console.log("ChangingThePage succes backend, frontend res");
       if (parsed.isChangingTheGmPage) {
+        setButtonPageChange(false);
         dispatch({
           type: "changingGmPage",
           index: parsed.indexGmPage,
           gmPage: parsed.goingToThisGmPage,
           doesGoingToThisGmPageExist: parsed.doesGoingToThisGmPageExist,
         });
-        setButtonPageChange(false);
       }
 
       if (parsed.isChangingThePlayersPage) {
@@ -109,6 +123,9 @@ export default function GmBar(props) {
     } else {
       console.log("backend changingPage error");
     }
+    dispatch({
+      type: "endPostingData",
+    });
   };
 
   return (
@@ -189,6 +206,9 @@ export default function GmBar(props) {
                 setButtonBackgroundSize(true);
                 setBackgroundWidth(props.widthSquares);
                 setBackgroundHeight(props.heightSquares);
+                dispatch({
+                  type: "startPostingData",
+                });
               }}
             >
               Edit Background-Size
@@ -353,6 +373,9 @@ export default function GmBar(props) {
                   setButtonPageChange(true);
                   setGmPageInput(gmPage);
                   setPlayersPageInput(playersPage);
+                  dispatch({
+                    type: "startPostingData",
+                  });
                 }}
               >
                 Edit Pages
