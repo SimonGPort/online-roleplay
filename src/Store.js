@@ -124,7 +124,6 @@ let reducer = (state, action) => {
     if (action.number < 0) {
       action.number = 1;
     }
-    console.log(action.number);
     return produce(state, (draftState) => {
       draftState.isDuplicateToken.number = action.number;
     });
@@ -144,7 +143,7 @@ let reducer = (state, action) => {
     });
   }
 
-  if (action.type === "changeMaster") {
+  if (action.type === "changeCanvasAfterDraw") {
     let canvasIndex = action.canvasIndex;
 
     if (action.clear) {
@@ -170,13 +169,20 @@ let reducer = (state, action) => {
       JSON.stringify(state.gameView) === JSON.stringify(action.gameView);
     let sameMasterToken =
       JSON.stringify(state.MasterToken) === JSON.stringify(action.MasterToken);
+    // let sameMasterToken = false;
 
     if (state.dragging || state.postingData) {
       return state;
     }
 
+    // console.log("same?:", sameGameView, sameMasterToken);
+    if (sameGameView && sameMasterToken) {
+      return state;
+    }
+
     if (sameGameView && !sameMasterToken) {
       return produce(state, (draftState) => {
+        draftState.MasterToken = {};
         draftState.MasterToken = action.MasterToken;
         draftState.page.gmPage = action.MasterToken.page.gmPage;
         draftState.page.playersPage = action.MasterToken.page.playersPage;
@@ -189,6 +195,7 @@ let reducer = (state, action) => {
     } else {
       return produce(state, (draftState) => {
         draftState.gameView = action.gameView;
+        draftState.MasterToken = {};
         draftState.MasterToken = action.MasterToken;
         draftState.page.gmPage = action.MasterToken.page.gmPage;
         draftState.page.playersPage = action.MasterToken.page.playersPage;

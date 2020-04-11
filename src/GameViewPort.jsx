@@ -30,6 +30,10 @@ class GameViewPort extends Component {
     if (this.state.localFlag) {
       return;
     }
+
+    if (this.props.postingData) {
+      return;
+    }
     if (
       this.canvasRef.current.toDataURL() !== this.props.MasterToken.canvas.src
     ) {
@@ -67,6 +71,19 @@ class GameViewPort extends Component {
     });
   };
   canvasFill = async () => {
+    this.props.dispatch({
+      type: "startPostingData",
+    });
+    let pageDiplay = undefined;
+    if (this.props.user === this.props.host) {
+      pageDiplay = this.props.page.gmPage;
+    } else {
+      pageDiplay = this.props.page.playersPage;
+    }
+    let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
+      return canvas.page === pageDiplay;
+    });
+
     const { width, height } = this.state.canvas;
     this.state.ctx.fillStyle = this.state.penColor;
     this.state.ctx.fillRect(0, 0, width, height);
@@ -78,10 +95,42 @@ class GameViewPort extends Component {
     data.append("width", this.state.canvas.width);
     data.append("height", this.state.canvas.height);
     data.append("clear", JSON.stringify(false));
-    await fetch("/drawData", { method: "POST", body: data });
+    let response = await fetch("/drawData", { method: "POST", body: data });
+    const body = await response.text();
+    const parsed = JSON.parse(body);
+    if (parsed.success) {
+      console.log("draw post success");
+      this.props.dispatch({
+        type: "changeCanvasAfterDraw",
+        clear: false,
+        src: this.canvasRef.current.toDataURL(),
+        canvasIndex: canvasIndex,
+      });
+      this.props.dispatch({
+        type: "endPostingData",
+      });
+    } else {
+      console.log("draw post failure");
+      this.props.dispatch({
+        type: "endPostingData",
+      });
+    }
   };
 
   canvasClear = async () => {
+    this.props.dispatch({
+      type: "startPostingData",
+    });
+    let pageDiplay = undefined;
+    if (this.props.user === this.props.host) {
+      pageDiplay = this.props.page.gmPage;
+    } else {
+      pageDiplay = this.props.page.playersPage;
+    }
+    let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
+      return canvas.page === pageDiplay;
+    });
+
     const { width, height } = this.state.canvas;
     this.state.ctx.clearRect(0, 0, width, height);
     let data = new FormData();
@@ -92,7 +141,26 @@ class GameViewPort extends Component {
     data.append("width", this.state.canvas.width);
     data.append("height", this.state.canvas.height);
     data.append("clear", JSON.stringify(true));
-    await fetch("/drawData", { method: "POST", body: data });
+    let response = await fetch("/drawData", { method: "POST", body: data });
+    const body = await response.text();
+    const parsed = JSON.parse(body);
+    if (parsed.success) {
+      console.log("draw post success");
+      this.props.dispatch({
+        type: "changeCanvasAfterDraw",
+        clear: true,
+        src: this.canvasRef.current.toDataURL(),
+        canvasIndex: canvasIndex,
+      });
+      this.props.dispatch({
+        type: "endPostingData",
+      });
+    } else {
+      console.log("draw post failure");
+      this.props.dispatch({
+        type: "endPostingData",
+      });
+    }
   };
 
   resizeCanvasDimensions = () => {
@@ -156,13 +224,17 @@ class GameViewPort extends Component {
         type: "draggingStart",
         tokenIdDragged: null,
       });
+      this.props.dispatch({
+        type: "startPostingData",
+      });
+      console.log("down");
     }
     if (status === "up" || status === "out") {
-      console.log("up");
       if (this.state.localFlag === false) {
         return;
       }
       this.props.dispatch({ type: "draggingEnd" });
+      console.log("up");
       this.setState({
         localFlag: false,
       });
@@ -176,12 +248,12 @@ class GameViewPort extends Component {
       let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
         return canvas.page === pageDiplay;
       });
-      // this.props.dispatch({
-      //   type: "changeMaster",
-      //   clear: this.props.erasingCanvas,
-      //   src: this.canvasRef.current.toDataURL(),
-      //   canvasIndex: canvasIndex,
-      // });
+      this.props.dispatch({
+        type: "changeCanvasAfterDraw",
+        clear: this.props.erasingCanvas,
+        src: this.canvasRef.current.toDataURL(),
+        canvasIndex: canvasIndex,
+      });
 
       let data = new FormData();
       data.append("src", this.canvasRef.current.toDataURL());
@@ -191,7 +263,20 @@ class GameViewPort extends Component {
       data.append("clear", JSON.stringify(this.props.erasingCanvas));
       data.append("page", this.props.page.gmPage);
       data.append("canvas", JSON.stringify(this.props.MasterToken.canvas));
-      await fetch("/drawData", { method: "POST", body: data });
+      let response = await fetch("/drawData", { method: "POST", body: data });
+      const body = await response.text();
+      const parsed = JSON.parse(body);
+      if (parsed.success) {
+        console.log("draw post success");
+        this.props.dispatch({
+          type: "endPostingData",
+        });
+      } else {
+        console.log("draw post failure");
+        this.props.dispatch({
+          type: "endPostingData",
+        });
+      }
     }
     if (status === "move") {
       if (this.state.localFlag) {
@@ -222,10 +307,11 @@ class GameViewPort extends Component {
 
     const { width, height, src, clear } = canvasDisplay;
     let img = new Image(width, height);
-    if (clear) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+
     img.onload = async () => {
+      if (clear) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
       ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(img, 0, 0);
       // this.props.dispatch({
@@ -238,7 +324,6 @@ class GameViewPort extends Component {
     img.src = src;
   };
   handleMouseDown = async (evt) => {
-    console.log(evt);
     if (this.props.isScanning === false) {
       return;
     }
@@ -290,7 +375,7 @@ class GameViewPort extends Component {
         scan.time.hours === timeNow.hours &&
         scan.time.minute === timeNow.minute &&
         scan.time.second <= timeNow.second &&
-        scan.time.second + 2 >= timeNow.second
+        scan.time.second + 10 >= timeNow.second
       );
     });
     let hideProperty = (token) => {
@@ -370,11 +455,10 @@ let mapStateToProps = (state) => {
     user: state.user,
     typeSelection: state.typeSelection,
     MasterToken: state.MasterToken,
-    canvasFill: state.canvasFill,
-    canvasClear: state.canvasClear,
     isScanning: state.isScanning,
     erasingCanvas: state.erasingCanvas,
     grid: state.grid,
+    postingData: state.postingData,
   };
 };
 export default connect(mapStateToProps)(GameViewPort);

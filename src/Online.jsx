@@ -43,12 +43,19 @@ export default function Online(props) {
   useEffect(() => {
     if (!postingData) {
       IntervalCleanup();
-      gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
-      interval.current = setInterval(updateGameView2, 100);
+      // gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
+      console.log("new version postingdata=false");
+      interval.current = setInterval(updateGameView2, 500);
     } else {
+      // gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
+      console.log("new version postingdata=true");
       IntervalCleanup();
     }
   }, [postingData]);
+
+  useEffect(() => {
+    gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
+  }, [dragging]);
 
   useEffect(() => {
     window.addEventListener("beforeunload", IntervalCleanup);
@@ -67,6 +74,7 @@ export default function Online(props) {
     if (updating.current) {
       return;
     }
+    console.log("version1:", gameUpdateVersion);
     updating.current = true;
     (async () => {
       let gameUpdateVersionStrigify = JSON.stringify(gameUpdateVersion);
@@ -80,10 +88,22 @@ export default function Online(props) {
       );
       let responseBody = await response.text();
       let body = JSON.parse(responseBody);
+
       if (body.gameUpdateVersion.current !== gameUpdateVersion.current) {
+        console.log(
+          "Version 1.5 delete:",
+          gameUpdateVersion.current,
+          body.gameUpdateVersion.current
+        );
         updating.current = false;
         return;
       }
+
+      console.log(
+        "Version2:",
+        gameUpdateVersion.current,
+        body.gameUpdateVersion.current
+      );
 
       if (body.success) {
         dispatch({
@@ -91,7 +111,13 @@ export default function Online(props) {
           gameView: body.gameViewFilter,
           MasterToken: body.MasterToken,
         });
+        console.log(
+          "version3:",
+          gameUpdateVersion,
+          body.gameUpdateVersion.current
+        );
         setLoading(true);
+        gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
         updating.current = false;
         return;
       }
