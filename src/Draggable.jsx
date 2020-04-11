@@ -10,8 +10,18 @@ class Draggable extends Component {
       prevPositionX: 0,
       prevPositionY: 0,
       isResizing: false,
+      positionX: undefined,
+      positionY: undefined,
     };
   }
+
+  componentDidMount() {
+    this.setState({
+      positionX: this.props.token.positionX,
+      positionY: this.props.token.positionY,
+    });
+  }
+
   componentWillUnmount() {
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
@@ -104,8 +114,8 @@ class Draggable extends Component {
     window.addEventListener("mouseup", this.handleMouseUp);
     const child = document.getElementById(this.props.token.tokenId);
 
-    let differenceX = clientX - this.props.token.positionX;
-    let differenceY = clientY - this.props.token.positionY;
+    let differenceX = clientX - this.state.positionX;
+    let differenceY = clientY - this.state.positionY;
     if (
       this.props.user === this.props.token.host &&
       differenceX >= child.offsetWidth * 0.9 &&
@@ -118,6 +128,10 @@ class Draggable extends Component {
       isDragging: true,
       prevPositionX: clientX,
       prevPositionY: clientY,
+    });
+    this.props.dispatch({
+      type: "Operation_ComponentDBRedux_Complete",
+      action: false,
     });
     this.props.dispatch({
       type: "draggingStart",
@@ -140,13 +154,15 @@ class Draggable extends Component {
 
     let differenceX = clientX - this.state.prevPositionX;
     let differenceY = clientY - this.state.prevPositionY;
-    this.props.dispatch({
-      type: "MouseMoveToken",
-      positionX: Number(this.props.token.positionX) + differenceX,
-      positionY: Number(this.props.token.positionY) + differenceY,
-      tokenId: this.props.token.tokenId,
-    });
+    // this.props.dispatch({
+    //   type: "MouseMoveToken",
+    //   positionX: Number(this.state.positionX) + differenceX,
+    //   positionY: Number(this.state.positionY) + differenceY,
+    //   tokenId: this.props.token.tokenId,
+    // });
     this.setState({
+      positionX: Number(this.state.positionX) + differenceX,
+      positionY: Number(this.state.positionY) + differenceY,
       prevPositionX: clientX,
       prevPositionY: clientY,
     });
@@ -159,16 +175,17 @@ class Draggable extends Component {
     this.setState({
       isDragging: false,
     });
-    this.props.dispatch({
-      type: "draggingEnd",
-    });
 
     this.dragged(
-      this.props.token.positionX,
-      this.props.token.positionY,
+      this.state.positionX,
+      this.state.positionY,
       child.offsetWidth,
       child.offsetHeight
     );
+
+    this.props.dispatch({
+      type: "draggingEnd",
+    });
   };
 
   dragged = async (positionX, positionY, width, height) => {
@@ -178,6 +195,7 @@ class Draggable extends Component {
     data.append("width", width);
     data.append("height", height);
     data.append("tokenId", this.props.token.tokenId);
+    data.append("host", this.props.token.host);
 
     this.props.dispatch({
       type: "startPostingData",
@@ -187,6 +205,7 @@ class Draggable extends Component {
     let body = await response.text();
     body = JSON.parse(body);
     if (body.success) {
+      console.log("/dragged success");
       this.props.dispatch({
         type: "endPostingData",
       });
@@ -201,9 +220,16 @@ class Draggable extends Component {
         <div
           className="online-container"
           style={{
+            display: this.props.grid === true ? "block" : "none",
+          }}
+          style={{
             position: "absolute",
-            top: `${this.props.token.positionY}px`,
-            left: `${this.props.token.positionX}px`,
+            top: this.props.Operation_ComponentDBRedux_Complete
+              ? `${this.props.token.positionY}px`
+              : `${this.state.positionY}px`,
+            left: this.props.Operation_ComponentDBRedux_Complete
+              ? `${this.props.token.positionX}px`
+              : `${this.state.positionX}px`,
           }}
           onMouseDown={this.handleMouseDown}
         >
@@ -221,6 +247,8 @@ let mapStateToProps = (state) => {
     user: state.user,
     isDuplicateToken: state.isDuplicateToken,
     isHidingToken: state.isHidingToken,
+    Operation_ComponentDBRedux_Complete:
+      state.Operation_ComponentDBRedux_Complete,
   };
 };
 

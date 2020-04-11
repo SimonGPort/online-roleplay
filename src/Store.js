@@ -74,6 +74,10 @@ let reducer = (state, action) => {
     return { ...state, postingData: true };
   }
 
+  if (action.type === "Operation_ComponentDBRedux_Complete") {
+    return { ...state, Operation_ComponentDBRedux_Complete: false };
+  }
+
   if (action.type === "endPostingData") {
     return { ...state, postingData: false };
   }
@@ -161,14 +165,51 @@ let reducer = (state, action) => {
     return { ...state, dragging: false, tokenIdDragged: "" };
   }
 
-  if (action.type === "gameUpdate") {
-    return produce(state, (draftState) => {
-      draftState.gameView = action.gameView;
-      draftState.MasterToken = action.MasterToken;
-      draftState.page.gmPage = action.MasterToken.page.gmPage;
-      draftState.page.playersPage = action.MasterToken.page.playersPage;
-    });
+  if (action.type === "gameUpdate2") {
+    let sameGameView =
+      JSON.stringify(state.gameView) === JSON.stringify(action.gameView);
+    let sameMasterToken =
+      JSON.stringify(state.MasterToken) === JSON.stringify(action.MasterToken);
+
+    if (state.dragging || state.postingData) {
+      return state;
+    }
+
+    if (sameGameView && !sameMasterToken) {
+      return produce(state, (draftState) => {
+        draftState.MasterToken = action.MasterToken;
+        draftState.page.gmPage = action.MasterToken.page.gmPage;
+        draftState.page.playersPage = action.MasterToken.page.playersPage;
+      });
+    } else if (!sameGameView && sameMasterToken) {
+      return produce(state, (draftState) => {
+        draftState.gameView = action.gameView;
+        draftState.Operation_ComponentDBRedux_Complete = true;
+      });
+    } else {
+      return produce(state, (draftState) => {
+        draftState.gameView = action.gameView;
+        draftState.MasterToken = action.MasterToken;
+        draftState.page.gmPage = action.MasterToken.page.gmPage;
+        draftState.page.playersPage = action.MasterToken.page.playersPage;
+        draftState.Operation_ComponentDBRedux_Complete = true;
+      });
+    }
   }
+
+  //   if (action.type === "gameUpdate") {
+  //     if (state.dragging === true || state.postingData === true) {
+  //       console.log("Store stop");
+  //       return state;
+  //     }
+
+  //   return produce(state, (draftState) => {
+  //     draftState.gameView = action.gameView;
+  //     draftState.MasterToken = action.MasterToken;
+  //     draftState.page.gmPage = action.MasterToken.page.gmPage;
+  //     draftState.page.playersPage = action.MasterToken.page.playersPage;
+  //   });
+  // }
 
   if (action.type === "set-messages") {
     let eventId = action.eventId;
@@ -362,6 +403,7 @@ const store = createStore(
     selectedToken: undefined,
     postingData: false,
     selectionEvent: [],
+    Operation_ComponentDBRedux_Complete: true,
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

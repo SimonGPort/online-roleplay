@@ -166,13 +166,15 @@ app.post("/requestToJoin", uploads.none(), async (req, res) => {
     return;
   }
 });
-
+//je travail ici
 app.post("/dragged", uploads.none(), async (req, res) => {
   let positionX = req.body.positionX;
   let positionY = req.body.positionY;
   let width = req.body.width;
   let height = req.body.height;
   let tokenId = req.body.tokenId;
+  let host = req.body.host;
+
   try {
     await dbo.collection("tokens").updateOne(
       { tokenId: tokenId },
@@ -185,6 +187,7 @@ app.post("/dragged", uploads.none(), async (req, res) => {
         },
       }
     );
+
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("dragged error", err);
@@ -587,6 +590,7 @@ app.get("/fetchGameView", async (req, res) => {
   let host = req.query.host;
   // let page = JSON.parse(req.query.page);
   let user = req.query.user;
+  let gameUpdateVersion = JSON.parse(req.query.gameUpdateVersion);
 
   let amITheGm = host === user;
 
@@ -612,7 +616,14 @@ app.get("/fetchGameView", async (req, res) => {
       // return token.page === page;
     });
 
-    res.send(JSON.stringify({ success: true, gameViewFilter, MasterToken }));
+    res.send(
+      JSON.stringify({
+        success: true,
+        gameViewFilter,
+        MasterToken,
+        gameUpdateVersion,
+      })
+    );
   } catch (err) {
     console.log("/GameView error", err);
     res.send(JSON.stringify({ success: false }));
