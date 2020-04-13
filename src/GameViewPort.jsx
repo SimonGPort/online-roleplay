@@ -34,9 +34,7 @@ class GameViewPort extends Component {
     if (this.props.postingData) {
       return;
     }
-    if (
-      this.canvasRef.current.toDataURL() !== this.props.MasterToken.canvas.src
-    ) {
+    if (this.canvasRef.current.toDataURL() !== this.props.canvas.src) {
       this.drawCanvas(this.state.ctx, this.state.canvas);
     }
   }
@@ -83,6 +81,10 @@ class GameViewPort extends Component {
     let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
       return canvas.page === pageDiplay;
     });
+    if (canvasIndex === -1) {
+      let canvas = this.canvasRef.current;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     const { width, height } = this.state.canvas;
     this.state.ctx.fillStyle = this.state.penColor;
@@ -130,6 +132,10 @@ class GameViewPort extends Component {
     let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
       return canvas.page === pageDiplay;
     });
+    if (canvasIndex === -1) {
+      let canvas = this.canvasRef.current;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     const { width, height } = this.state.canvas;
     this.state.ctx.clearRect(0, 0, width, height);
@@ -146,6 +152,7 @@ class GameViewPort extends Component {
     const parsed = JSON.parse(body);
     if (parsed.success) {
       console.log("draw post success");
+
       this.props.dispatch({
         type: "changeCanvasAfterDraw",
         clear: true,
@@ -164,27 +171,27 @@ class GameViewPort extends Component {
   };
 
   resizeCanvasDimensions = () => {
-    let pageDiplay = undefined;
-    if (this.props.user === this.props.host) {
-      pageDiplay = this.props.page.gmPage;
-    } else {
-      pageDiplay = this.props.page.playersPage;
-    }
-    let canvasDisplay = this.props.MasterToken.canvas.find((canvas) => {
-      return canvas.page === pageDiplay;
-    });
+    // let pageDiplay = undefined;
+    // if (this.props.user === this.props.host) {
+    //   pageDiplay = this.props.page.gmPage;
+    // } else {
+    //   pageDiplay = this.props.page.playersPage;
+    // }
+    // let canvasDisplay = this.props.MasterToken.canvas.find((canvas) => {
+    //   return canvas.page === pageDiplay;
+    // });
 
-    if (canvasDisplay === undefined) {
+    if (Object.entries(this.props.canvas).length === 0) {
       return;
     }
 
     if (
-      canvasDisplay.width === this.state.canvas.width &&
-      canvasDisplay.height === this.state.canvas.height
+      this.props.canvas.width === this.state.canvas.width &&
+      this.props.canvas.height === this.state.canvas.height
     ) {
       return;
     }
-    const canvas = this.canvasRef.current;
+    let canvas = this.canvasRef.current;
     canvas.width = canvasDisplay.width;
     canvas.height = canvasDisplay.height;
     this.setState({ canvas, height: canvas.height, width: canvas.width });
@@ -239,22 +246,26 @@ class GameViewPort extends Component {
         localFlag: false,
       });
 
-      let pageDiplay = undefined;
-      if (this.props.user === this.props.host) {
-        pageDiplay = this.props.page.gmPage;
-      } else {
-        pageDiplay = this.props.page.playersPage;
-      }
-      let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
-        return canvas.page === pageDiplay;
-      });
-      this.props.dispatch({
-        type: "changeCanvasAfterDraw",
-        clear: this.props.erasingCanvas,
-        src: this.canvasRef.current.toDataURL(),
-        canvasIndex: canvasIndex,
-      });
+      // let pageDiplay = undefined;
+      // if (this.props.user === this.props.host) {
+      //   pageDiplay = this.props.page.gmPage;
+      // } else {
+      //   pageDiplay = this.props.page.playersPage;
+      // }
+      // let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
+      //   return canvas.page === pageDiplay;
+      // });
+      // if (canvasIndex === -1) {
+      //   let canvas = this.canvasRef.current;
+      //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // }
 
+      ///A CHANGER IMPORTANT
+      // this.props.dispatch({
+      //   type: "changeCanvasAfterDraw",
+      //   clear: this.props.erasingCanvas,
+      //   src: this.canvasRef.current.toDataURL(),
+      // });
       let data = new FormData();
       data.append("src", this.canvasRef.current.toDataURL());
       data.append("host", this.props.host);
@@ -262,7 +273,8 @@ class GameViewPort extends Component {
       data.append("height", this.state.canvas.height);
       data.append("clear", JSON.stringify(this.props.erasingCanvas));
       data.append("page", this.props.page.gmPage);
-      data.append("canvas", JSON.stringify(this.props.MasterToken.canvas));
+      // data.append("canvas", JSON.stringify(this.props.canvas));
+      data.append("pageInDB", JSON.stringify(this.props.MasterToken.pageInDB));
       let response = await fetch("/drawData", { method: "POST", body: data });
       const body = await response.text();
       const parsed = JSON.parse(body);
@@ -285,33 +297,17 @@ class GameViewPort extends Component {
     }
   };
   drawCanvas = async (ctx, canvas) => {
-    if (this.props.MasterToken.canvas.length === 0) {
-      return;
-    }
-    let pageDiplay = undefined;
-    if (this.props.user === this.props.host) {
-      pageDiplay = this.props.page.gmPage;
-    } else {
-      pageDiplay = this.props.page.playersPage;
-    }
-
-    let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
-      return canvas.page === pageDiplay;
-    });
-    let canvasDisplay = this.props.MasterToken.canvas.find((canvas) => {
-      return canvas.page === pageDiplay;
-    });
-    if (canvasDisplay === undefined) {
+    if (Object.entries(this.props.canvas).length === 0) {
       return;
     }
 
-    const { width, height, src, clear } = canvasDisplay;
+    const { width, height, src, clear } = this.props.canvas;
     let img = new Image(width, height);
+    if (clear) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     img.onload = async () => {
-      if (clear) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
       ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(img, 0, 0);
       // this.props.dispatch({
@@ -459,6 +455,7 @@ let mapStateToProps = (state) => {
     erasingCanvas: state.erasingCanvas,
     grid: state.grid,
     postingData: state.postingData,
+    canvas: state.canvas,
   };
 };
 export default connect(mapStateToProps)(GameViewPort);

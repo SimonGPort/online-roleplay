@@ -74,6 +74,8 @@ export default function Online(props) {
     if (updating.current) {
       return;
     }
+    let x = Date.now();
+    console.log(x);
     console.log("version1:", gameUpdateVersion);
     updating.current = true;
     (async () => {
@@ -89,33 +91,21 @@ export default function Online(props) {
       let responseBody = await response.text();
       let body = JSON.parse(responseBody);
 
-      if (body.gameUpdateVersion.current !== gameUpdateVersion.current) {
-        console.log(
-          "Version 1.5 delete:",
-          gameUpdateVersion.current,
-          body.gameUpdateVersion.current
-        );
+      if (body.gameUpdateVersion !== gameUpdateVersion.current) {
         updating.current = false;
         return;
       }
 
-      console.log(
-        "Version2:",
-        gameUpdateVersion.current,
-        body.gameUpdateVersion.current
-      );
-
       if (body.success) {
         dispatch({
-          type: "gameUpdate2",
+          type: "gameUpdate",
           gameView: body.gameViewFilter,
           MasterToken: body.MasterToken,
+          canvas: body.canvas,
         });
-        console.log(
-          "version3:",
-          gameUpdateVersion,
-          body.gameUpdateVersion.current
-        );
+        let y = Date.now();
+        let z = y - x;
+        console.log("temps:", z);
         setLoading(true);
         gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
         updating.current = false;

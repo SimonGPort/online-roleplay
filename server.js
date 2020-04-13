@@ -82,11 +82,16 @@ app.post("/signup", uploads.none(), async (req, res) => {
       hide: null,
       chat: [],
       scan: [],
-      canvas: [],
+      pageInDB: [1],
       // canvas: [{ page: 1, src: "", width: null, height: null, clear: false }],
       onlineUsers: [],
       grid: false,
     });
+    await dbo.collection("canvas").insertOne({
+      host: username,
+      canvas: [{ page: 1, src: "", width: null, height: null, clear: false }],
+    });
+
     let sessionId = "" + Math.floor(Math.random() * 1000000);
     sessions[sessionId] = req.body.username;
     res.cookie("sid", sessionId);
@@ -166,7 +171,7 @@ app.post("/requestToJoin", uploads.none(), async (req, res) => {
     return;
   }
 });
-//je travail ici
+
 app.post("/dragged", uploads.none(), async (req, res) => {
   let positionX = req.body.positionX;
   let positionY = req.body.positionY;
@@ -412,38 +417,42 @@ app.post("/scan", uploads.none(), async (req, res) => {
   }
 });
 
+///je travail ici
 app.post("/drawData", uploads.none(), async (req, res) => {
-  let canvas = JSON.parse(req.body.canvas);
+  // let canvas = JSON.parse(req.body.canvas);
   let src = req.body.src;
   let host = req.body.host;
   let width = JSON.parse(req.body.width);
   let height = JSON.parse(req.body.height);
   let clear = JSON.parse(req.body.clear);
   let page = JSON.parse(req.body.page);
-  let index = canvas.findIndex((canvas) => {
-    return canvas.page === page;
-  });
+  let pageInDB = JSON.parse(req.body.pageInDB);
+  // let index = canvas.findIndex((canvas) => {
+  //   return canvas.page === page;
+  // });
 
-  if (index === -1 || index === undefined) {
-    canvas.push({ src, width, height, clear, page });
-  } else {
-    canvas[index] = { src, width, height, clear, page };
-  }
-  try {
-    await dbo.collection("tokens").updateOne(
-      { host: host, type: "MasterToken" },
+  let canvas = { page, src, width, height, clear };
+
+  if (pageInDB.includes(page)) {
+    await dbo.collection("canvas").updateOne(
+      { host: host, canvas: { $elemMatch: { page: page } } },
       {
         $set: {
           canvas,
         },
       }
     );
-    console.log("canvas post success");
+    console.log("canvas post success $set");
     res.send(JSON.stringify({ success: true }));
-  } catch (err) {
-    console.log("dragged error", err);
-    res.send(JSON.stringify({ success: false }));
-    return;
+  } else {
+    await dbo.collection("canvas").updateOne(
+      { host: host, canvas: { $elemMatch: { page: page } } },
+      {
+        $push: {
+          canvas,
+        },
+      }
+    );
   }
 });
 
@@ -591,7 +600,7 @@ app.get("/fetchGameView", async (req, res) => {
   // let page = JSON.parse(req.query.page);
   let user = req.query.user;
   let gameUpdateVersion = JSON.parse(req.query.gameUpdateVersion);
-
+  gameUpdateVersion = gameUpdateVersion.current;
   let amITheGm = host === user;
 
   try {
@@ -606,22 +615,42 @@ app.get("/fetchGameView", async (req, res) => {
     let MasterToken = gameView.find((token) => {
       return token.type === "MasterToken";
     });
-    let gameViewFilter = gameView.filter((token) => {
-      if (amITheGm) {
-        return token.page === MasterToken.page.gmPage;
-      } else {
-        return token.page === MasterToken.page.playersPage;
-      }
 
-      // return token.page === page;
+    let pageImGoing = undefined;
+    if (amITheGm) {
+      pageImGoing = MasterToken.page.gmPage;
+    } else {
+      pageImGoing = MasterToken.page.playersPage;
+    }
+
+    let gameViewFilter = gameView.filter((token) => {
+      return token.page === pageImGoing;
     });
 
+    let pageImGoingExist = MasterToken.pageInDB.includes(pageImGoing);
+
+    // je travail ici
+    let field = "canvas.page";
+    console.log("field:", field);
+
+    let canvas = undefined;
+    if (pageImGoingExist) {
+      canvas = await dbo
+        .collection("canvas")
+        .findOne(
+          { host: host, canvas: { $elemMatch: { page: pageImGoing } } },
+          { projection: { "canvas.$.page": 1 } }
+        );
+    }
+    canvas = canvas.canvas[0];
+    console.log("canvas:", canvas);
     res.send(
       JSON.stringify({
         success: true,
         gameViewFilter,
         MasterToken,
         gameUpdateVersion,
+        canvas,
       })
     );
   } catch (err) {
