@@ -89,7 +89,7 @@ app.post("/signup", uploads.none(), async (req, res) => {
     });
     await dbo.collection("canvas").insertOne({
       host: username,
-      canvas: [{ page: 1, src: "", width: null, height: null, clear: false }],
+      canvas: [{ page: 1, src: "", width: 1400, height: 1400, clear: false }],
     });
 
     let sessionId = "" + Math.floor(Math.random() * 1000000);
@@ -207,22 +207,23 @@ app.post("/changingTheBackgroundSize", uploads.none(), async (req, res) => {
   backgroundWidth = backgroundWidth * 70;
   backgroundHeight = backgroundHeight * 70;
   let host = req.body.host;
-  let gmPage = JSON.parse(req.body.gmPage);
-  let canvas = JSON.parse(req.body.canvas);
+  let page = JSON.parse(req.body.gmPage);
 
-  const index = canvas.findIndex((canvas) => {
-    return canvas.page === gmPage;
-  });
+  // const index = canvas.findIndex((canvas) => {
+  //   return canvas.page === gmPage;
+  // });
 
-  canvas[index].width = backgroundWidth;
-  canvas[index].height = backgroundHeight;
+  // canvas[index].width = backgroundWidth;
+  // canvas[index].height = backgroundHeight;
 
+  ///je travail ici
   try {
-    await dbo.collection("tokens").updateOne(
-      { host: host, type: "MasterToken" },
+    await dbo.collection("canvas").updateOne(
+      { host: host, canvas: { $elemMatch: { page: page } } },
       {
         $set: {
-          canvas,
+          "canvas.$.width": backgroundWidth,
+          "canvas.$.height": backgroundHeight,
         },
       }
     );
@@ -231,7 +232,6 @@ app.post("/changingTheBackgroundSize", uploads.none(), async (req, res) => {
       JSON.stringify({
         success: true,
         backgroundWidth,
-        index,
         backgroundHeight,
       })
     );
@@ -417,7 +417,6 @@ app.post("/scan", uploads.none(), async (req, res) => {
   }
 });
 
-///je travail ici
 app.post("/drawData", uploads.none(), async (req, res) => {
   // let canvas = JSON.parse(req.body.canvas);
   let src = req.body.src;
@@ -438,7 +437,10 @@ app.post("/drawData", uploads.none(), async (req, res) => {
       { host: host, canvas: { $elemMatch: { page: page } } },
       {
         $set: {
-          canvas,
+          "canvas.$.src": src,
+          "canvas.$.width": width,
+          "canvas.$.height": height,
+          "canvas.$.clear": clear,
         },
       }
     );
@@ -629,10 +631,8 @@ app.get("/fetchGameView", async (req, res) => {
 
     let pageImGoingExist = MasterToken.pageInDB.includes(pageImGoing);
 
-    // je travail ici
     let field = "canvas.page";
-    console.log("field:", field);
-
+    let x = Date.now();
     let canvas = undefined;
     if (pageImGoingExist) {
       canvas = await dbo
@@ -642,8 +642,10 @@ app.get("/fetchGameView", async (req, res) => {
           { projection: { "canvas.$.page": 1 } }
         );
     }
+    let y = Date.now();
+    let z = y - x;
+    console.log("temps2 :", z);
     canvas = canvas.canvas[0];
-    console.log("canvas:", canvas);
     res.send(
       JSON.stringify({
         success: true,

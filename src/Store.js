@@ -130,10 +130,9 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "changingTheBackgroundSize") {
-    let index = action.index;
     return produce(state, (draftState) => {
-      draftState.MasterToken.canvas[index].width = action.backgroundWidth;
-      draftState.MasterToken.canvas[index].height = action.backgroundHeight;
+      draftState.canvas.width = action.backgroundWidth;
+      draftState.canvas.height = action.backgroundHeight;
     });
   }
 
@@ -172,6 +171,9 @@ let reducer = (state, action) => {
       JSON.stringify(state.gameView) === JSON.stringify(action.gameView);
     let sameMasterToken =
       JSON.stringify(state.MasterToken) === JSON.stringify(action.MasterToken);
+    let sameCanvas =
+      JSON.stringify(state.canvas) === JSON.stringify(action.canvas);
+
     // let sameMasterToken = false;
 
     if (state.dragging || state.postingData) {
@@ -179,24 +181,18 @@ let reducer = (state, action) => {
     }
 
     // console.log("same?:", sameGameView, sameMasterToken);
-    if (sameGameView && sameMasterToken) {
+    if (sameGameView && sameMasterToken && sameCanvas) {
+      console.log("STOP SAME CANVAS");
       return state;
     }
     console.log(action.canvas);
-    if (sameGameView && !sameMasterToken) {
-      return produce(state, (draftState) => {
-        draftState.MasterToken = {};
-        draftState.MasterToken = action.MasterToken;
-        draftState.page.gmPage = action.MasterToken.page.gmPage;
-        draftState.page.playersPage = action.MasterToken.page.playersPage;
-        draftState.canvas = action.canvas;
-      });
-    } else if (!sameGameView && sameMasterToken) {
-      return produce(state, (draftState) => {
-        draftState.gameView = action.gameView;
-        draftState.Operation_ComponentDBRedux_Complete = true;
-        draftState.canvas = action.canvas;
-      });
+    if (sameCanvas) {
+      draftState.gameView = action.gameView;
+      draftState.MasterToken = {};
+      draftState.MasterToken = action.MasterToken;
+      draftState.page.gmPage = action.MasterToken.page.gmPage;
+      draftState.page.playersPage = action.MasterToken.page.playersPage;
+      draftState.Operation_ComponentDBRedux_Complete = true;
     } else {
       return produce(state, (draftState) => {
         draftState.gameView = action.gameView;

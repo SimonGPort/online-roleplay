@@ -44,11 +44,9 @@ export default function Online(props) {
     if (!postingData) {
       IntervalCleanup();
       // gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
-      console.log("new version postingdata=false");
       interval.current = setInterval(updateGameView2, 500);
     } else {
       // gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
-      console.log("new version postingdata=true");
       IntervalCleanup();
     }
   }, [postingData]);
@@ -75,8 +73,6 @@ export default function Online(props) {
       return;
     }
     let x = Date.now();
-    console.log(x);
-    console.log("version1:", gameUpdateVersion);
     updating.current = true;
     (async () => {
       let gameUpdateVersionStrigify = JSON.stringify(gameUpdateVersion);

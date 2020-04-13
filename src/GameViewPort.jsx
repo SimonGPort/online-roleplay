@@ -72,31 +72,32 @@ class GameViewPort extends Component {
     this.props.dispatch({
       type: "startPostingData",
     });
-    let pageDiplay = undefined;
-    if (this.props.user === this.props.host) {
-      pageDiplay = this.props.page.gmPage;
-    } else {
-      pageDiplay = this.props.page.playersPage;
-    }
-    let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
-      return canvas.page === pageDiplay;
-    });
-    if (canvasIndex === -1) {
-      let canvas = this.canvasRef.current;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    // let pageDiplay = undefined;
+    // if (this.props.user === this.props.host) {
+    //   pageDiplay = this.props.page.gmPage;
+    // } else {
+    //   pageDiplay = this.props.page.playersPage;
+    // }
+    // let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
+    //   return canvas.page === pageDiplay;
+    // });
+    // if (canvasIndex === -1) {
+    //   let canvas = this.canvasRef.current;
+    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // }
 
     const { width, height } = this.state.canvas;
     this.state.ctx.fillStyle = this.state.penColor;
     this.state.ctx.fillRect(0, 0, width, height);
     let data = new FormData();
-    data.append("canvas", JSON.stringify(this.props.MasterToken.canvas));
+    // data.append("canvas", JSON.stringify(this.props.MasterToken.canvas));
     data.append("page", this.props.page.gmPage);
     data.append("src", this.canvasRef.current.toDataURL());
     data.append("host", this.props.host);
     data.append("width", this.state.canvas.width);
     data.append("height", this.state.canvas.height);
     data.append("clear", JSON.stringify(false));
+    data.append("pageInDB", JSON.stringify(this.props.MasterToken.pageInDB));
     let response = await fetch("/drawData", { method: "POST", body: data });
     const body = await response.text();
     const parsed = JSON.parse(body);
@@ -123,19 +124,19 @@ class GameViewPort extends Component {
     this.props.dispatch({
       type: "startPostingData",
     });
-    let pageDiplay = undefined;
-    if (this.props.user === this.props.host) {
-      pageDiplay = this.props.page.gmPage;
-    } else {
-      pageDiplay = this.props.page.playersPage;
-    }
-    let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
-      return canvas.page === pageDiplay;
-    });
-    if (canvasIndex === -1) {
-      let canvas = this.canvasRef.current;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    // let pageDiplay = undefined;
+    // if (this.props.user === this.props.host) {
+    //   pageDiplay = this.props.page.gmPage;
+    // } else {
+    //   pageDiplay = this.props.page.playersPage;
+    // }
+    // let canvasIndex = this.props.MasterToken.canvas.findIndex((canvas) => {
+    //   return canvas.page === pageDiplay;
+    // });
+    // if (canvasIndex === -1) {
+    //   let canvas = this.canvasRef.current;
+    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // }
 
     const { width, height } = this.state.canvas;
     this.state.ctx.clearRect(0, 0, width, height);
@@ -147,6 +148,7 @@ class GameViewPort extends Component {
     data.append("width", this.state.canvas.width);
     data.append("height", this.state.canvas.height);
     data.append("clear", JSON.stringify(true));
+    data.append("pageInDB", JSON.stringify(this.props.MasterToken.pageInDB));
     let response = await fetch("/drawData", { method: "POST", body: data });
     const body = await response.text();
     const parsed = JSON.parse(body);
@@ -192,8 +194,8 @@ class GameViewPort extends Component {
       return;
     }
     let canvas = this.canvasRef.current;
-    canvas.width = canvasDisplay.width;
-    canvas.height = canvasDisplay.height;
+    canvas.width = this.props.canvas.width;
+    canvas.height = this.props.canvas.height;
     this.setState({ canvas, height: canvas.height, width: canvas.width });
     this.drawCanvas(this.state.ctx, this.state.canvas);
   };
@@ -260,12 +262,11 @@ class GameViewPort extends Component {
       //   ctx.clearRect(0, 0, canvas.width, canvas.height);
       // }
 
-      ///A CHANGER IMPORTANT
-      // this.props.dispatch({
-      //   type: "changeCanvasAfterDraw",
-      //   clear: this.props.erasingCanvas,
-      //   src: this.canvasRef.current.toDataURL(),
-      // });
+      this.props.dispatch({
+        type: "changeCanvasAfterDraw",
+        clear: this.props.erasingCanvas,
+        src: this.canvasRef.current.toDataURL(),
+      });
       let data = new FormData();
       data.append("src", this.canvasRef.current.toDataURL());
       data.append("host", this.props.host);

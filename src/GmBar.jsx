@@ -59,7 +59,7 @@ export default function GmBar(props) {
     data.append("backgroundHeight", JSON.stringify(backgroundHeight));
     data.append("host", props.host);
     data.append("gmPage", JSON.stringify(gmPage));
-    data.append("canvas", JSON.stringify(canvas));
+    // data.append("canvas", JSON.stringify(canvas));
     let response = await fetch("/changingTheBackgroundSize", {
       method: "POST",
       body: data,
@@ -72,7 +72,6 @@ export default function GmBar(props) {
         type: "changingTheBackgroundSize",
         backgroundWidth: parsed.backgroundWidth,
         backgroundHeight: parsed.backgroundHeight,
-        index: parsed.index,
       });
       setButtonBackgroundSize(false);
     } else {
@@ -108,7 +107,7 @@ export default function GmBar(props) {
         setButtonPageChange(false);
         dispatch({
           type: "changingGmPage",
-          index: parsed.indexGmPage,
+          index: parfed.indexGmPage,
           gmPage: parsed.goingToThisGmPage,
           doesGoingToThisGmPageExist: parsed.doesGoingToThisGmPageExist,
         });
