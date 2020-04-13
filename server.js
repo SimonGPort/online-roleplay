@@ -21,7 +21,7 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 const users = [];
-let loadingGameUpdate = false;
+let loadingGameUpdate = [];
 const sessions = {};
 
 reloadMagic(app);
@@ -602,14 +602,28 @@ app.get("/fetchMessages", async (req, res) => {
 });
 ////je travail ici
 app.get("/fetchGameView", async (req, res) => {
-  if (loadingGameUpdate) {
+  let user = req.query.user;
+  if (user === "") {
     return;
   }
-  loadingGameUpdate = true;
+
+  let userLoadingProcess = loadingGameUpdate.find((userLoading) => {
+    return userLoading.user === user;
+  });
+  console.log(loadingGameUpdate);
+  if (userLoadingProcess === undefined) {
+    loadingGameUpdate.push({ user: user, loading: false });
+    userLoadingProcess = loadingGameUpdate.find((userLoading) => {
+      return userLoading.user === user;
+    });
+  }
+
+  if (userLoadingProcess.loading) {
+    return;
+  }
+  userLoadingProcess.loading = true;
 
   let host = req.query.host;
-  // let page = JSON.parse(req.query.page);
-  let user = req.query.user;
   let gameUpdateVersion = JSON.parse(req.query.gameUpdateVersion);
   gameUpdateVersion = gameUpdateVersion.current;
   let amITheGm = host === user;
@@ -687,10 +701,18 @@ app.get("/fetchGameView", async (req, res) => {
         canvas,
       })
     );
-    loadingGameUpdate = false;
+    userLoadingProcess.loading = false;
+    loadingGameUpdate = loadingGameUpdate.filter((userLoadingProcess) => {
+      return userLoadingProcess.user !== user;
+    });
+    console.log(loadingGameUpdate);
   } catch (err) {
     console.log("/GameView error", err);
     res.send(JSON.stringify({ success: false }));
+    userLoadingProcess.loading = false;
+    loadingGameUpdate = loadingGameUpdate.filter((userLoadingProcess) => {
+      return userLoadingProcess.user !== user;
+    });
     return;
   }
 });
