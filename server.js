@@ -672,6 +672,13 @@ app.get("/fetchGameView", async (req, res) => {
       pageImGoingExist = true;
     }
     if (!pageImGoingExist && pageImGoingExist !== undefined) {
+      if (user !== host) {
+        userLoadingProcess.loading = false;
+        loadingGameUpdate = loadingGameUpdate.filter((userLoadingProcess) => {
+          return userLoadingProcess.user !== user;
+        });
+        return;
+      }
       canvas = {
         page: pageImGoing,
         src: "",
