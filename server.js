@@ -21,6 +21,7 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 const users = [];
+let loadingGameUpdate = false;
 const sessions = {};
 
 reloadMagic(app);
@@ -216,7 +217,6 @@ app.post("/changingTheBackgroundSize", uploads.none(), async (req, res) => {
   // canvas[index].width = backgroundWidth;
   // canvas[index].height = backgroundHeight;
 
-  ///je travail ici
   try {
     await dbo.collection("canvas").updateOne(
       { host: host, canvas: { $elemMatch: { page: page } } },
@@ -248,59 +248,64 @@ app.post("/ChangingThePage", uploads.none(), async (req, res) => {
   let prevGmPage = JSON.parse(req.body.prevGmPage);
   let prevPlayersPage = JSON.parse(req.body.prevPlayersPage);
   let host = req.body.host;
-  let canvas = JSON.parse(req.body.canvas);
+  // let canvas = JSON.parse(req.body.canvas);
+  let pageInDB = JSON.parse(req.body.pageInDB);
 
   isChangingTheGmPage = goingToThisGmPage !== prevGmPage;
   isChangingThePlayersPage = goingTothisPlayersPage !== prevPlayersPage;
 
-  let indexGmPage = undefined;
-  let indexPlayersPage = undefined;
-  let doesGoingToThisGmPageExist = undefined;
-  let doesgoingTothisPlayersPageExist = undefined;
+  let doesGoingToThisGmPageExist = false;
+  let doesgoingTothisPlayersPageExist = false;
 
-  if (isChangingTheGmPage) {
-    indexGmPage = canvas.findIndex((canvas) => {
-      return canvas.page === goingToThisGmPage;
-    });
+  // if (isChangingTheGmPage) {
+  //   indexGmPage = canvas.findIndex((canvas) => {
+  //     return canvas.page === goingToThisGmPage;
+  //   });
 
-    indexGmPage === -1
-      ? (doesGoingToThisGmPageExist = false)
-      : (doesGoingToThisGmPageExist = true);
+  //   indexGmPage === -1
+  //     ? (doesGoingToThisGmPageExist = false)
+  //     : (doesGoingToThisGmPageExist = true);
 
-    if (doesGoingToThisGmPageExist) {
-      canvas[indexGmPage].clear = true;
-    } else {
-      canvas.push({
-        page: goingToThisGmPage,
-        src: "",
-        width: 1400,
-        height: 1400,
-        clear: true,
-      });
-    }
+  if (pageInDB.includes(goingToThisGmPage)) {
+    doesGoingToThisGmPageExist = true;
+  }
+  if (pageInDB.includes(goingTothisPlayersPage)) {
+    doesgoingTothisPlayersPageExist = true;
   }
 
-  if (isChangingThePlayersPage) {
-    indexPlayersPage = canvas.findIndex((canvas) => {
-      return canvas.page === goingTothisPlayersPage;
-    });
-    indexPlayersPage === -1
-      ? (doesgoingTothisPlayersPageExist = false)
-      : (doesgoingTothisPlayersPageExist = true);
+  //   if (doesGoingToThisGmPageExist) {
+  //     canvas[indexGmPage].clear = true;
+  //   } else {
+  //     canvas.push({
+  //       page: goingToThisGmPage,
+  //       src: "",
+  //       width: 1400,
+  //       height: 1400,
+  //       clear: true,
+  //     });
+  //   }
+  // }
 
-    if (doesgoingTothisPlayersPageExist) {
-      canvas[indexPlayersPage].clear = true;
-    } else {
-      canvas.push({
-        page: goingTothisPlayersPage,
-        src: "",
-        width: 1400,
-        height: 1400,
-        clear: true,
-      });
-    }
-  }
+  // if (isChangingThePlayersPage) {
+  //   indexPlayersPage = canvas.findIndex((canvas) => {
+  //     return canvas.page === goingTothisPlayersPage;
+  //   });
+  //   indexPlayersPage === -1
+  //     ? (doesgoingTothisPlayersPageExist = false)
+  //     : (doesgoingTothisPlayersPageExist = true);
 
+  //   if (doesgoingTothisPlayersPageExist) {
+  //     canvas[indexPlayersPage].clear = true;
+  //   } else {
+  //     canvas.push({
+  //       page: goingTothisPlayersPage,
+  //       src: "",
+  //       width: 1400,
+  //       height: 1400,
+  //       clear: true,
+  //     });
+  //   }
+  // }
   try {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
@@ -310,7 +315,6 @@ app.post("/ChangingThePage", uploads.none(), async (req, res) => {
             playersPage: goingTothisPlayersPage,
             gmPage: goingToThisGmPage,
           },
-          canvas,
         },
       }
     );
@@ -320,8 +324,8 @@ app.post("/ChangingThePage", uploads.none(), async (req, res) => {
         success: true,
         goingToThisGmPage,
         goingTothisPlayersPage,
-        indexGmPage,
-        indexPlayersPage,
+        // indexGmPage,
+        // indexPlayersPage,
         isChangingTheGmPage,
         isChangingThePlayersPage,
         doesGoingToThisGmPageExist,
@@ -596,8 +600,13 @@ app.get("/fetchMessages", async (req, res) => {
     return;
   }
 });
-
+////je travail ici
 app.get("/fetchGameView", async (req, res) => {
+  if (loadingGameUpdate) {
+    return;
+  }
+  loadingGameUpdate = true;
+
   let host = req.query.host;
   // let page = JSON.parse(req.query.page);
   let user = req.query.user;
@@ -641,11 +650,34 @@ app.get("/fetchGameView", async (req, res) => {
           { host: host, canvas: { $elemMatch: { page: pageImGoing } } },
           { projection: { "canvas.$.page": 1 } }
         );
+
+      let y = Date.now();
+      let z = y - x;
+      console.log("temps2 :", z);
+      canvas = canvas.canvas[0];
+      pageImGoingExist = true;
     }
-    let y = Date.now();
-    let z = y - x;
-    console.log("temps2 :", z);
-    canvas = canvas.canvas[0];
+    if (!pageImGoingExist && pageImGoingExist !== undefined) {
+      canvas = {
+        page: pageImGoing,
+        src: "",
+        width: 1400,
+        height: 1400,
+        clear: true,
+      };
+      await dbo
+        .collection("canvas")
+        .updateOne({ host }, { $push: { canvas: canvas } });
+      await dbo
+        .collection("tokens")
+        .updateOne(
+          { host, type: "MasterToken" },
+          { $push: { pageInDB: pageImGoing } }
+        );
+
+      MasterToken.pageInDB.push(pageImGoing);
+    }
+
     res.send(
       JSON.stringify({
         success: true,
@@ -655,6 +687,7 @@ app.get("/fetchGameView", async (req, res) => {
         canvas,
       })
     );
+    loadingGameUpdate = false;
   } catch (err) {
     console.log("/GameView error", err);
     res.send(JSON.stringify({ success: false }));

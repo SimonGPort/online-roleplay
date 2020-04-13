@@ -3,26 +3,27 @@ import { useDispatch, useSelector } from "react-redux";
 import ChatOnline from "./ChatOnline.jsx";
 
 export default function GmBar(props) {
-  const selection = useSelector((state) => state.typeSelection);
-  const isErasing = useSelector((state) => state.isErasingToken);
-  const isDuplicate = useSelector((state) => state.isDuplicateToken);
-  const isHiding = useSelector((state) => state.isHidingToken);
-  const isScanning = useSelector((state) => state.isScanning);
-  const typeSelection = useSelector((state) => state.typeSelection);
-  const gmPage = useSelector((state) => state.page.gmPage);
-  const playersPage = useSelector((state) => state.page.playersPage);
-  const erasingCanvas = useSelector((state) => state.erasingCanvas);
-  const canvas = useSelector((state) => state.MasterToken.canvas);
-  const grid = useSelector((state) => state.MasterToken.grid);
-  const [buttonBackgroundSize, setButtonBackgroundSize] = useState(false);
-  const [backgroundWidth, setBackgroundWidth] = useState("");
-  const [backgroundHeight, setBackgroundHeight] = useState("");
+  let selection = useSelector((state) => state.typeSelection);
+  let isErasing = useSelector((state) => state.isErasingToken);
+  let isDuplicate = useSelector((state) => state.isDuplicateToken);
+  let isHiding = useSelector((state) => state.isHidingToken);
+  let isScanning = useSelector((state) => state.isScanning);
+  let typeSelection = useSelector((state) => state.typeSelection);
+  let gmPage = useSelector((state) => state.page.gmPage);
+  let playersPage = useSelector((state) => state.page.playersPage);
+  let erasingCanvas = useSelector((state) => state.erasingCanvas);
+  let canvas = useSelector((state) => state.MasterToken.canvas);
+  let grid = useSelector((state) => state.MasterToken.grid);
+  let [buttonBackgroundSize, setButtonBackgroundSize] = useState(false);
+  let [backgroundWidth, setBackgroundWidth] = useState("");
+  let [backgroundHeight, setBackgroundHeight] = useState("");
+  let pageInDB = useSelector((state) => state.MasterToken.pageInDB);
 
-  const [buttonPageChange, setButtonPageChange] = useState(false);
-  const [gmPageInput, setGmPageInput] = useState("");
-  const [playersPageInput, setPlayersPageInput] = useState("");
+  let [buttonPageChange, setButtonPageChange] = useState(false);
+  let [gmPageInput, setGmPageInput] = useState("");
+  let [playersPageInput, setPlayersPageInput] = useState("");
 
-  const dispatch = useDispatch();
+  let dispatch = useDispatch();
 
   let thereIsGrid = async () => {
     dispatch({
@@ -82,6 +83,7 @@ export default function GmBar(props) {
     });
   };
 
+  ////je travail ici GmBar
   let ChangingPageHandler = async () => {
     // dispatch({
     //   type: "startPostingData",
@@ -93,7 +95,8 @@ export default function GmBar(props) {
     data.append("prevGmPage", JSON.stringify(gmPage));
     data.append("prevPlayersPage", JSON.stringify(playersPage));
     data.append("host", props.host);
-    data.append("canvas", JSON.stringify(canvas));
+    // data.append("canvas", JSON.stringify(canvas));
+    data.append("pageInDB", JSON.stringify(pageInDB));
     let response = await fetch("/ChangingThePage", {
       method: "POST",
       body: data,
@@ -104,10 +107,9 @@ export default function GmBar(props) {
     if (parsed.success) {
       console.log("ChangingThePage succes backend, frontend res");
       if (parsed.isChangingTheGmPage) {
-        setButtonPageChange(false);
         dispatch({
           type: "changingGmPage",
-          index: parfed.indexGmPage,
+          // index: parsed.indexGmPage,
           gmPage: parsed.goingToThisGmPage,
           doesGoingToThisGmPageExist: parsed.doesGoingToThisGmPageExist,
         });
@@ -122,6 +124,7 @@ export default function GmBar(props) {
     } else {
       console.log("backend changingPage error");
     }
+    setButtonPageChange(false);
     dispatch({
       type: "endPostingData",
     });

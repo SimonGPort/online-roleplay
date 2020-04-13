@@ -28,7 +28,7 @@ let reducer = (state, action) => {
     if (action.doesGoingToThisGmPageExist) {
       return produce(state, (draftState) => {
         draftState.page.gmPage = action.gmPage;
-        draftState.MasterToken.canvas[action.index].clear = true;
+        draftState.canvas.clear = true;
       });
     }
 
@@ -187,12 +187,14 @@ let reducer = (state, action) => {
     }
     console.log(action.canvas);
     if (sameCanvas) {
-      draftState.gameView = action.gameView;
-      draftState.MasterToken = {};
-      draftState.MasterToken = action.MasterToken;
-      draftState.page.gmPage = action.MasterToken.page.gmPage;
-      draftState.page.playersPage = action.MasterToken.page.playersPage;
-      draftState.Operation_ComponentDBRedux_Complete = true;
+      return produce(state, (draftState) => {
+        draftState.gameView = action.gameView;
+        draftState.MasterToken = {};
+        draftState.MasterToken = action.MasterToken;
+        draftState.page.gmPage = action.MasterToken.page.gmPage;
+        draftState.page.playersPage = action.MasterToken.page.playersPage;
+        draftState.Operation_ComponentDBRedux_Complete = true;
+      });
     } else {
       return produce(state, (draftState) => {
         draftState.gameView = action.gameView;
