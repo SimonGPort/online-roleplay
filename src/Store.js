@@ -43,6 +43,14 @@ let reducer = (state, action) => {
     });
   }
 
+  if (action.type === "Unselect") {
+    return { ...state, permissionToken: [], selectedToken: "" };
+  }
+
+  if (action.type === "fitToTheMap") {
+    return { ...state, fitToTheMap: action.action };
+  }
+
   if (action.type === "AddOrRemovePermission") {
     const index = state.gameView.findIndex((token) => {
       return token.tokenId === action.tokenId;
@@ -182,7 +190,6 @@ let reducer = (state, action) => {
 
     // console.log("same?:", sameGameView, sameMasterToken);
     if (sameGameView && sameMasterToken && sameCanvas) {
-      console.log("STOP SAME CANVAS");
       return state;
     }
     console.log(action.canvas);
@@ -397,11 +404,12 @@ const store = createStore(
     MasterToken: {},
     erasingCanvas: false,
     permissionToken: [],
-    selectedToken: undefined,
+    selectedToken: "",
     postingData: false,
     selectionEvent: [],
     Operation_ComponentDBRedux_Complete: true,
     canvas: {},
+    fitToTheMap: false,
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

@@ -7,26 +7,26 @@ class CreationOnlineToken extends Component {
     this.state = {
       imgFile: "",
       numberOfTokens: 1,
-      type: "Token"
+      type: "Token",
     };
   }
 
-  pictureInput = e => {
+  pictureInput = (e) => {
     this.setState({ imgFile: e.target.files[0] });
   };
 
-  numberOfTokens = evt => {
+  numberOfTokens = (evt) => {
     if (this.state.numberOfTokens < 0) {
       return this.setState({ numberOfTokens: 1 });
     }
     this.setState({ numberOfTokens: evt.target.value });
   };
 
-  typeInput = evt => {
+  typeInput = (evt) => {
     this.setState({ type: evt.target.value });
   };
 
-  submitHandler = async evt => {
+  submitHandler = async (evt) => {
     evt.preventDefault();
     if (this.props.login === false) {
       alert("you need to login");
@@ -44,7 +44,7 @@ class CreationOnlineToken extends Component {
     data.append("host", this.props.host);
     let response = await fetch("/creatingANewToken", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -52,7 +52,11 @@ class CreationOnlineToken extends Component {
       alert("Your token is created");
       this.props.dispatch({
         type: "CreationOnlineToken",
-        action: false
+        action: false,
+      });
+      this.props.dispatch({
+        type: "typeSelection",
+        typeSelection: this.state.type,
       });
     } else {
       alert("Can't create your token");
@@ -67,7 +71,7 @@ class CreationOnlineToken extends Component {
             onClick={() =>
               this.props.dispatch({
                 type: "CreationOnlineToken",
-                action: false
+                action: false,
               })
             }
           >
@@ -99,11 +103,11 @@ class CreationOnlineToken extends Component {
   };
 }
 
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
     gameView: state.gameView,
     page: state.page.gmPage,
-    login: state.login
+    login: state.login,
   };
 };
 

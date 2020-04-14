@@ -179,7 +179,6 @@ app.post("/dragged", uploads.none(), async (req, res) => {
   let width = req.body.width;
   let height = req.body.height;
   let tokenId = req.body.tokenId;
-  let host = req.body.host;
 
   try {
     await dbo.collection("tokens").updateOne(
@@ -610,7 +609,6 @@ app.get("/fetchGameView", async (req, res) => {
   let userLoadingProcess = loadingGameUpdate.find((userLoading) => {
     return userLoading.user === user;
   });
-  console.log(loadingGameUpdate);
   if (userLoadingProcess === undefined) {
     loadingGameUpdate.push({ user: user, loading: false });
     userLoadingProcess = loadingGameUpdate.find((userLoading) => {
@@ -655,7 +653,6 @@ app.get("/fetchGameView", async (req, res) => {
     let pageImGoingExist = MasterToken.pageInDB.includes(pageImGoing);
 
     let field = "canvas.page";
-    let x = Date.now();
     let canvas = undefined;
     if (pageImGoingExist) {
       canvas = await dbo
@@ -665,9 +662,6 @@ app.get("/fetchGameView", async (req, res) => {
           { projection: { "canvas.$.page": 1 } }
         );
 
-      let y = Date.now();
-      let z = y - x;
-      console.log("temps2 :", z);
       canvas = canvas.canvas[0];
       pageImGoingExist = true;
     }

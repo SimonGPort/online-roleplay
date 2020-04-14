@@ -354,6 +354,31 @@ class GameViewPort extends Component {
 
   changingPenSize = (e) => this.setState({ penSize: e });
   changingPenColor = (e) => this.setState({ penColor: e });
+  ///je travail ici
+  fitToMap = async (tokenId) => {
+    let rect = canvas.getBoundingClientRect();
+    let data = new FormData();
+    data.append("positionX", rect.left);
+    data.append("positionY", rect.top);
+    data.append("width", rect.width);
+    data.append("height", rect.height);
+    data.append("tokenId", tokenId);
+    data.append("host", this.props.host);
+
+    this.props.dispatch({
+      type: "startPostingData",
+    });
+
+    let response = await fetch("/dragged", { method: "POST", body: data });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      console.log("/dragged success");
+      this.props.dispatch({
+        type: "endPostingData",
+      });
+    }
+  };
 
   render = () => {
     let scan = this.props.MasterToken.scan.find((scan) => {
@@ -406,7 +431,7 @@ class GameViewPort extends Component {
           {this.props.gameView.map((token) => {
             return (
               <div key={token.tokenId}>
-                <Draggable token={token}>
+                <Draggable token={token} fitToMap={this.fitToMap}>
                   <div
                     className="draggable-image"
                     id={token.tokenId}
@@ -416,8 +441,7 @@ class GameViewPort extends Component {
                         (this.props.user === this.props.host &&
                           this.props.typeSelection === "Background" &&
                           token.type === "Background") ||
-                        (this.props.user === this.props.host &&
-                          this.props.typeSelection === "Token" &&
+                        (this.props.typeSelection === "Token" &&
                           token.type === "Token")
                           ? "4"
                           : token.zIndex,
@@ -427,6 +451,11 @@ class GameViewPort extends Component {
                         this.props.user === this.props.host ? "both" : "none",
                       display: hideProperty(token) ? "none" : "block",
                       opacity: token.hide === true ? "0.5" : "1",
+                      border:
+                        this.props.selectedToken === token.tokenId
+                          ? "3px solid yellow"
+                          : "",
+                      boxSizing: "border-box",
                     }}
                   />
                 </Draggable>
@@ -457,6 +486,7 @@ let mapStateToProps = (state) => {
     grid: state.grid,
     postingData: state.postingData,
     canvas: state.canvas,
+    selectedToken: state.selectedToken,
   };
 };
 export default connect(mapStateToProps)(GameViewPort);

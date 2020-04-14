@@ -18,6 +18,7 @@ export default function GmBar(props) {
   let [backgroundWidth, setBackgroundWidth] = useState("");
   let [backgroundHeight, setBackgroundHeight] = useState("");
   let pageInDB = useSelector((state) => state.MasterToken.pageInDB);
+  let fitToMap = useSelector((state) => state.fitToTheMap);
 
   let [buttonPageChange, setButtonPageChange] = useState(false);
   let [gmPageInput, setGmPageInput] = useState("");
@@ -83,7 +84,14 @@ export default function GmBar(props) {
     });
   };
 
-  ////je travail ici GmBar
+  let Unselect = () => {
+    dispatch({ type: "Unselect" });
+  };
+  ///je travail ici
+  let fitToTheMap = (evt) => {
+    dispatch({ type: "fitToTheMap", action: evt });
+  };
+
   let ChangingPageHandler = async () => {
     // dispatch({
     //   type: "startPostingData",
@@ -399,6 +407,27 @@ export default function GmBar(props) {
               />
             </>
           )}
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              Unselect();
+            }}
+          >
+            Unselect
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              fitToTheMap(!fitToMap);
+            }}
+            style={{
+              backgroundColor: fitToMap === true ? "yellow" : "",
+            }}
+          >
+            Fit to the map
+          </button>
         </div>
       </div>
       <div>

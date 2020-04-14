@@ -114,6 +114,9 @@ class ChatOnline extends Component {
                   onClick={() =>
                     this.giveOrRemovePermissionToken(permissionValue, user.user)
                   }
+                  style={{
+                    display: this.props.tokenId === "" ? "none" : "block",
+                  }}
                 >
                   {permissionValue ? "Remove Control" : "Give Control"}
                 </button>

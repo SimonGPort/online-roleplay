@@ -75,23 +75,28 @@ class Draggable extends Component {
       console.log("the token is duplicate");
     }
   };
-
+  ////travail ici
   handleMouseDown = ({ clientX, clientY }) => {
+    this.props.dispatch({
+      type: "permissionToken",
+      permissionToken: this.props.token.permission,
+      tokenId: this.props.token.tokenId,
+    });
+
+    if (!this.props.token.permission.includes(this.props.user)) {
+      return;
+    }
+    ///travail
+    if (this.props.fitToTheMap) {
+      this.props.fitToMap(this.props.token.tokenId);
+    }
+
     if (
       this.props.isErasingToken &&
       this.props.typeSelection === this.props.token.type
     ) {
       this.eraseToken();
       return;
-    }
-
-    if (this.props.token.type === "Token") {
-      console.log("permission");
-      this.props.dispatch({
-        type: "permissionToken",
-        permissionToken: this.props.token.permission,
-        tokenId: this.props.token.tokenId,
-      });
     }
 
     if (
@@ -249,6 +254,7 @@ let mapStateToProps = (state) => {
     isHidingToken: state.isHidingToken,
     Operation_ComponentDBRedux_Complete:
       state.Operation_ComponentDBRedux_Complete,
+    fitToTheMap: state.fitToTheMap,
   };
 };
 
