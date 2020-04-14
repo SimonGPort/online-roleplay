@@ -7,11 +7,16 @@ class ChatOnline extends Component {
     this.state = {
       inputValue: "",
       password: "",
+      initiaveChanging: false,
     };
   }
 
   chatInput = (evt) => {
     this.setState({ inputValue: evt.target.value });
+  };
+
+  ButtonInitiative = (value) => {
+    this.setState({ initiaveChanging: value });
   };
 
   submitHandler = async (evt) => {
@@ -34,6 +39,9 @@ class ChatOnline extends Component {
   };
 
   handleOnChanges = async (evt, user) => {
+    if (!this.state.initiaveChanging) {
+      return;
+    }
     let data = new FormData();
     data.append("playerinitiative", evt.target.value);
     data.append("host", this.props.host);
@@ -54,6 +62,8 @@ class ChatOnline extends Component {
       console.log("playerinitiative Failure");
     }
   };
+  ///je travail ici
+  handleInitiative = () => {};
 
   giveOrRemovePermissionToken = async (permissionValue, user) => {
     let data = new FormData();
@@ -105,8 +115,13 @@ class ChatOnline extends Component {
               <div key={idx}>
                 {user.user}/
                 <input
+                  readOnly={!this.state.initiaveChanging}
+                  style={{
+                    backgroundColor:
+                      this.state.initiaveChanging === true ? "" : "grey",
+                  }}
                   key={idx}
-                  value={user.initiative}
+                  value={!this.state.initiaveChanging ? user.initiative : null}
                   type="number"
                   onChange={(evt) => this.handleOnChanges(evt, user)}
                 />
@@ -123,6 +138,29 @@ class ChatOnline extends Component {
               </div>
             );
           })}
+          {this.state.initiaveChanging ? (
+            <button
+              onClick={() => {
+                this.ButtonInitiative(!this.state.initiaveChanging);
+              }}
+              style={{
+                backgroundColor: "yellow",
+              }}
+            >
+              Save Initiative
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                this.ButtonInitiative(!this.state.initiaveChanging);
+              }}
+              style={{
+                backgroundColor: "",
+              }}
+            >
+              Edit Initiative
+            </button>
+          )}
         </div>
       </div>
     );

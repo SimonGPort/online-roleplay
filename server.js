@@ -706,7 +706,6 @@ app.get("/fetchGameView", async (req, res) => {
     loadingGameUpdate = loadingGameUpdate.filter((userLoadingProcess) => {
       return userLoadingProcess.user !== user;
     });
-    console.log(loadingGameUpdate);
   } catch (err) {
     console.log("/GameView error", err);
     res.send(JSON.stringify({ success: false }));

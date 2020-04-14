@@ -72,7 +72,6 @@ export default function Online(props) {
     if (updating.current) {
       return;
     }
-    let x = Date.now();
     updating.current = true;
     (async () => {
       let gameUpdateVersionStrigify = JSON.stringify(gameUpdateVersion);
@@ -99,9 +98,6 @@ export default function Online(props) {
           MasterToken: body.MasterToken,
           canvas: body.canvas,
         });
-        let y = Date.now();
-        let z = y - x;
-        console.log("temps:", z);
         setLoading(true);
         gameUpdateVersion.current = Math.floor(Math.random() * 1000000);
         updating.current = false;
