@@ -91,78 +91,121 @@ class ChatOnline extends Component {
       .slice()
       .sort((a, b) => b.initiative - a.initiative);
     return (
-      <div>
-        <div>
-          {this.props.chat.map((msg, idx) => {
-            return (
-              <div key={idx}>
-                {msg.username}: {msg.message}
-              </div>
-            );
-          })}
-
-          <div>
-            <form onSubmit={this.submitHandler}>
-              <input value={this.state.inputValue} onChange={this.chatInput} />
-              <input type="submit" />
-            </form>
-          </div>
-        </div>
-        <div>
-          {userSort.map((user, idx) => {
-            let permissionValue = this.props.permission.includes(user.user);
-            return (
-              <div key={idx}>
-                {user.user}/
+      <>
+        <div className="chatOnline">
+          <div className="chat-section">
+            <div className="event-information">Chat</div>
+            <div className="chat-message-list">
+              {this.props.chat.map((msg, idx) => {
+                return (
+                  <div key={idx}>
+                    {msg.username}: {msg.message}
+                  </div>
+                );
+              })}
+            </div>
+            <div>
+              <form onSubmit={this.submitHandler} className="chat-form">
                 <input
-                  readOnly={!this.state.initiaveChanging}
-                  style={{
-                    backgroundColor:
-                      this.state.initiaveChanging === true ? "" : "grey",
-                  }}
-                  key={idx}
-                  value={!this.state.initiaveChanging ? user.initiative : null}
-                  type="number"
-                  onChange={(evt) => this.handleOnChanges(evt, user)}
+                  className="chat-input"
+                  value={this.state.inputValue}
+                  onChange={this.chatInput}
                 />
+                <input
+                  type="submit"
+                  value="chat"
+                  className="event-chat-submit"
+                />
+              </form>
+            </div>
+          </div>
+
+          {/* <div>
+            {this.props.chat.map((msg, idx) => {
+              return (
+                <div key={idx}>
+                  {msg.username}: {msg.message}
+                </div>
+              );
+            })}
+
+            <div>
+              <form onSubmit={this.submitHandler}>
+                <input
+                  value={this.state.inputValue}
+                  onChange={this.chatInput}
+                />
+                <input type="submit" />
+              </form>
+            </div>
+          </div> */}
+          <div>
+            <div className="listOfUsers">
+              <div className="event-information">Players</div>
+              {userSort.map((user, idx) => {
+                let permissionValue = this.props.permission.includes(user.user);
+                return (
+                  <div key={idx} className="GmBar-User">
+                    {user.user}
+                    <input
+                      className="GmBar-Input"
+                      readOnly={!this.state.initiaveChanging}
+                      style={{
+                        backgroundColor:
+                          this.state.initiaveChanging === true ? "" : "grey",
+                      }}
+                      key={idx}
+                      value={
+                        !this.state.initiaveChanging ? user.initiative : null
+                      }
+                      type="number"
+                      onChange={(evt) => this.handleOnChanges(evt, user)}
+                    />
+                    <button
+                      onClick={() =>
+                        this.giveOrRemovePermissionToken(
+                          permissionValue,
+                          user.user
+                        )
+                      }
+                      style={{
+                        display: this.props.tokenId === "" ? "none" : "block",
+                      }}
+                    >
+                      {permissionValue ? "Remove Control" : "Give Control"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+            <div>
+              {this.state.initiaveChanging ? (
                 <button
-                  onClick={() =>
-                    this.giveOrRemovePermissionToken(permissionValue, user.user)
-                  }
+                  onClick={() => {
+                    this.ButtonInitiative(!this.state.initiaveChanging);
+                  }}
                   style={{
-                    display: this.props.tokenId === "" ? "none" : "block",
+                    backgroundColor: "yellow",
                   }}
                 >
-                  {permissionValue ? "Remove Control" : "Give Control"}
+                  Save Initiative
                 </button>
-              </div>
-            );
-          })}
-          {this.state.initiaveChanging ? (
-            <button
-              onClick={() => {
-                this.ButtonInitiative(!this.state.initiaveChanging);
-              }}
-              style={{
-                backgroundColor: "yellow",
-              }}
-            >
-              Save Initiative
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                this.ButtonInitiative(!this.state.initiaveChanging);
-              }}
-              style={{
-                backgroundColor: "",
-              }}
-            >
-              Edit Initiative
-            </button>
-          )}
+              ) : (
+                <button
+                  onClick={() => {
+                    this.ButtonInitiative(!this.state.initiaveChanging);
+                  }}
+                  style={{
+                    backgroundColor: "",
+                  }}
+                >
+                  Edit Initiative
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
+      </>
     );
   };
 }

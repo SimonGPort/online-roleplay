@@ -572,3 +572,30 @@ body {
   text-decoration: none;
   color: #97cda9;
 }
+.GmBar {
+  display: grid;
+  grid-template-columns: 33% 57% 10%;
+}
+.chatOnline {
+  display: grid;
+  grid-template-columns: 70% 30%;
+}
+.GmBar-User {
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+}
+.GmBar-Input {
+  width: 30px;
+  text-align: center;
+}
+.GmBar-Gm-Sub-Section {
+  margin-bottom: 15px;
+  border-bottom: 3px solid #97cda9;
+  padding-bottom: 5px;
+}
+.GmBar-Gm-Section {
+  padding: 10px;
+}
+.GmBar-button-right-Margin {
+  margin-right: 10px;
+}

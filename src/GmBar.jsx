@@ -19,6 +19,7 @@ export default function GmBar(props) {
   let [backgroundHeight, setBackgroundHeight] = useState("");
   let pageInDB = useSelector((state) => state.MasterToken.pageInDB);
   let fitToMap = useSelector((state) => state.fitToTheMap);
+  let user = useSelector((state) => state.user);
 
   let [buttonPageChange, setButtonPageChange] = useState(false);
   let [gmPageInput, setGmPageInput] = useState("");
@@ -87,7 +88,7 @@ export default function GmBar(props) {
   let Unselect = () => {
     dispatch({ type: "Unselect" });
   };
-  ///je travail ici
+
   let fitToTheMap = (evt) => {
     dispatch({ type: "fitToTheMap", action: evt });
   };
@@ -139,274 +140,337 @@ export default function GmBar(props) {
   };
 
   return (
-    <div id="GmBar">
-      <button
-        onClick={() =>
-          dispatch({
-            type: "CreationOnlineToken",
-            action: true,
-          })
-        }
-      >
-        New Token
-      </button>
-      <div>
-        <select
-          value={selection}
-          onChange={(evt) => {
-            dispatch({
-              type: "typeSelection",
-              typeSelection: evt.target.value,
-            });
-          }}
-        >
-          <option>Token</option>
-          <option>Background</option>
-          <option>Draw</option>
-        </select>
-      </div>
-      <div>
-        <button
-          onClick={(evt) => {
-            dispatch({
-              type: "isErasingToken",
-              isErasingToken: !isErasing,
-            });
-          }}
-          style={{
-            backgroundColor: isErasing === true ? "yellow" : "",
-          }}
-        >
-          Erase Token
-        </button>
-      </div>
-
-      <div>
-        {buttonBackgroundSize ? (
-          <>
-            <button
-              style={{ backgroundColor: "yellow" }}
-              onClick={() => {
-                changeBackgroundSize();
-              }}
-            >
-              Save Background-Size
-            </button>
-            <label>Background Width-Squares</label>
-            <input
-              value={backgroundWidth}
-              type="number"
-              onChange={({ target: { value } }) => {
-                setBackgroundWidth(parseInt(value));
-              }}
-            />
-            <label>Background Height-Squares</label>
-            <input
-              value={backgroundHeight}
-              type="number"
-              onChange={({ target: { value } }) =>
-                setBackgroundHeight(parseInt(value))
-              }
-            />
-          </>
-        ) : (
-          <>
-            <button
-              onClick={() => {
-                setButtonBackgroundSize(true);
-                setBackgroundWidth(props.widthSquares);
-                setBackgroundHeight(props.heightSquares);
+    <div className="GmBar">
+      <div className="GmBar-Gm-Section">
+        <div style={{ display: user === props.host ? "block" : "none" }}>
+          <div className="event-information">Gm's Tools</div>
+          <div className="GmBar-Gm-Sub-Section">
+            <select
+              value={selection}
+              onChange={(evt) => {
                 dispatch({
-                  type: "startPostingData",
+                  type: "typeSelection",
+                  typeSelection: evt.target.value,
                 });
               }}
             >
-              Edit Background-Size
+              <option>Token</option>
+              <option>Background</option>
+              <option>Draw</option>
+            </select>
+          </div>
+          <div className="GmBar-Gm-Sub-Section">
+            <button
+              className="GmBar-button-right-Margin event-chat-submit"
+              onClick={() =>
+                dispatch({
+                  type: "CreationOnlineToken",
+                  action: true,
+                })
+              }
+            >
+              New Token
             </button>
-            <label>Background Width-Squares</label>
+            <button
+              className="event-chat-submit"
+              onClick={(evt) => {
+                dispatch({
+                  type: "isErasingToken",
+                  isErasingToken: !isErasing,
+                });
+              }}
+              style={{
+                backgroundColor: isErasing === true ? "yellow" : "",
+              }}
+            >
+              Erase Token
+            </button>
+          </div>
+          <div className="GmBar-Gm-Sub-Section">
+            <button
+              className="GmBar-button-right-Margin event-chat-submit"
+              onClick={(evt) => {
+                dispatch({
+                  type: "isHidingToken",
+                  isHidingToken: !isHiding,
+                });
+              }}
+              style={{
+                backgroundColor: isHiding === true ? "yellow" : "",
+              }}
+            >
+              Hide
+            </button>
+            <button
+              className="event-chat-submit"
+              onClick={(evt) => {
+                dispatch({
+                  type: "isDuplicate",
+                  isDuplicate: !isDuplicate.action,
+                });
+              }}
+              style={{
+                backgroundColor: isDuplicate.action === true ? "yellow" : "",
+              }}
+            >
+              Duplicate
+            </button>
             <input
-              readOnly
-              value={props.widthSquares}
               type="number"
-              style={{ backgroundColor: "grey" }}
-            />
-            <label>X </label>
-            <label>Background Height-Squares</label>
-            <input
-              readOnly
-              value={props.heightSquares}
-              type="number"
-              style={{ backgroundColor: "grey" }}
-            />
-          </>
-        )}
-      </div>
+              className="GmBar-Input"
+              value={isDuplicate.number}
+              onChange={(evt) => {
+                dispatch({ type: "duplicateNumber", number: evt.target.value });
+              }}
+            ></input>
+          </div>
+          <div className="GmBar-Gm-Sub-Section">
+            <button
+              className="GmBar-button-right-Margin event-chat-submit"
+              onClick={(evt) => {
+                thereIsGrid();
+              }}
+              style={{
+                backgroundColor: grid === true ? "yellow" : "",
+              }}
+            >
+              Grid
+            </button>
+            <button
+              className="event-chat-submit"
+              onClick={() => {
+                fitToTheMap(!fitToMap);
+              }}
+              style={{
+                backgroundColor: fitToMap === true ? "yellow" : "",
+              }}
+            >
+              Fit to map
+            </button>
+          </div>
+          <div className="GmBar-Gm-Sub-Section ">
+            {buttonBackgroundSize ? (
+              <>
+                <div style={{ display: "flex" }}>
+                  <button
+                    className="event-chat-submit GmBar-button-right-Margin"
+                    style={{ backgroundColor: "yellow" }}
+                    onClick={() => {
+                      changeBackgroundSize();
+                    }}
+                  >
+                    Save Size
+                  </button>
 
-      <div>
-        <button
-          onClick={(evt) => {
-            dispatch({
-              type: "isDuplicate",
-              isDuplicate: !isDuplicate.action,
-            });
-          }}
-          style={{
-            backgroundColor: isDuplicate.action === true ? "yellow" : "",
-          }}
-        >
-          duplicate
-        </button>
-        <input
-          type="number"
-          value={isDuplicate.number}
-          onChange={(evt) => {
-            dispatch({ type: "duplicateNumber", number: evt.target.value });
-          }}
-        ></input>
-      </div>
-      <div>
-        <button
-          onClick={(evt) => {
-            dispatch({
-              type: "isHidingToken",
-              isHidingToken: !isHiding,
-            });
-          }}
-          style={{
-            backgroundColor: isHiding === true ? "yellow" : "",
-          }}
-        >
-          Hide
-        </button>
-        <div
-          style={{
-            display: typeSelection === "Draw" ? "block" : "none",
-          }}
-        >
-          <button onClick={props.canvasFill}>Fill</button>
-          <button onClick={props.canvasClear}>Clear</button>
-          <button
+                  <div className="GmBar-button-right-Margin">
+                    <label>Width-Squares</label>
+                    <input
+                      value={backgroundWidth}
+                      className="GmBar-Input"
+                      type="number"
+                      onChange={({ target: { value } }) => {
+                        setBackgroundWidth(parseInt(value));
+                      }}
+                    />
+                  </div>
+                  <div className="GmBar-button-right-Margin"></div>
+                  <label>Height-Squares</label>
+                  <input
+                    value={backgroundHeight}
+                    className="GmBar-Input"
+                    type="number"
+                    onChange={({ target: { value } }) =>
+                      setBackgroundHeight(parseInt(value))
+                    }
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ display: "flex" }}>
+                  <button
+                    className="GmBar-button-right-Margin event-chat-submit"
+                    onClick={() => {
+                      setButtonBackgroundSize(true);
+                      setBackgroundWidth(props.widthSquares);
+                      setBackgroundHeight(props.heightSquares);
+                      dispatch({
+                        type: "startPostingData",
+                      });
+                    }}
+                  >
+                    Edit Size
+                  </button>
+                  <div className="GmBar-button-right-Margin">
+                    <div className="GmBar-button-right-Margin">
+                      <label>Width-Squares</label>
+                      <input
+                        readOnly
+                        className="GmBar-Input"
+                        value={props.widthSquares}
+                        type="number"
+                        style={{ backgroundColor: "grey" }}
+                      />
+                    </div>
+                  </div>
+                  <div className="GmBar-button-right-Margin"></div>
+                  <label>Height-Squares</label>
+                  <input
+                    readOnly
+                    className="GmBar-Input"
+                    value={props.heightSquares}
+                    type="number"
+                    style={{ backgroundColor: "grey" }}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+          <div className="GmBar-Gm-Sub-Section" style={{ display: "flex" }}>
+            {buttonPageChange ? (
+              <>
+                <button
+                  style={{ backgroundColor: "yellow" }}
+                  onClick={() => {
+                    ChangingPageHandler();
+                  }}
+                >
+                  Save Pages
+                </button>
+                <div className="GmBar-button-right-Margin">
+                  <label>Gm's Page</label>
+                  <input
+                    value={gmPageInput}
+                    type="number"
+                    className="GmBar-Input"
+                    onChange={({ target: { value } }) => {
+                      setGmPageInput(parseInt(value));
+                    }}
+                  />
+                </div>
+                <label>Players's Page</label>
+                <input
+                  value={playersPageInput}
+                  className="GmBar-Input"
+                  type="number"
+                  onChange={({ target: { value } }) =>
+                    setPlayersPageInput(parseInt(value))
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <button
+                  className="GmBar-button-right-Margin event-chat-submit"
+                  onClick={() => {
+                    setButtonPageChange(true);
+                    setGmPageInput(gmPage);
+                    setPlayersPageInput(playersPage);
+                    dispatch({
+                      type: "startPostingData",
+                    });
+                  }}
+                >
+                  Edit Pages
+                </button>
+                <div className="GmBar-button-right-Margin">
+                  <label>Gm's Page</label>
+                  <input
+                    readOnly
+                    className="GmBar-Input"
+                    value={gmPage}
+                    type="number"
+                    style={{ backgroundColor: "grey" }}
+                  />
+                </div>
+                <label>Players's Page</label>
+                <input
+                  readOnly
+                  className="GmBar-Input"
+                  value={playersPage}
+                  type="number"
+                  style={{ backgroundColor: "grey" }}
+                />
+              </>
+            )}
+          </div>
+          <div
+            className="GmBar-Gm-Sub-Section"
             style={{
-              backgroundColor: erasingCanvas === true ? "yellow" : "",
-            }}
-            onClick={(evt) => {
-              dispatch({
-                type: "erasingCanvas",
-                erasingCanvas: !erasingCanvas,
-              });
+              display: typeSelection === "Draw" ? "flex" : "none",
             }}
           >
-            Eraser
-          </button>
-          <label>Pen Size</label>
-          <input
-            type="number"
-            onChange={(evt) => {
-              props.changingPenSize(evt.target.value);
-            }}
-          />
-
-          <label>Pen Color</label>
-          <select
-            onChange={(evt) => {
-              props.changingPenColor(evt.target.value);
-            }}
-          >
-            <option>Black</option>
-            <option>Red</option>
-            <option>Blue</option>
-            <option>Green</option>
-            <option>Yellow</option>
-            <option>Pink</option>
-            <option>White</option>
-          </select>
+            <button
+              onClick={props.canvasFill}
+              className="event-chat-submit GmBar-button-right-Margin"
+            >
+              Fill
+            </button>
+            <button
+              onClick={props.canvasClear}
+              className="event-chat-submit GmBar-button-right-Margin"
+            >
+              Clear
+            </button>
+            <button
+              className="event-chat-submit GmBar-button-right-Margin"
+              style={{
+                backgroundColor: erasingCanvas === true ? "yellow" : "",
+              }}
+              onClick={(evt) => {
+                dispatch({
+                  type: "erasingCanvas",
+                  erasingCanvas: !erasingCanvas,
+                });
+              }}
+            >
+              Eraser
+            </button>
+            <div className="GmBar-button-right-Margin">
+              <label>Pen Size</label>
+              <input
+                className="GmBar-Input"
+                type="number"
+                onChange={(evt) => {
+                  props.changingPenSize(evt.target.value);
+                }}
+              />
+            </div>
+            <label>Pen Color</label>
+            <select
+              onChange={(evt) => {
+                props.changingPenColor(evt.target.value);
+              }}
+            >
+              <option>Black</option>
+              <option>Red</option>
+              <option>Blue</option>
+              <option>Green</option>
+              <option>Yellow</option>
+              <option>Pink</option>
+              <option>White</option>
+            </select>
+          </div>
         </div>
       </div>
       <div>
-        <button
-          onClick={(evt) => {
-            dispatch({
-              type: "isScanning",
-              isScanning: !isScanning,
-            });
-          }}
-          style={{
-            backgroundColor: isScanning === true ? "yellow" : "",
-          }}
-        >
-          Scan {isScanning}
-        </button>
-        <button
-          onClick={(evt) => {
-            thereIsGrid();
-          }}
-          style={{
-            backgroundColor: grid === true ? "yellow" : "",
-          }}
-        >
-          Grid
-        </button>
+        <ChatOnline host={props.host} />
       </div>
       <div>
         <div>
-          {buttonPageChange ? (
-            <>
-              <button
-                style={{ backgroundColor: "yellow" }}
-                onClick={() => {
-                  ChangingPageHandler();
-                }}
-              >
-                Save Pages
-              </button>
-              <label>Gm's Page</label>
-              <input
-                value={gmPageInput}
-                type="number"
-                onChange={({ target: { value } }) => {
-                  setGmPageInput(parseInt(value));
-                }}
-              />
-              <label>Players's Page</label>
-              <input
-                value={playersPageInput}
-                type="number"
-                onChange={({ target: { value } }) =>
-                  setPlayersPageInput(parseInt(value))
-                }
-              />
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => {
-                  setButtonPageChange(true);
-                  setGmPageInput(gmPage);
-                  setPlayersPageInput(playersPage);
-                  dispatch({
-                    type: "startPostingData",
-                  });
-                }}
-              >
-                Edit Pages
-              </button>
-              <label>Gm's Page</label>
-              <input
-                readOnly
-                value={gmPage}
-                type="number"
-                style={{ backgroundColor: "grey" }}
-              />
-              <label>X </label>
-              <label>Players's Page</label>
-              <input
-                readOnly
-                value={playersPage}
-                type="number"
-                style={{ backgroundColor: "grey" }}
-              />
-            </>
-          )}
+          <button
+            onClick={(evt) => {
+              dispatch({
+                type: "isScanning",
+                isScanning: !isScanning,
+              });
+            }}
+            style={{
+              backgroundColor: isScanning === true ? "yellow" : "",
+            }}
+          >
+            Scan {isScanning}
+          </button>
         </div>
         <div>
           <button
@@ -417,21 +481,6 @@ export default function GmBar(props) {
             Unselect
           </button>
         </div>
-        <div>
-          <button
-            onClick={() => {
-              fitToTheMap(!fitToMap);
-            }}
-            style={{
-              backgroundColor: fitToMap === true ? "yellow" : "",
-            }}
-          >
-            Fit to the map
-          </button>
-        </div>
-      </div>
-      <div>
-        <ChatOnline host={props.host} />
       </div>
     </div>
   );
