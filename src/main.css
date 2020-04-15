@@ -55,6 +55,7 @@ body {
   border-radius: 5px;
   background-color: #5b7b9b;
   padding: 10px;
+  margin: 10px;
 }
 
 .card-sponsored {
@@ -599,3 +600,37 @@ body {
 .GmBar-button-right-Margin {
   margin-right: 10px;
 }
+.GmBar-button {
+  border-radius: 5px;
+  border: 3px solid #97cda9;
+}
+.rbc-event-content {
+  font-size: 14px;
+}
+.rbc-calendar {
+  border: 3px solid #97cda9;
+}
+.rbc-day-bg {
+  border: 1px solid #97cda9;
+}
+.rbc-header {
+  border: 1px solid #97cda9;
+}
+.listOfUsers {
+  margin: 5px;
+  border-right: 3px solid #97cda9;
+}
+.GmBar-user-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* .GmBar2 {
+  top: 0;
+  height: 30%;
+  position: fixed;
+  z-index: 50;
+  background-color: #e5e5d9;
+  width: -webkit-fill-available;
+} */

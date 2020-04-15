@@ -173,6 +173,36 @@ app.post("/requestToJoin", uploads.none(), async (req, res) => {
   }
 });
 
+app.post("/fitToMap", uploads.none(), async (req, res) => {
+  let positionX = req.body.positionX;
+  // let positionX = "0";
+  // let positionY = "0";
+  let positionY = req.body.positionY;
+  let width = req.body.width;
+  let height = req.body.height;
+  let tokenId = req.body.tokenId;
+
+  try {
+    await dbo.collection("tokens").updateOne(
+      { tokenId: tokenId },
+      {
+        $set: {
+          positionX: positionX,
+          positionY: positionY,
+          width: width,
+          height: height,
+        },
+      }
+    );
+
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("dragged error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
 app.post("/dragged", uploads.none(), async (req, res) => {
   let positionX = req.body.positionX;
   let positionY = req.body.positionY;
@@ -373,20 +403,21 @@ app.post("/giveOrRemovePermissionToken", uploads.none(), async (req, res) => {
     return;
   }
 });
-
+///je travail
 app.post("/playerinitiative", uploads.none(), async (req, res) => {
-  let playerinitiative = JSON.parse(req.body.playerinitiative);
-  let user = JSON.parse(req.body.user);
+  let onlineUsers = JSON.parse(req.body.onlineUsers);
   let host = req.body.host;
-  let playerIndex = JSON.parse(req.body.playerIndex);
-  user.initiative = playerinitiative;
-  let field = "onlineUsers." + playerIndex;
+  // let playerinitiative = JSON.parse(req.body.playerinitiative);
+  // let user = JSON.parse(req.body.user);
+  // let playerIndex = JSON.parse(req.body.playerIndex);
+  // user.initiative = playerinitiative;
+  // let field = "onlineUsers." + playerIndex;
 
   try {
     await dbo.collection("tokens").updateOne(
       { host: host, type: "MasterToken" },
       {
-        $set: { [field]: user },
+        $set: { onlineUsers },
       }
     );
     res.send(JSON.stringify({ success: true }));

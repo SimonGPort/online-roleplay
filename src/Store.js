@@ -128,6 +128,13 @@ let reducer = (state, action) => {
     return { ...state, isScanning: action.isScanning };
   }
 
+  if (action.type === "changeInitiative") {
+    return produce(state, (draftState) => {
+      draftState.MasterToken.onlineUsers[action.index].initiative =
+        action.initiative;
+    });
+  }
+
   if (action.type === "duplicateNumber") {
     if (action.number < 0) {
       action.number = 1;
@@ -401,7 +408,7 @@ const store = createStore(
     isHidingToken: false,
     isScanning: false,
     CreationOnlineToken: false,
-    MasterToken: {},
+    MasterToken: { scan: null },
     erasingCanvas: false,
     permissionToken: [],
     selectedToken: "",

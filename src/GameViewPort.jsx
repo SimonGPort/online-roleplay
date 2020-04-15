@@ -358,8 +358,11 @@ class GameViewPort extends Component {
   fitToMap = async (tokenId) => {
     let rect = canvas.getBoundingClientRect();
     let data = new FormData();
-    data.append("positionX", rect.left);
-    data.append("positionY", rect.top);
+    data.append("positionX", 0);
+    data.append("positionY", 0);
+
+    // data.append("positionX", window.pageXOffset + rect.left);
+    // data.append("positionY", window.pageYOffset + rect.top);
     data.append("width", rect.width);
     data.append("height", rect.height);
     data.append("tokenId", tokenId);
@@ -369,10 +372,14 @@ class GameViewPort extends Component {
       type: "startPostingData",
     });
 
-    let response = await fetch("/dragged", { method: "POST", body: data });
+    let response = await fetch("/fitToMap", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
     if (body.success) {
+      this.props.dispatch({
+        type: "fitToTheMap",
+        action: false,
+      });
       console.log("/dragged success");
       this.props.dispatch({
         type: "endPostingData",
@@ -400,6 +407,7 @@ class GameViewPort extends Component {
         scan.time.second + 10 >= timeNow.second
       );
     });
+
     let hideProperty = (token) => {
       return this.props.user !== this.props.host && token.hide === true;
     };
@@ -442,7 +450,8 @@ class GameViewPort extends Component {
                           this.props.typeSelection === "Background" &&
                           token.type === "Background") ||
                         (this.props.typeSelection === "Token" &&
-                          token.type === "Token")
+                          token.type === "Token" &&
+                          token.permission.includes(this.props.user))
                           ? "4"
                           : token.zIndex,
                       height: token.height + "px",
@@ -453,7 +462,7 @@ class GameViewPort extends Component {
                       opacity: token.hide === true ? "0.5" : "1",
                       border:
                         this.props.selectedToken === token.tokenId
-                          ? "3px solid yellow"
+                          ? "1px solid yellow"
                           : "",
                       boxSizing: "border-box",
                     }}

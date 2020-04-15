@@ -161,7 +161,7 @@ export default function GmBar(props) {
           </div>
           <div className="GmBar-Gm-Sub-Section">
             <button
-              className="GmBar-button-right-Margin event-chat-submit"
+              className="GmBar-button-right-Margin GmBar-button"
               onClick={() =>
                 dispatch({
                   type: "CreationOnlineToken",
@@ -172,7 +172,7 @@ export default function GmBar(props) {
               New Token
             </button>
             <button
-              className="event-chat-submit"
+              className="GmBar-button"
               onClick={(evt) => {
                 dispatch({
                   type: "isErasingToken",
@@ -188,7 +188,7 @@ export default function GmBar(props) {
           </div>
           <div className="GmBar-Gm-Sub-Section">
             <button
-              className="GmBar-button-right-Margin event-chat-submit"
+              className="GmBar-button-right-Margin GmBar-button"
               onClick={(evt) => {
                 dispatch({
                   type: "isHidingToken",
@@ -202,7 +202,7 @@ export default function GmBar(props) {
               Hide
             </button>
             <button
-              className="event-chat-submit"
+              className="GmBar-button"
               onClick={(evt) => {
                 dispatch({
                   type: "isDuplicate",
@@ -226,7 +226,7 @@ export default function GmBar(props) {
           </div>
           <div className="GmBar-Gm-Sub-Section">
             <button
-              className="GmBar-button-right-Margin event-chat-submit"
+              className="GmBar-button-right-Margin GmBar-button"
               onClick={(evt) => {
                 thereIsGrid();
               }}
@@ -237,7 +237,7 @@ export default function GmBar(props) {
               Grid
             </button>
             <button
-              className="event-chat-submit"
+              className="GmBar-button"
               onClick={() => {
                 fitToTheMap(!fitToMap);
               }}
@@ -253,7 +253,7 @@ export default function GmBar(props) {
               <>
                 <div style={{ display: "flex" }}>
                   <button
-                    className="event-chat-submit GmBar-button-right-Margin"
+                    className="GmBar-button GmBar-button-right-Margin"
                     style={{ backgroundColor: "yellow" }}
                     onClick={() => {
                       changeBackgroundSize();
@@ -289,7 +289,7 @@ export default function GmBar(props) {
               <>
                 <div style={{ display: "flex" }}>
                   <button
-                    className="GmBar-button-right-Margin event-chat-submit"
+                    className="GmBar-button-right-Margin GmBar-button"
                     onClick={() => {
                       setButtonBackgroundSize(true);
                       setBackgroundWidth(props.widthSquares);
@@ -361,7 +361,7 @@ export default function GmBar(props) {
             ) : (
               <>
                 <button
-                  className="GmBar-button-right-Margin event-chat-submit"
+                  className="GmBar-button-right-Margin GmBar-button"
                   onClick={() => {
                     setButtonPageChange(true);
                     setGmPageInput(gmPage);
@@ -402,18 +402,18 @@ export default function GmBar(props) {
           >
             <button
               onClick={props.canvasFill}
-              className="event-chat-submit GmBar-button-right-Margin"
+              className="GmBar-button GmBar-button-right-Margin"
             >
               Fill
             </button>
             <button
               onClick={props.canvasClear}
-              className="event-chat-submit GmBar-button-right-Margin"
+              className="GmBar-button GmBar-button-right-Margin"
             >
               Clear
             </button>
             <button
-              className="event-chat-submit GmBar-button-right-Margin"
+              className="GmBar-button GmBar-button-right-Margin"
               style={{
                 backgroundColor: erasingCanvas === true ? "yellow" : "",
               }}
@@ -457,8 +457,10 @@ export default function GmBar(props) {
         <ChatOnline host={props.host} />
       </div>
       <div>
+        <div className="event-information">Selection</div>
         <div>
           <button
+            className="GmBar-button GmBar-button-right-Margin"
             onClick={(evt) => {
               dispatch({
                 type: "isScanning",
@@ -471,9 +473,8 @@ export default function GmBar(props) {
           >
             Scan {isScanning}
           </button>
-        </div>
-        <div>
           <button
+            className="GmBar-button"
             onClick={() => {
               Unselect();
             }}

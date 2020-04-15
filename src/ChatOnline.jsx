@@ -8,6 +8,7 @@ class ChatOnline extends Component {
       inputValue: "",
       password: "",
       initiaveChanging: false,
+      UserInitiative: [],
     };
   }
 
@@ -16,6 +17,15 @@ class ChatOnline extends Component {
   };
 
   ButtonInitiative = (value) => {
+    if (value) {
+      this.props.dispatch({
+        type: "startPostingData",
+      });
+    } else {
+      this.props.dispatch({
+        type: "endPostingData",
+      });
+    }
     this.setState({ initiaveChanging: value });
   };
 
@@ -38,18 +48,22 @@ class ChatOnline extends Component {
     }
   };
 
-  handleOnChanges = async (evt, user) => {
-    if (!this.state.initiaveChanging) {
-      return;
-    }
-    let data = new FormData();
-    data.append("playerinitiative", evt.target.value);
-    data.append("host", this.props.host);
-    data.append("user", JSON.stringify(user));
+  handleOnChanges = (evt, user) => {
     let playerIndex = this.props.onlineUsers.findIndex((onlineUser) => {
       return onlineUser.user === user.user;
     });
-    data.append("playerIndex", JSON.stringify(playerIndex));
+    this.props.dispatch({
+      type: "changeInitiative",
+      user: user,
+      initiative: evt.target.value,
+      index: playerIndex,
+    });
+  };
+
+  PostInitiative = async () => {
+    let data = new FormData();
+    data.append("onlineUsers", JSON.stringify(this.props.onlineUsers));
+    data.append("host", this.props.host);
     let response = await fetch("/playerinitiative", {
       method: "POST",
       body: data,
@@ -62,8 +76,30 @@ class ChatOnline extends Component {
       console.log("playerinitiative Failure");
     }
   };
-  ///je travail ici
-  handleInitiative = () => {};
+  //   if (this.state.initiaveChanging) {
+  //     return;
+  //   }
+  //   console.log("changing initiative");
+  //
+  //   data.append("playerinitiative", evt.target.value);
+  //   data.append("host", this.props.host);
+  //   data.append("user", JSON.stringify(user));
+  //   let playerIndex = this.props.onlineUsers.findIndex((onlineUser) => {
+  //     return onlineUser.user === user.user;
+  //   });
+  //   data.append("playerIndex", JSON.stringify(playerIndex));
+  //   let response = await fetch("/playerinitiative", {
+  //     method: "POST",
+  //     body: data,
+  //   });
+  //   const body = await response.text();
+  //   const parsed = JSON.parse(body);
+  //   if (parsed.success) {
+  //     console.log("playerinitiative success");
+  //   } else {
+  //     console.log("playerinitiative Failure");
+  //   }
+  // };
 
   giveOrRemovePermissionToken = async (permissionValue, user) => {
     let data = new FormData();
@@ -87,9 +123,12 @@ class ChatOnline extends Component {
   };
 
   render = () => {
-    let userSort = this.props.onlineUsers
-      .slice()
-      .sort((a, b) => b.initiative - a.initiative);
+    let userSort = undefined;
+    this.props.postingData
+      ? (userSort = this.props.onlineUsers)
+      : (userSort = this.props.onlineUsers
+          .slice()
+          .sort((a, b) => b.initiative - a.initiative));
     return (
       <>
         <div className="chatOnline">
@@ -139,49 +178,55 @@ class ChatOnline extends Component {
               </form>
             </div>
           </div> */}
-          <div>
-            <div className="listOfUsers">
-              <div className="event-information">Players</div>
-              {userSort.map((user, idx) => {
-                let permissionValue = this.props.permission.includes(user.user);
-                return (
-                  <div key={idx} className="GmBar-User">
-                    {user.user}
-                    <input
-                      className="GmBar-Input"
-                      readOnly={!this.state.initiaveChanging}
-                      style={{
-                        backgroundColor:
-                          this.state.initiaveChanging === true ? "" : "grey",
-                      }}
-                      key={idx}
-                      value={
-                        !this.state.initiaveChanging ? user.initiative : null
-                      }
-                      type="number"
-                      onChange={(evt) => this.handleOnChanges(evt, user)}
-                    />
-                    <button
-                      onClick={() =>
-                        this.giveOrRemovePermissionToken(
-                          permissionValue,
-                          user.user
-                        )
-                      }
-                      style={{
-                        display: this.props.tokenId === "" ? "none" : "block",
-                      }}
-                    >
-                      {permissionValue ? "Remove Control" : "Give Control"}
-                    </button>
+          <div className="listOfUsers">
+            <div className="event-information">Players</div>
+            {userSort.map((user, idx) => {
+              let permissionValue = this.props.permission.includes(user.user);
+              return (
+                <div key={idx} className="GmBar-User">
+                  <div className="GmBar-user-container">
+                    <img src="/images/account_box.svg" /> {user.user}
                   </div>
-                );
-              })}
-            </div>
+                  <input
+                    className="GmBar-Input"
+                    readOnly={!this.state.initiaveChanging}
+                    style={{
+                      backgroundColor:
+                        this.state.initiaveChanging === true ? "" : "grey",
+                    }}
+                    key={idx}
+                    value={
+                      !this.state.initiaveChanging ? user.initiative : null
+                    }
+                    type="number"
+                    onChange={(evt) => this.handleOnChanges(evt, user)}
+                  />
+                  <button
+                    onClick={() =>
+                      this.giveOrRemovePermissionToken(
+                        permissionValue,
+                        user.user
+                      )
+                    }
+                    style={{
+                      display:
+                        this.props.tokenId === "" ||
+                        this.props.user !== this.props.host
+                          ? "none"
+                          : "block",
+                    }}
+                  >
+                    {permissionValue ? "Remove Control" : "Give Control"}
+                  </button>
+                </div>
+              );
+            })}
             <div>
               {this.state.initiaveChanging ? (
                 <button
+                  className="GmBar-button"
                   onClick={() => {
+                    this.PostInitiative();
                     this.ButtonInitiative(!this.state.initiaveChanging);
                   }}
                   style={{
@@ -192,6 +237,7 @@ class ChatOnline extends Component {
                 </button>
               ) : (
                 <button
+                  className="GmBar-button"
                   onClick={() => {
                     this.ButtonInitiative(!this.state.initiaveChanging);
                   }}
@@ -217,6 +263,7 @@ let mapStateToProps = (state) => {
     user: state.user,
     permission: state.permissionToken,
     tokenId: state.selectedToken,
+    postingData: state.postingData,
   };
 };
 

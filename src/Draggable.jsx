@@ -75,7 +75,7 @@ class Draggable extends Component {
       console.log("the token is duplicate");
     }
   };
-  ////travail ici
+
   handleMouseDown = ({ clientX, clientY }) => {
     this.props.dispatch({
       type: "permissionToken",
@@ -86,9 +86,10 @@ class Draggable extends Component {
     if (!this.props.token.permission.includes(this.props.user)) {
       return;
     }
-    ///travail
+
     if (this.props.fitToTheMap) {
       this.props.fitToMap(this.props.token.tokenId);
+      return;
     }
 
     if (
@@ -119,8 +120,11 @@ class Draggable extends Component {
     window.addEventListener("mouseup", this.handleMouseUp);
     const child = document.getElementById(this.props.token.tokenId);
 
-    let differenceX = clientX - this.state.positionX;
-    let differenceY = clientY - this.state.positionY;
+    let rectChild = child.getBoundingClientRect();
+    let differenceX = clientX - rectChild.left;
+    let differenceY = clientY - rectChild.top;
+    // let differenceX = clientX - this.state.positionX;
+    // let differenceY = clientY - this.state.positionY;
     if (
       this.props.user === this.props.token.host &&
       differenceX >= child.offsetWidth * 0.9 &&
@@ -174,6 +178,9 @@ class Draggable extends Component {
   };
 
   handleMouseUp = ({ clientX, clientY }) => {
+    if (this.props.fitToTheMap) {
+      return;
+    }
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
     const child = document.getElementById(this.props.token.tokenId);
