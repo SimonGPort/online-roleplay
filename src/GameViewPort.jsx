@@ -411,7 +411,7 @@ class GameViewPort extends Component {
         scan.time.hours === timeNow.hours &&
         scan.time.minute === timeNow.minute &&
         scan.time.second <= timeNow.second &&
-        scan.time.second + 10 >= timeNow.second
+        scan.time.second + 2 >= timeNow.second
       );
     });
 

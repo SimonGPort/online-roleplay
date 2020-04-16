@@ -9,7 +9,22 @@ class ChatOnline extends Component {
       password: "",
       initiaveChanging: false,
       UserInitiative: [],
+      chatLength: undefined,
     };
+  }
+
+  componentDidMount() {
+    let chatBottom = document.getElementById("chatBottom");
+    chatBottom.scrollTop = chatBottom.scrollHeight;
+    this.setState({ chatLength: this.props.chat.length });
+  }
+
+  componentDidUpdate() {
+    if (this.state.chatLength !== this.props.chat.length) {
+      let chatBottom = document.getElementById("chatBottom");
+      chatBottom.scrollTop = chatBottom.scrollHeight;
+      this.setState({ chatLength: this.props.chat.length });
+    }
   }
 
   chatInput = (evt) => {
@@ -198,7 +213,7 @@ class ChatOnline extends Component {
         <div className="chatOnline">
           <div className="GmBar-chat-section">
             <div className="GmBar-event-information">Chat</div>
-            <div className="GmBar-chat-message-list">
+            <div className="GmBar-chat-message-list" id="chatBottom">
               {this.props.chat.map((msg, idx) => {
                 return this.treatment(msg, idx);
               })}
