@@ -20,7 +20,7 @@ export default function GmBar(props) {
   let pageInDB = useSelector((state) => state.MasterToken.pageInDB);
   let fitToMap = useSelector((state) => state.fitToTheMap);
   let user = useSelector((state) => state.user);
-
+  let [GmBarPositionBottom, setGmBarPositionBottom] = useState(true);
   let [buttonPageChange, setButtonPageChange] = useState(false);
   let [gmPageInput, setGmPageInput] = useState("");
   let [playersPageInput, setPlayersPageInput] = useState("");
@@ -140,12 +140,20 @@ export default function GmBar(props) {
   };
 
   return (
-    <div className="GmBar">
+    <div
+      className="GmBar"
+      style={{
+        display: props.GmBarDisplay ? "" : "none",
+        top: GmBarPositionBottom ? "" : "0",
+        bottom: GmBarPositionBottom ? "0" : "",
+      }}
+    >
       <div className="GmBar-Gm-Section">
         <div style={{ display: user === props.host ? "block" : "none" }}>
           <div className="event-information">Gm's Tools</div>
           <div className="GmBar-Gm-Sub-Section">
             <select
+              className="GmBar-button-right-Margin"
               value={selection}
               onChange={(evt) => {
                 dispatch({
@@ -158,8 +166,6 @@ export default function GmBar(props) {
               <option>Background</option>
               <option>Draw</option>
             </select>
-          </div>
-          <div className="GmBar-Gm-Sub-Section">
             <button
               className="GmBar-button-right-Margin GmBar-button"
               onClick={() =>
@@ -169,10 +175,10 @@ export default function GmBar(props) {
                 })
               }
             >
-              New Token
+              New Element
             </button>
             <button
-              className="GmBar-button"
+              className="GmBar-button GmBar-button-right-Margin"
               onClick={(evt) => {
                 dispatch({
                   type: "isErasingToken",
@@ -183,10 +189,8 @@ export default function GmBar(props) {
                 backgroundColor: isErasing === true ? "yellow" : "",
               }}
             >
-              Erase Token
+              Erase Element
             </button>
-          </div>
-          <div className="GmBar-Gm-Sub-Section">
             <button
               className="GmBar-button-right-Margin GmBar-button"
               onClick={(evt) => {
@@ -199,7 +203,7 @@ export default function GmBar(props) {
                 backgroundColor: isHiding === true ? "yellow" : "",
               }}
             >
-              Hide
+              Hide Element
             </button>
             <button
               className="GmBar-button"
@@ -213,118 +217,19 @@ export default function GmBar(props) {
                 backgroundColor: isDuplicate.action === true ? "yellow" : "",
               }}
             >
-              Duplicate
+              Duplicate Element
             </button>
             <input
               type="number"
               className="GmBar-Input"
               value={isDuplicate.number}
               onChange={(evt) => {
-                dispatch({ type: "duplicateNumber", number: evt.target.value });
+                dispatch({
+                  type: "duplicateNumber",
+                  number: evt.target.value,
+                });
               }}
             ></input>
-          </div>
-          <div className="GmBar-Gm-Sub-Section">
-            <button
-              className="GmBar-button-right-Margin GmBar-button"
-              onClick={(evt) => {
-                thereIsGrid();
-              }}
-              style={{
-                backgroundColor: grid === true ? "yellow" : "",
-              }}
-            >
-              Grid
-            </button>
-            <button
-              className="GmBar-button"
-              onClick={() => {
-                fitToTheMap(!fitToMap);
-              }}
-              style={{
-                backgroundColor: fitToMap === true ? "yellow" : "",
-              }}
-            >
-              Fit to map
-            </button>
-          </div>
-          <div className="GmBar-Gm-Sub-Section ">
-            {buttonBackgroundSize ? (
-              <>
-                <div style={{ display: "flex" }}>
-                  <button
-                    className="GmBar-button GmBar-button-right-Margin"
-                    style={{ backgroundColor: "yellow" }}
-                    onClick={() => {
-                      changeBackgroundSize();
-                    }}
-                  >
-                    Save Size
-                  </button>
-
-                  <div className="GmBar-button-right-Margin">
-                    <label>Width-Squares</label>
-                    <input
-                      value={backgroundWidth}
-                      className="GmBar-Input"
-                      type="number"
-                      onChange={({ target: { value } }) => {
-                        setBackgroundWidth(parseInt(value));
-                      }}
-                    />
-                  </div>
-                  <div className="GmBar-button-right-Margin"></div>
-                  <label>Height-Squares</label>
-                  <input
-                    value={backgroundHeight}
-                    className="GmBar-Input"
-                    type="number"
-                    onChange={({ target: { value } }) =>
-                      setBackgroundHeight(parseInt(value))
-                    }
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div style={{ display: "flex" }}>
-                  <button
-                    className="GmBar-button-right-Margin GmBar-button"
-                    onClick={() => {
-                      setButtonBackgroundSize(true);
-                      setBackgroundWidth(props.widthSquares);
-                      setBackgroundHeight(props.heightSquares);
-                      dispatch({
-                        type: "startPostingData",
-                      });
-                    }}
-                  >
-                    Edit Size
-                  </button>
-                  <div className="GmBar-button-right-Margin">
-                    <div className="GmBar-button-right-Margin">
-                      <label>Width-Squares</label>
-                      <input
-                        readOnly
-                        className="GmBar-Input"
-                        value={props.widthSquares}
-                        type="number"
-                        style={{ backgroundColor: "grey" }}
-                      />
-                    </div>
-                  </div>
-                  <div className="GmBar-button-right-Margin"></div>
-                  <label>Height-Squares</label>
-                  <input
-                    readOnly
-                    className="GmBar-Input"
-                    value={props.heightSquares}
-                    type="number"
-                    style={{ backgroundColor: "grey" }}
-                  />
-                </div>
-              </>
-            )}
           </div>
           <div className="GmBar-Gm-Sub-Section" style={{ display: "flex" }}>
             {buttonPageChange ? (
@@ -395,6 +300,131 @@ export default function GmBar(props) {
             )}
           </div>
           <div
+            className="GmBar-Gm-Sub-Section "
+            style={{
+              display: typeSelection === "Background" ? "flex" : "none",
+            }}
+          >
+            {buttonBackgroundSize ? (
+              <>
+                <div style={{ display: "flex" }}>
+                  <button
+                    className="GmBar-button GmBar-button-right-Margin"
+                    style={{ backgroundColor: "yellow" }}
+                    onClick={() => {
+                      changeBackgroundSize();
+                    }}
+                  >
+                    Save Squares
+                  </button>
+                  {/* <div className="GmBar-button-right-Margin"> */}
+                  <label>Width</label>
+                  <input
+                    value={backgroundWidth}
+                    className="GmBar-Input"
+                    type="number"
+                    onChange={({ target: { value } }) => {
+                      setBackgroundWidth(parseInt(value));
+                    }}
+                  />
+                  {/* </div> */}
+                  <div className="GmBar-button-right-Margin"></div>
+                  <label>Height</label>
+                  <input
+                    value={backgroundHeight}
+                    className="GmBar-Input GmBar-button-right-Margin"
+                    type="number"
+                    onChange={({ target: { value } }) =>
+                      setBackgroundHeight(parseInt(value))
+                    }
+                  />
+                  <button
+                    className="GmBar-button-right-Margin GmBar-button"
+                    onClick={(evt) => {
+                      thereIsGrid();
+                    }}
+                    style={{
+                      backgroundColor: grid === true ? "yellow" : "",
+                    }}
+                  >
+                    Map Grid
+                  </button>
+                  <button
+                    className="GmBar-button"
+                    onClick={() => {
+                      fitToTheMap(!fitToMap);
+                    }}
+                    style={{
+                      backgroundColor: fitToMap === true ? "yellow" : "",
+                    }}
+                  >
+                    Fit to Map
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ display: "flex" }}>
+                  <button
+                    className="GmBar-button-right-Margin GmBar-button"
+                    onClick={() => {
+                      setButtonBackgroundSize(true);
+                      setBackgroundWidth(props.widthSquares);
+                      setBackgroundHeight(props.heightSquares);
+                      dispatch({
+                        type: "startPostingData",
+                      });
+                    }}
+                  >
+                    Edit Squares
+                  </button>
+                  {/* <div className="GmBar-button-right-Margin"> */}
+                  <label>Width</label>
+                  <input
+                    readOnly
+                    className="GmBar-Input"
+                    value={props.widthSquares}
+                    type="number"
+                    style={{ backgroundColor: "grey" }}
+                  />
+                  {/* </div> */}
+                  <div className="GmBar-button-right-Margin"></div>
+                  <label>Height</label>
+                  <input
+                    readOnly
+                    className="GmBar-Input GmBar-button-right-Margin"
+                    value={props.heightSquares}
+                    type="number"
+                    style={{ backgroundColor: "grey" }}
+                  />
+                  <button
+                    className="GmBar-button-right-Margin GmBar-button"
+                    onClick={(evt) => {
+                      thereIsGrid();
+                    }}
+                    style={{
+                      backgroundColor: grid === true ? "yellow" : "",
+                    }}
+                  >
+                    Map Grid
+                  </button>
+                  <button
+                    className="GmBar-button"
+                    onClick={() => {
+                      fitToTheMap(!fitToMap);
+                    }}
+                    style={{
+                      backgroundColor: fitToMap === true ? "yellow" : "",
+                    }}
+                  >
+                    Fit to Map
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div
             className="GmBar-Gm-Sub-Section"
             style={{
               display: typeSelection === "Draw" ? "flex" : "none",
@@ -427,7 +457,7 @@ export default function GmBar(props) {
               Eraser
             </button>
             <div className="GmBar-button-right-Margin">
-              <label>Pen Size</label>
+              <label>Size</label>
               <input
                 className="GmBar-Input"
                 type="number"
@@ -436,7 +466,7 @@ export default function GmBar(props) {
                 }}
               />
             </div>
-            <label>Pen Color</label>
+            <label>Color</label>
             <select
               onChange={(evt) => {
                 props.changingPenColor(evt.target.value);
@@ -481,6 +511,17 @@ export default function GmBar(props) {
           >
             Unselect
           </button>
+          <div>
+            <button
+              style={{ marginTop: "10px" }}
+              className="GmBar-button"
+              onClick={() => {
+                setGmBarPositionBottom(!GmBarPositionBottom);
+              }}
+            >
+              {GmBarPositionBottom === true ? "Top" : "bottom"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

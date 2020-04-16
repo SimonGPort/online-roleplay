@@ -49,7 +49,7 @@ class CreationOnlineToken extends Component {
     let body = await response.text();
     body = JSON.parse(body);
     if (body.success) {
-      alert("Your token is created");
+      alert("Your element is created");
       this.props.dispatch({
         type: "CreationOnlineToken",
         action: false,

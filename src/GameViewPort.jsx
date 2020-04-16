@@ -20,6 +20,7 @@ class GameViewPort extends Component {
       height: 0,
       penSize: 5,
       penColor: "black",
+      GmBarDisplay: false,
     };
   }
   componentDidMount() {
@@ -387,6 +388,12 @@ class GameViewPort extends Component {
     }
   };
 
+  ToggleGmBar = () => {
+    this.setState({
+      GmBarDisplay: !this.state.GmBarDisplay,
+    });
+  };
+
   render = () => {
     let scan = this.props.MasterToken.scan.find((scan) => {
       let timeNow = {};
@@ -417,9 +424,13 @@ class GameViewPort extends Component {
 
     return (
       <div>
+        <div className="GmBar-Menu-Button-container" onClick={this.ToggleGmBar}>
+          <img className="GmBar-Menu-Button" src="/images/library_books.svg" />
+        </div>
         {scan && <Scan scan={scan} />}
 
         <GmBar
+          GmBarDisplay={this.state.GmBarDisplay}
           host={this.props.host}
           eventId={this.props.eventId}
           canvasFill={this.canvasFill}

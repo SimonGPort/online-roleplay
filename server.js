@@ -1214,6 +1214,10 @@ app.post("/duplicateToken", uploads.none(), async (req, res) => {
   let number = parseInt(req.body.number);
   console.log(number, "number");
   let token = JSON.parse(req.body.token);
+  let positionX = JSON.parse(token.positionX) + 30;
+  let positionY = JSON.parse(token.positionY);
+  positionX = JSON.stringify(positionX);
+  positionY = JSON.stringify(positionY);
   console.log("token", token);
   let imgFile = token.imgFile;
   let host = token.host;
@@ -1232,8 +1236,8 @@ app.post("/duplicateToken", uploads.none(), async (req, res) => {
         return {
           tokenId: "" + Math.floor(Math.random() * 1000000),
           imgFile: imgFile,
-          positionY: "0",
-          positionX: "0",
+          positionY: positionY,
+          positionX: positionX,
           host: host,
           page: page,
           type: type,

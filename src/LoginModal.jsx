@@ -6,18 +6,18 @@ class LoginModal extends Component {
     super(props);
     this.state = {
       username: "",
-      password: ""
+      password: "",
     };
   }
 
-  usernameChange = evt => {
+  usernameChange = (evt) => {
     this.setState({ username: evt.target.value });
   };
-  passwordChange = evt => {
+  passwordChange = (evt) => {
     this.setState({ password: evt.target.value });
   };
 
-  submitHandler = async evt => {
+  submitHandler = async (evt) => {
     evt.preventDefault();
     let data = new FormData();
     data.append("username", this.state.username);
@@ -30,7 +30,7 @@ class LoginModal extends Component {
       this.props.dispatch({
         type: "login",
         login: true,
-        user: this.state.username
+        user: this.state.username,
       });
       this.props.removeLoginModal();
     } else {
@@ -61,7 +61,7 @@ class LoginModal extends Component {
               <div className="modalElement">
                 Password
                 <input
-                  type="text"
+                  type="password"
                   onChange={this.passwordChange}
                   className="inputModal"
                 />

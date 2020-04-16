@@ -122,6 +122,70 @@ class ChatOnline extends Component {
     }
   };
 
+  treatment = (msg, idx) => {
+    let indexOfStartingNum = [];
+    let indexOfClosingNum = [];
+
+    for (let i = 0; i < msg.message.length; i++) {
+      let letter = msg.message[i];
+      if (letter === "(") {
+        indexOfStartingNum.push(i);
+      }
+      if (letter === ")") {
+        indexOfClosingNum.push(i);
+      }
+    }
+    let listOfNumber = [];
+    for (let i = 0; i < indexOfStartingNum.length; i++) {
+      let number = msg.message.slice(
+        indexOfStartingNum[i] + 1,
+        indexOfClosingNum[i]
+      );
+      listOfNumber.push(number);
+    }
+    console.log(
+      "treatment",
+      indexOfStartingNum,
+      indexOfClosingNum,
+      listOfNumber
+    );
+
+    let completeMessage = [];
+
+    if (listOfNumber.length) {
+      let message = msg.message.split("");
+      let beforeMessage = undefined;
+      let afterMessage = undefined;
+      let centerMessage = undefined;
+      for (let i = 0; i < listOfNumber.length; i++) {
+        completeMessage = [];
+        beforeMessage = message.slice(0, indexOfStartingNum[i] - 2 * i);
+        afterMessage = message.slice(indexOfClosingNum[i] - 2 * i + 1);
+        centerMessage = [
+          <div className="dice-chat-image-container">
+            <img className="dice-chat-image" src="/images/dice20 chat.png" />
+            {listOfNumber[i]}
+          </div>,
+        ];
+
+        completeMessage = completeMessage.concat(beforeMessage);
+        completeMessage = completeMessage.concat(centerMessage);
+        completeMessage = completeMessage.concat(afterMessage);
+        message = completeMessage;
+      }
+      console.log("completeMessage", completeMessage);
+    } else {
+      completeMessage = msg.message;
+    }
+
+    return (
+      <div key={idx} style={{ display: "flex" }}>
+        {msg.username}: {completeMessage}
+        {/* {msg.username}: {msg.message} */}
+      </div>
+    );
+  };
+
   render = () => {
     let userSort = undefined;
     this.props.postingData
@@ -132,15 +196,11 @@ class ChatOnline extends Component {
     return (
       <>
         <div className="chatOnline">
-          <div className="chat-section">
-            <div className="event-information">Chat</div>
-            <div className="chat-message-list">
+          <div className="GmBar-chat-section">
+            <div className="GmBar-event-information">Chat</div>
+            <div className="GmBar-chat-message-list">
               {this.props.chat.map((msg, idx) => {
-                return (
-                  <div key={idx}>
-                    {msg.username}: {msg.message}
-                  </div>
-                );
+                return this.treatment(msg, idx);
               })}
             </div>
             <div>
@@ -180,47 +240,49 @@ class ChatOnline extends Component {
           </div> */}
           <div className="listOfUsers">
             <div className="event-information">Players</div>
-            {userSort.map((user, idx) => {
-              let permissionValue = this.props.permission.includes(user.user);
-              return (
-                <div key={idx} className="GmBar-User">
-                  <div className="GmBar-user-container">
-                    <img src="/images/account_box.svg" /> {user.user}
+            <div className="GmBar-User-Section">
+              {userSort.map((user, idx) => {
+                let permissionValue = this.props.permission.includes(user.user);
+                return (
+                  <div key={idx} className="GmBar-User">
+                    <div className="GmBar-user-container">
+                      <img src="/images/account_box.svg" /> {user.user}
+                    </div>
+                    <input
+                      className="GmBar-Input"
+                      readOnly={!this.state.initiaveChanging}
+                      style={{
+                        backgroundColor:
+                          this.state.initiaveChanging === true ? "" : "grey",
+                      }}
+                      key={idx}
+                      value={
+                        !this.state.initiaveChanging ? user.initiative : null
+                      }
+                      type="number"
+                      onChange={(evt) => this.handleOnChanges(evt, user)}
+                    />
+                    <button
+                      onClick={() =>
+                        this.giveOrRemovePermissionToken(
+                          permissionValue,
+                          user.user
+                        )
+                      }
+                      style={{
+                        display:
+                          this.props.tokenId === "" ||
+                          this.props.user !== this.props.host
+                            ? "none"
+                            : "block",
+                      }}
+                    >
+                      {permissionValue ? "Remove Control" : "Give Control"}
+                    </button>
                   </div>
-                  <input
-                    className="GmBar-Input"
-                    readOnly={!this.state.initiaveChanging}
-                    style={{
-                      backgroundColor:
-                        this.state.initiaveChanging === true ? "" : "grey",
-                    }}
-                    key={idx}
-                    value={
-                      !this.state.initiaveChanging ? user.initiative : null
-                    }
-                    type="number"
-                    onChange={(evt) => this.handleOnChanges(evt, user)}
-                  />
-                  <button
-                    onClick={() =>
-                      this.giveOrRemovePermissionToken(
-                        permissionValue,
-                        user.user
-                      )
-                    }
-                    style={{
-                      display:
-                        this.props.tokenId === "" ||
-                        this.props.user !== this.props.host
-                          ? "none"
-                          : "block",
-                    }}
-                  >
-                    {permissionValue ? "Remove Control" : "Give Control"}
-                  </button>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
             <div>
               {this.state.initiaveChanging ? (
                 <button
@@ -237,7 +299,7 @@ class ChatOnline extends Component {
                 </button>
               ) : (
                 <button
-                  className="GmBar-button"
+                  className="GmBar-button-initiative"
                   onClick={() => {
                     this.ButtonInitiative(!this.state.initiaveChanging);
                   }}
