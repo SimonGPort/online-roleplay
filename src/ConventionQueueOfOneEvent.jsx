@@ -59,7 +59,7 @@ class ConventionQueueOfOneEvent extends Component {
       return alert("you need to login");
     }
     let data = new FormData();
-    data.append("eventIndex", this.props.eventIndex);
+    data.append("eventId", this.props.eventId);
     data.append("user", this.props.user);
     data.append("tableIndex", this.props.tableIndex);
     let response = await fetch("/newGmEventConvention", {
@@ -115,8 +115,8 @@ class ConventionQueueOfOneEvent extends Component {
           {this.props.user === this.props.host ||
           this.props.user === this.props.table.tableCreator ? (
             <div>
-              <button onClick={this.deleteEvent} className="card-enter">
-                Delete the event
+              <button onClick={this.deleteEvent} className="card-enter-event ">
+                Delete Event
               </button>
             </div>
           ) : (
@@ -124,13 +124,19 @@ class ConventionQueueOfOneEvent extends Component {
           )}
           {this.props.table.players.includes(this.props.user) ? (
             <div>
-              <button onClick={this.leaveTheQueue} className="card-enter">
-                Leave the queue
+              <button
+                onClick={this.leaveTheQueue}
+                className="card-enter-event "
+              >
+                Leave
               </button>
             </div>
           ) : (
             <div>
-              <button onClick={this.requestToJoin} className="card-enter">
+              <button
+                onClick={this.requestToJoin}
+                className="card-enter-event "
+              >
                 Attend
               </button>
             </div>
@@ -151,8 +157,8 @@ class ConventionQueueOfOneEvent extends Component {
           {this.props.table.gm !== "" ? (
             this.props.table.gm
           ) : (
-            <button onClick={this.newGm} class="convention-BecomeTheGm-button">
-              Become the Game Master of this table
+            <button onClick={this.newGm} class="card-enter-event">
+              Become GM
             </button>
           )}
         </div>

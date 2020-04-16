@@ -95,8 +95,8 @@ class Queue extends Component {
         <div>
           {this.props.user === this.props.host ? (
             <div className="event-attend-section">
-              <button onClick={this.deleteEvent} className="card-enter">
-                Delete the event
+              <button onClick={this.deleteEvent} className="card-enter-event ">
+                Delete Event
               </button>
               <div>
                 Spots available {parseInt(this.props.players.length) + 1}/
@@ -105,8 +105,11 @@ class Queue extends Component {
             </div>
           ) : this.props.players.includes(this.props.user) ? (
             <div className="event-attend-section">
-              <button onClick={this.leaveTheQueue} className="card-enter">
-                Leave the queue
+              <button
+                onClick={this.leaveTheQueue}
+                className="card-enter-event "
+              >
+                Leave
               </button>
               <div>
                 Spots available {parseInt(this.props.players.length) + 1}/
@@ -115,7 +118,10 @@ class Queue extends Component {
             </div>
           ) : (
             <div className="event-attend-section">
-              <button onClick={this.requestToJoin} className="card-enter">
+              <button
+                onClick={this.requestToJoin}
+                className="card-enter-event "
+              >
                 Attend
               </button>
               <div>

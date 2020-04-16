@@ -231,6 +231,7 @@ class Draggable extends Component {
       <div>
         <div
           className="online-container"
+          id="draggable-container"
           style={{
             display: this.props.grid === true ? "block" : "none",
           }}

@@ -66,36 +66,44 @@ class CreationOnlineToken extends Component {
   render = () => {
     return (
       <div>
-        <div>
-          <button
-            onClick={() =>
-              this.props.dispatch({
-                type: "CreationOnlineToken",
-                action: false,
-              })
-            }
-          >
-            Back
-          </button>
-        </div>
         <form onSubmit={this.submitHandler}>
-          <div>
-            <label>token's image</label>
-            <input type="file" onChange={this.pictureInput} />
-            <label>Number of object</label>
+          <div className="creation-online-token-section">
+            <label>Type</label>
+            <select
+              value={this.state.type}
+              onChange={this.typeInput}
+              className="GmBar-button-right-Margin-NewToken"
+            >
+              <option>Token</option>
+              <option>Background</option>
+            </select>
+            <label>Quantity</label>
             <input
+              className="GmBar-button-right-Margin-NewToken GmBar-button"
               type="number"
               value={this.state.numberOfTokens}
               onChange={this.numberOfTokens}
             />
-            <label>Type:</label>
-            <select value={this.state.type} onChange={this.typeInput}>
-              <option>Token</option>
-              <option>Background</option>
-            </select>
+            <label>Image</label>
+            <input type="file" onChange={this.pictureInput} />
           </div>
-          <div>
-            <input type="submit" value="Submit" />
+          <div className="creation-online-token-section">
+            <input
+              type="submit"
+              value="Submit"
+              className="GmBar-button GmBar-button-right-Margin-NewToken"
+            />
+            <button
+              className="GmBar-button"
+              onClick={() =>
+                this.props.dispatch({
+                  type: "CreationOnlineToken",
+                  action: false,
+                })
+              }
+            >
+              Back
+            </button>
           </div>
         </form>
       </div>

@@ -25,7 +25,6 @@ class ConventionEvent extends Component {
     let tableIndex = event.conventionsGame.findIndex((table) => {
       return table.tableId === this.props.tableId;
     });
-
     return this.props.events.length === 0 ? (
       <div>loading ...</div>
     ) : (
@@ -43,9 +42,9 @@ class ConventionEvent extends Component {
             <div className="ReturnToTheConvention-button-container">
               <Link
                 to={`/event/${this.props.eventId}`}
-                class="convention-createANewTable-button"
+                class="card-enter-event"
               >
-                Return to the convention's page
+                Back
               </Link>
             </div>
           </div>
@@ -63,7 +62,7 @@ class ConventionEvent extends Component {
 
         <div className="event-center-section">
           <div className="card-title">{table.title}</div>
-          <div>Game Master: {event.host}</div>
+          <div>Game Master: {table.gm}</div>
           <div>Convention's organizer: {event.host}</div>
           <div>
             <img src={table.img} className="card-img" />

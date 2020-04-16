@@ -355,7 +355,6 @@ class GameViewPort extends Component {
 
   changingPenSize = (e) => this.setState({ penSize: e });
   changingPenColor = (e) => this.setState({ penColor: e });
-  ///je travail ici
   fitToMap = async (tokenId) => {
     let rect = canvas.getBoundingClientRect();
     let data = new FormData();

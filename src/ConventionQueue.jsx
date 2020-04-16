@@ -38,9 +38,10 @@ class ConventionQueue extends Component {
               return (
                 <div key={idx}>
                   <Link
+                    className="convention-game-button"
                     to={`/convention-event/${this.props.eventId}/${game.tableId}`}
                   >
-                    {game.title}
+                    • {game.title}
                   </Link>
                 </div>
               );
@@ -50,34 +51,46 @@ class ConventionQueue extends Component {
               this.props.host === this.props.user
             ) {
               return (
-                <div key={idx}>
+                <div key={idx} style={{ display: "flex" }}>
                   <Link
                     to={`/convention-event/${this.props.eventId}/${game.tableId}`}
                     className="convention-game-button"
                   >
-                    {game.title}
+                    • {game.title}
                   </Link>
                   {this.props.host === this.props.user ? (
-                    <button
-                      onClick={() => this.gameAccepted(idx)}
-                      className="AcceptThisGame-button"
-                    >
-                      Accept this game
-                    </button>
+                    <div className="iconGameConvertion-icon-container">
+                      <img
+                        src="/images/visibility_off.svg"
+                        className="visibility_off-iconGameConvention"
+                        onClick={() => this.gameAccepted(idx)}
+                      />
+                      <p class="img-description-gameConvention">
+                        Accept this game
+                      </p>
+                    </div>
                   ) : (
-                    <div>The organisator need to make this game visible</div>
+                    <div className="iconGameConvertion-icon-container">
+                      <img
+                        src="/images/visibility_off.svg"
+                        className="visibility_off-iconGameConvention"
+                      />
+                      <p class="img-description-gameConvention">
+                        The organizer need to accept the game
+                      </p>
+                    </div>
                   )}
                 </div>
               );
             }
           })}
         </div>
-        <div className="convention-createANewTable-button-container">
+        <div className="card-enter-event">
           <Link
             to={`/creation-convention-table/${this.props.eventId}`}
             className="convention-createANewTable-button"
           >
-            Create a new table
+            New Table
           </Link>
         </div>
       </div>
