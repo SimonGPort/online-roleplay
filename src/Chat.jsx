@@ -7,10 +7,22 @@ class Chat extends Component {
     this.state = {
       inputValue: "",
       password: "",
+      chatLength: undefined,
     };
   }
   componentDidMount() {
+    let chatBottom = document.getElementById("chatBottom");
+    chatBottom.scrollTop = chatBottom.scrollHeight;
     this.messageInterval = setInterval(this.updateMessages, 500);
+    this.setState({ chatLength: this.props.chat.length });
+  }
+
+  componentDidUpdate() {
+    if (this.state.chatLength !== this.props.chat.length) {
+      let chatBottom = document.getElementById("chatBottom");
+      chatBottom.scrollTop = chatBottom.scrollHeight;
+      this.setState({ chatLength: this.props.chat.length });
+    }
   }
 
   componentWillUnmount() {
@@ -60,7 +72,7 @@ class Chat extends Component {
     return (
       <div className="chat-section">
         <div className="event-information">Chat</div>
-        <div className="chat-message-list">
+        <div className="chat-message-list" id="chatBottom">
           {this.props.chat.map((msg, idx) => {
             return (
               <div key={idx}>

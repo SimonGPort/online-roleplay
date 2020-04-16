@@ -398,12 +398,16 @@ body {
   margin-left: 10px;
 }
 .GmBar-chat-message-list {
+  height: 493px;
   overflow: scroll;
   height: 160px;
 }
 
 .chat-message-list {
   overflow: scroll;
+  height: 508px;
+  /* display: flex;
+  flex-direction: column-reverse; */
 }
 .chat-input {
   border-radius: 5px;
@@ -421,6 +425,7 @@ body {
 .event-description {
   overflow: scroll;
   height: calc(100% - 20px);
+  height: 142px;
 }
 
 .event-queue-section {
