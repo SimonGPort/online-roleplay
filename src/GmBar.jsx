@@ -28,8 +28,13 @@ export default function GmBar(props) {
   let dispatch = useDispatch();
 
   let thereIsGrid = async () => {
+    debugger;
     dispatch({
       type: "startPostingData",
+    });
+
+    dispatch({
+      type: "draggingGridStart",
     });
 
     let data = new FormData();
@@ -51,6 +56,9 @@ export default function GmBar(props) {
     } else {
       alert("thereIsGrid Failure");
     }
+    dispatch({
+      type: "draggingGridEnd",
+    });
     dispatch({
       type: "endPostingData",
     });

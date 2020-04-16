@@ -174,6 +174,14 @@ let reducer = (state, action) => {
     });
   }
 
+  if (action.type === "draggingGridStart") {
+    return { ...state, dragging: true };
+  }
+
+  if (action.type === "draggingGridEnd") {
+    return { ...state, dragging: false };
+  }
+
   if (action.type === "draggingStart") {
     return { ...state, dragging: true, tokenIdDragged: action.tokenIdDragged };
   }
