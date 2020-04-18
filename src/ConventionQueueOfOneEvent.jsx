@@ -202,7 +202,7 @@ class ConventionQueueOfOneEvent extends Component {
                   Attendees: {player}
                   {this.props.user === this.props.host ||
                   this.props.user === this.props.table.gm ? (
-                    <span>
+                    <span className="ban-player-container">
                       <img
                         src="/images/Ban Hammer.svg"
                         className="ban-player-button"
@@ -214,6 +214,7 @@ class ConventionQueueOfOneEvent extends Component {
                           );
                         }}
                       />
+                      <p class="Ban-message-hovering">Ban this player</p>
                     </span>
                   ) : (
                     ""
@@ -226,7 +227,7 @@ class ConventionQueueOfOneEvent extends Component {
                 On the waiting list: {player}{" "}
                 {this.props.user === this.props.host ||
                 this.props.user === this.props.table.gm ? (
-                  <span>
+                  <span className="ban-player-container">
                     <img
                       src="/images/Ban Hammer.svg"
                       className="ban-player-button"
@@ -238,6 +239,7 @@ class ConventionQueueOfOneEvent extends Component {
                         );
                       }}
                     />
+                    <p class="Ban-message-hovering">Ban this player</p>
                   </span>
                 ) : (
                   ""

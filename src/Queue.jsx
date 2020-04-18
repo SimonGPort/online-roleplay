@@ -170,7 +170,7 @@ class Queue extends Component {
                   <div className="Attendees" key={idx}>
                     Attendees: {player}
                     {this.props.user === this.props.host ? (
-                      <span>
+                      <span className="ban-player-container">
                         <img
                           src="/images/Ban Hammer.svg"
                           className="ban-player-button"
@@ -178,6 +178,7 @@ class Queue extends Component {
                             this.handleBanPlayer(this.props.id, player);
                           }}
                         />
+                        <p class="ban-message-hovering">Ban this player</p>
                       </span>
                     ) : (
                       ""
@@ -189,7 +190,7 @@ class Queue extends Component {
                 <div className="Attendees">
                   On the waiting list: {player}
                   {this.props.user === this.props.host ? (
-                    <span>
+                    <span className="ban-player-container">
                       <img
                         src="/images/Ban Hammer.svg"
                         className="ban-player-button"
@@ -197,6 +198,7 @@ class Queue extends Component {
                           this.handleBanPlayer(this.props.id, player);
                         }}
                       />
+                      <p class="Ban-message-hovering">Ban this player</p>
                     </span>
                   ) : (
                     ""

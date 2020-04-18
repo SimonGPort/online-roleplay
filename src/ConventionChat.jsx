@@ -45,7 +45,6 @@ class ConventionChat extends Component {
     //   this.props.dispatch({ type: "logout" });
     //   return;
     // }
-    console.log("parsed", parsed);
     this.props.dispatch({
       type: "set-messages-convention",
       messages: parsed.chat,

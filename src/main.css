@@ -804,3 +804,23 @@ body {
   box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
   cursor: pointer;
 }
+
+.Ban-message-hovering {
+  display: none;
+}
+.ban-player-container {
+  width: 24px;
+  height: 24px;
+}
+
+.ban-player-container:hover .Ban-message-hovering {
+  display: inline;
+  visibility: visible;
+  opacity: 1;
+  position: fixed;
+  background-color: #5b7b9b;
+  transform: translate(260px, -50px);
+  border: 3px solid #97cda9;
+  padding: 2px;
+  border-radius: 5px;
+}
