@@ -81,6 +81,7 @@ class ConventionEvent extends Component {
 
         <div>
           <ConventionChat
+            user={this.props.user}
             tableIndex={tableIndex}
             chat={table.chat}
             eventId={this.props.eventId}

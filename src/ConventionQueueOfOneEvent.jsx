@@ -10,7 +10,7 @@ class ConventionQueueOfOneEvent extends Component {
 
   // BanPlayer = require("./BanPlayer.js");
 
-  handleBanPlayer = async (eventId, tableIndex, user) => {
+  handleBanPlayerConvention = async (eventId, tableIndex, user) => {
     if (window.confirm("Do you want to ban this player?")) {
       let data = new FormData();
       data.append("eventId", eventId);
@@ -152,7 +152,9 @@ class ConventionQueueOfOneEvent extends Component {
           ) : (
             ""
           )}
-          {this.props.table.players.includes(this.props.user) ? (
+          {this.props.table.gm === this.props.user ? (
+            ""
+          ) : this.props.table.players.includes(this.props.user) ? (
             <div>
               <button
                 onClick={this.leaveTheQueue}
@@ -198,13 +200,14 @@ class ConventionQueueOfOneEvent extends Component {
               return (
                 <div className="Attendees" key={idx}>
                   Attendees: {player}
-                  {this.props.user === this.props.host ? (
+                  {this.props.user === this.props.host ||
+                  this.props.user === this.props.table.gm ? (
                     <span>
                       <img
                         src="/images/Ban Hammer.svg"
                         className="ban-player-button"
                         onClick={() => {
-                          this.handleBanPlayer(
+                          this.handleBanPlayerConvention(
                             this.props.eventId,
                             this.props.tableIndex,
                             player
@@ -221,7 +224,8 @@ class ConventionQueueOfOneEvent extends Component {
             return (
               <div className="Attendees">
                 On the waiting list: {player}{" "}
-                {this.props.user === this.props.host ? (
+                {this.props.user === this.props.host ||
+                this.props.user === this.props.table.gm ? (
                   <span>
                     <img
                       src="/images/Ban Hammer.svg"

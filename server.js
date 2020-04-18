@@ -616,22 +616,6 @@ app.post("/autoLogin", async (req, res) => {
   }
 });
 
-app.get("/fetchMessages", async (req, res) => {
-  const eventId = req.query.eventId;
-  try {
-    const event = await dbo.collection("events").findOne({ eventId: eventId });
-    if (!event) {
-      return res.send(JSON.stringify({ success: false }));
-    }
-    const chat = event.chat;
-    res.send(JSON.stringify({ success: true, chat }));
-  } catch (err) {
-    console.log("/fetchMessages error", err);
-    res.send(JSON.stringify({ success: false }));
-    return;
-  }
-});
-
 app.get("/fetchGameView", async (req, res) => {
   let user = req.query.user;
   if (user === "") {
@@ -749,23 +733,45 @@ app.get("/fetchGameView", async (req, res) => {
   }
 });
 
-app.get("/fetchMessagesConvention", async (req, res) => {
-  const eventId = req.query.eventId;
-  const tableIndex = req.query.tableIndex;
+////chat normal
+app.get("/fetchMessages", async (req, res) => {
+  let eventId = req.query.eventId;
+  let user = req.query.user;
   try {
     const event = await dbo.collection("events").findOne({ eventId: eventId });
     if (!event) {
       return res.send(JSON.stringify({ success: false }));
     }
-    const chat = event.conventionsGame[tableIndex].chat;
-    res.send(JSON.stringify({ success: true, chat }));
+    const chat = event.chat;
+    let userHasBeenBan = event.ban.includes(user);
+    res.send(JSON.stringify({ success: true, chat, userHasBeenBan }));
   } catch (err) {
     console.log("/fetchMessages error", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }
 });
-///je travail ici
+
+app.get("/fetchMessagesConvention", async (req, res) => {
+  const eventId = req.query.eventId;
+  const tableIndex = req.query.tableIndex;
+  let user = req.query.user;
+  try {
+    const event = await dbo.collection("events").findOne({ eventId: eventId });
+    if (!event) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    const chat = event.conventionsGame[tableIndex].chat;
+    let userHasBeenBan = event.conventionsGame[tableIndex].ban.includes(user);
+    console.log(userHasBeenBan);
+    res.send(JSON.stringify({ success: true, chat, userHasBeenBan }));
+  } catch (err) {
+    console.log("/fetchMessages error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
 app.post("/BanPlayerConventionQueue", uploads.none(), async (req, res) => {
   let eventId = req.body.eventId;
   let tableId = req.body.tableId;

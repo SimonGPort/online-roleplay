@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 class ConventionChat extends Component {
   constructor() {
@@ -34,7 +35,9 @@ class ConventionChat extends Component {
       "/fetchMessagesConvention?eventId=" +
         this.props.eventId +
         "&tableIndex=" +
-        this.props.tableIndex
+        this.props.tableIndex +
+        "&user=" +
+        this.props.user
     );
     let responseBody = await response.text();
     let parsed = JSON.parse(responseBody);
@@ -42,12 +45,22 @@ class ConventionChat extends Component {
     //   this.props.dispatch({ type: "logout" });
     //   return;
     // }
+    console.log("parsed", parsed);
     this.props.dispatch({
       type: "set-messages-convention",
       messages: parsed.chat,
       eventId: this.props.eventId,
       tableId: this.props.tableId,
     });
+
+    if (parsed.userHasBeenBan) {
+      clearInterval(this.messageInterval);
+      this.props.dispatch({
+        type: "removeSelectionEvent",
+      });
+      this.props.history.push("/");
+      alert("you've been banned from this event");
+    }
   };
 
   chatInput = (evt) => {
@@ -123,4 +136,4 @@ class ConventionChat extends Component {
   };
 }
 
-export default connect()(ConventionChat);
+export default withRouter(connect()(ConventionChat));

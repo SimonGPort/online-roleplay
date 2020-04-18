@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 class Chat extends Component {
   constructor() {
@@ -14,6 +15,7 @@ class Chat extends Component {
     let chatBottom = document.getElementById("chatBottom");
     chatBottom.scrollTop = chatBottom.scrollHeight;
     this.messageInterval = setInterval(this.updateMessages, 500);
+    console.log("this.props.chat", this.props.chat);
     this.setState({ chatLength: this.props.chat.length });
   }
 
@@ -34,20 +36,30 @@ class Chat extends Component {
   }
 
   updateMessages = async () => {
-    let response = await fetch("/fetchMessages?eventId=" + this.props.id);
+    let response = await fetch(
+      "/fetchMessages?eventId=" + this.props.id + "&user=" + this.props.user
+    );
     let responseBody = await response.text();
-    // console.log('response from messages', responseBody);
     let parsed = JSON.parse(responseBody);
-    // console.log('parsed', parsed);
     // if (!parsed.success) {
     //   this.props.dispatch({ type: "logout" });
     //   return;
     // }
+    console.log("parse.chat", parsed.chat);
     this.props.dispatch({
       type: "set-messages",
       messages: parsed.chat,
       eventId: this.props.id,
     });
+
+    if (parsed.userHasBeenBan) {
+      clearInterval(this.messageInterval);
+      this.props.dispatch({
+        type: "removeSelectionEvent",
+      });
+      this.props.history.push("/");
+      alert("you've been banned from this event");
+    }
   };
 
   chatInput = (evt) => {
@@ -104,4 +116,4 @@ class Chat extends Component {
   };
 }
 
-export default connect()(Chat);
+export default withRouter(connect()(Chat));
