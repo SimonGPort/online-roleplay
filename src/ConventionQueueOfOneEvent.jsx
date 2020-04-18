@@ -8,7 +8,34 @@ class ConventionQueueOfOneEvent extends Component {
     super();
   }
 
-  BanPlayer = require("./BanPlayer.js");
+  // BanPlayer = require("./BanPlayer.js");
+
+  handleBanPlayer = async (eventId, tableIndex, user) => {
+    if (window.confirm("Do you want to ban this player?")) {
+      let data = new FormData();
+      data.append("eventId", eventId);
+      // data.append("tableId", tableId);
+      data.append("tableIndex", tableIndex);
+      data.append("user", user);
+      let response = await fetch("/BanPlayerConventionQueue", {
+        method: "POST",
+        body: data,
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      if (body.success) {
+        console.log("ban success");
+        this.props.dispatch({
+          type: "BanPlayerConventionQueue",
+          eventId: eventId,
+          user: user,
+          tableIndex: tableIndex,
+        });
+      } else {
+        console.log("ban fail");
+      }
+    }
+  };
 
   requestToJoin = async (evt) => {
     if (this.props.login === false) {
@@ -177,7 +204,7 @@ class ConventionQueueOfOneEvent extends Component {
                         src="/images/Ban Hammer.svg"
                         className="ban-player-button"
                         onClick={() => {
-                          this.BanPlayer.handleBanPlayerConvention(
+                          this.handleBanPlayer(
                             this.props.eventId,
                             this.props.tableIndex,
                             player
@@ -219,5 +246,4 @@ class ConventionQueueOfOneEvent extends Component {
     );
   };
 }
-
 export default withRouter(connect()(ConventionQueueOfOneEvent));

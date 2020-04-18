@@ -24,6 +24,31 @@ let reducer = (state, action) => {
     });
   }
   ///je travail ici
+  if (action.type === "BanPlayerConventionQueue") {
+    let index = state.events.findIndex((event) => {
+      return event.eventId === action.eventId;
+    });
+
+    return produce(state, (draftState) => {
+      draftState.events[index].conventionsGame[
+        action.tableIndex
+      ].players = draftState.events[index].conventionsGame[
+        action.tableIndex
+      ].players.filter((user) => {
+        user !== action.user;
+      });
+
+      draftState.events[index].conventionsGame[
+        action.tableIndex
+      ].ban = draftState.events[index].conventionsGame[
+        action.tableIndex
+      ].ban.push(action.user);
+
+      // draftState.events[index].players.filter((user) => {
+      //   user !== action.user;
+      // });
+    });
+  }
 
   if (action.type === "BanPlayerNormalQueue") {
     let index = state.events.findIndex((event) => {

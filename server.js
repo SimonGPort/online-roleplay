@@ -772,7 +772,7 @@ app.post("/BanPlayerConventionQueue", uploads.none(), async (req, res) => {
   let user = req.body.user;
   let tableIndex = req.body.tableIndex;
   let fieldBan = "conventionsGame." + tableIndex + ".ban";
-  let field = "conventionsGame." + tableIndex;
+  let field = "conventionsGame." + tableIndex + ".players";
 
   try {
     await dbo
