@@ -7,6 +7,9 @@ class ConventionQueueOfOneEvent extends Component {
   constructor() {
     super();
   }
+
+  BanPlayer = require("./BanPlayer.js");
+
   requestToJoin = async (evt) => {
     if (this.props.login === false) {
       return alert("you need to login");
@@ -165,9 +168,51 @@ class ConventionQueueOfOneEvent extends Component {
         <div>
           {this.props.table.players.map((player, idx) => {
             if (idx <= this.props.table.players.length) {
-              return <div>Attendees: {player}</div>;
+              return (
+                <div className="Attendees" key={idx}>
+                  Attendees: {player}
+                  {this.props.user === this.props.host ? (
+                    <span>
+                      <img
+                        src="/images/Ban Hammer.svg"
+                        className="ban-player-button"
+                        onClick={() => {
+                          this.BanPlayer.handleBanPlayerConvention(
+                            this.props.eventId,
+                            this.props.tableIndex,
+                            player
+                          );
+                        }}
+                      />
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
             }
-            return <div>On the waiting list: {player}</div>;
+            return (
+              <div className="Attendees">
+                On the waiting list: {player}{" "}
+                {this.props.user === this.props.host ? (
+                  <span>
+                    <img
+                      src="/images/Ban Hammer.svg"
+                      className="ban-player-button"
+                      onClick={() => {
+                        this.BanPlayer.handleBanPlayerConvention(
+                          this.props.eventId,
+                          this.props.tableIndex,
+                          player
+                        );
+                      }}
+                    />
+                  </span>
+                ) : (
+                  ""
+                )}
+              </div>
+            );
           })}
         </div>
       </div>

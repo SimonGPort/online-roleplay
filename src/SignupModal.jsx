@@ -7,21 +7,21 @@ class SignupModal extends Component {
     this.state = {
       username: "",
       email: "",
-      password: ""
+      password: "",
     };
   }
 
-  usernameChange = evt => {
+  usernameChange = (evt) => {
     this.setState({ username: evt.target.value });
   };
-  emailChange = evt => {
+  emailChange = (evt) => {
     this.setState({ email: evt.target.value });
   };
-  passwordChange = evt => {
+  passwordChange = (evt) => {
     this.setState({ password: evt.target.value });
   };
 
-  submitHandler = async evt => {
+  submitHandler = async (evt) => {
     evt.preventDefault();
     let data = new FormData();
     data.append("username", this.state.username);
@@ -35,11 +35,16 @@ class SignupModal extends Component {
       this.props.dispatch({
         type: "signup",
         login: true,
-        user: this.state.username
+        user: this.state.username,
       });
       this.props.removeSignupModal();
     } else {
-      alert("error");
+      debugger;
+      if (body.reason === "nameTaken") {
+        alert("Name Taken");
+      } else {
+        alert("Connection failed");
+      }
     }
   };
 

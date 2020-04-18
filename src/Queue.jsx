@@ -7,6 +7,9 @@ class Queue extends Component {
   constructor() {
     super();
   }
+
+  // BanPlayer = require("./BanPlayer.js");
+
   requestToJoin = async (evt) => {
     if (this.props.login === false) {
       return alert("you need to login");
@@ -52,8 +55,33 @@ class Queue extends Component {
     }
   };
 
+  handleBanPlayer = async (eventId, user) => {
+    if (window.confirm("Do you want to ban this player?")) {
+      let data = new FormData();
+      data.append("eventId", eventId);
+      data.append("user", user);
+      let response = await fetch("/BanPlayerNormalQueue", {
+        method: "POST",
+        body: data,
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      if (body.success) {
+        console.log("ban success");
+        this.props.dispatch({
+          type: "BanPlayerNormalQueue",
+          eventId: eventId,
+          user: user,
+        });
+      } else {
+        console.log("ban fail");
+      }
+    }
+  };
+
   deleteEvent = async (evt) => {
     if (window.confirm("Do you really want to delete the event?")) {
+      this.props.deletingEventMethod(true);
       let data = new FormData();
       data.append("id", this.props.id);
       let response = await fetch("/deleteTheEvent", {
@@ -63,6 +91,8 @@ class Queue extends Component {
       let body = await response.text();
       body = JSON.parse(body);
       if (body.success) {
+        debugger;
+        this.props.history.push("/");
         this.props.dispatch({
           type: "DeleteEvent",
           id: this.props.id,
@@ -70,10 +100,10 @@ class Queue extends Component {
         this.props.dispatch({
           type: "removeSelectionEvent",
         });
-        this.props.history.push("/");
       } else {
         alert("error, you can't delete this event");
       }
+      this.props.deletingEventMethod(false);
     }
   };
 
@@ -136,10 +166,42 @@ class Queue extends Component {
           <div>
             {this.props.players.map((player, idx) => {
               if (idx <= this.props.players.length) {
-                return <div className="Attendees">Attendees: {player}</div>;
+                return (
+                  <div className="Attendees" key={idx}>
+                    Attendees: {player}
+                    {this.props.user === this.props.host ? (
+                      <span>
+                        <img
+                          src="/images/Ban Hammer.svg"
+                          className="ban-player-button"
+                          onClick={() => {
+                            this.handleBanPlayer(this.props.id, player);
+                          }}
+                        />
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                );
               }
               return (
-                <div className="Attendees">On the waiting list: {player}</div>
+                <div className="Attendees">
+                  On the waiting list: {player}
+                  {this.props.user === this.props.host ? (
+                    <span>
+                      <img
+                        src="/images/Ban Hammer.svg"
+                        className="ban-player-button"
+                        onClick={() => {
+                          this.handleBanPlayer(this.props.id, player);
+                        }}
+                      />
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
               );
             })}
           </div>

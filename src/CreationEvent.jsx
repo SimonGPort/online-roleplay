@@ -85,7 +85,7 @@ class CreationEvent extends Component {
     data.append("title", this.state.title);
     data.append("type", this.state.type);
     data.append("theme", this.state.theme);
-    data.append("system", this.state.theme);
+    data.append("system", this.state.system);
     data.append("language", this.state.language);
     data.append("when", this.state.when);
     data.append("time", this.state.time);
@@ -187,11 +187,13 @@ class CreationEvent extends Component {
               <option>D&D 4E</option>
               <option>D&D 5E</option>
               <option>Dungeon world</option>
+              <option>Fate</option>
               <option>Fiasco</option>
               <option>GURPS</option>
               <option>Pathfinder</option>
               <option>Pathfinder 2E</option>
               <option>Runequest</option>
+              <option>Starfinder</option>
               <option>Starwars FFG</option>
               <option>Stars without number</option>
               <option>Shadowrun</option>

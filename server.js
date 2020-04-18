@@ -63,7 +63,7 @@ app.post("/signup", uploads.none(), async (req, res) => {
   try {
     const user = await dbo.collection("users").findOne({ username: username });
     if (user) {
-      return res.send(JSON.stringify({ success: false }));
+      return res.send(JSON.stringify({ success: false, reason: "nameTaken" }));
     }
     await dbo
       .collection("users")
@@ -99,7 +99,7 @@ app.post("/signup", uploads.none(), async (req, res) => {
     res.send(JSON.stringify({ success: true }));
   } catch (err) {
     console.log("/signup error", err);
-    res.send(JSON.stringify({ success: false }));
+    res.send(JSON.stringify({ success: false, reason: "connectionFailed" }));
     return;
   }
 });
@@ -403,7 +403,7 @@ app.post("/giveOrRemovePermissionToken", uploads.none(), async (req, res) => {
     return;
   }
 });
-///je travail
+
 app.post("/playerinitiative", uploads.none(), async (req, res) => {
   let onlineUsers = JSON.parse(req.body.onlineUsers);
   let host = req.body.host;
@@ -525,8 +525,6 @@ app.post("/deleteTheEventConvention", uploads.none(), async (req, res) => {
   let tableIndex = req.body.tableIndex;
   let tableId = req.body.tableId;
   let field = "conventionsGame." + tableIndex;
-  console.log("deleteConventionEvent:", field);
-  console.log("je test mes variables", eventId, tableIndex, tableId);
   try {
     await dbo
       .collection("events")
@@ -554,6 +552,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   let time = req.body.time;
   let players = [];
   let chat = [];
+  let ban = [];
   let conventionsGame = [];
   let frequency = req.body.frequency;
   let description = req.body.description;
@@ -562,6 +561,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   let numPlayers = req.body.numPlayers;
   let img = "/uploads/" + req.file.filename;
   let eventId = "" + Math.floor(Math.random() * 1000000);
+
   console.log("image", img);
   if (host === undefined) {
     console.log("The user need to login");
@@ -588,6 +588,7 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
       address: address,
       location: location,
       numPlayers: numPlayers,
+      ban: ban,
     });
     console.log("The event has been register");
     res.send(JSON.stringify({ success: true }));
@@ -630,7 +631,7 @@ app.get("/fetchMessages", async (req, res) => {
     return;
   }
 });
-////je travail ici
+
 app.get("/fetchGameView", async (req, res) => {
   let user = req.query.user;
   if (user === "") {
@@ -760,6 +761,54 @@ app.get("/fetchMessagesConvention", async (req, res) => {
     res.send(JSON.stringify({ success: true, chat }));
   } catch (err) {
     console.log("/fetchMessages error", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+///je travail ici
+app.post("/BanPlayerConventionQueue", uploads.none(), async (req, res) => {
+  let eventId = req.body.eventId;
+  let tableId = req.body.tableId;
+  let user = req.body.user;
+  let tableIndex = req.body.tableIndex;
+  let fieldBan = "conventionsGame." + tableIndex + ".ban";
+  let field = "conventionsGame." + tableIndex;
+
+  try {
+    await dbo
+      .collection("events")
+      .updateOne({ eventId: eventId }, { $push: { [fieldBan]: user } });
+
+    await dbo
+      .collection("events")
+      .updateOne({ eventId: eventId }, { $pull: { [field]: user } });
+
+    console.log("BanPlayerConventionQueue success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("BanPlayerConventionQueue fail", err);
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
+});
+
+app.post("/BanPlayerNormalQueue", uploads.none(), async (req, res) => {
+  let eventId = req.body.eventId;
+  let user = req.body.user;
+
+  try {
+    await dbo
+      .collection("events")
+      .updateOne({ eventId: eventId }, { $push: { ban: user } });
+
+    await dbo
+      .collection("events")
+      .updateOne({ eventId: eventId }, { $pull: { players: user } });
+
+    console.log("BanPlayerNormalQueue success");
+    res.send(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.log("BanPlayerNormalQueue fail", err);
     res.send(JSON.stringify({ success: false }));
     return;
   }
@@ -1048,6 +1097,7 @@ app.post(
     let time = req.body.time;
     let players = [];
     let chat = [];
+    let ban = [];
     let tableId = "" + Math.floor(Math.random() * 1000000);
     let frequency = "Just once";
     let description = req.body.description;
@@ -1072,6 +1122,7 @@ app.post(
       description: description,
       numPlayers: numPlayers,
       img: img,
+      ban: ban,
     };
     try {
       await dbo

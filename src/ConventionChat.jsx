@@ -38,10 +38,10 @@ class ConventionChat extends Component {
     );
     let responseBody = await response.text();
     let parsed = JSON.parse(responseBody);
-    if (!parsed.success) {
-      this.props.dispatch({ type: "logout" });
-      return;
-    }
+    // if (!parsed.success) {
+    //   this.props.dispatch({ type: "logout" });
+    //   return;
+    // }
     this.props.dispatch({
       type: "set-messages-convention",
       messages: parsed.chat,
@@ -78,13 +78,15 @@ class ConventionChat extends Component {
       <div className="chat-section">
         <div className="event-information">Chat</div>
         <div className="chat-message-list" id="chatBottom">
-          {this.props.chat.map((msg, idx) => {
-            return (
-              <div key={idx}>
-                {msg.username}: {msg.message}
-              </div>
-            );
-          })}
+          {this.props.chat
+            ? this.props.chat.map((msg, idx) => {
+                return (
+                  <div key={idx}>
+                    {msg.username}: {msg.message}
+                  </div>
+                );
+              })
+            : ""}
         </div>
         <div>
           <form onSubmit={this.submitHandler} className="chat-form">

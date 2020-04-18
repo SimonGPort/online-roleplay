@@ -19,7 +19,6 @@ class NavbarLoginSection extends Component {
     const body = await response.text();
     const parsed = JSON.parse(body);
     if (parsed.success) {
-      console.log("dispatch logout");
       this.props.dispatch({ type: "logout", login: false });
     }
   };

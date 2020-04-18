@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import Card from "./Card.jsx";
 import { connect } from "react-redux";
 
-///Mettre l'ID de l'eventSponsored dans un array, exemple: ["255215"]
-const eventSponsored = "904373";
+///Mettre l'ID de l'eventSponsored en string, exemple: "221641"
+const eventSponsored = "221641";
 
 class Announcements extends Component {
   constructor() {

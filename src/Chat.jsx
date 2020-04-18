@@ -18,6 +18,10 @@ class Chat extends Component {
   }
 
   componentDidUpdate() {
+    if (this.props.deletingEvent) {
+      clearInterval(this.messageInterval);
+    }
+
     if (this.state.chatLength !== this.props.chat.length) {
       let chatBottom = document.getElementById("chatBottom");
       chatBottom.scrollTop = chatBottom.scrollHeight;
@@ -35,10 +39,10 @@ class Chat extends Component {
     // console.log('response from messages', responseBody);
     let parsed = JSON.parse(responseBody);
     // console.log('parsed', parsed);
-    if (!parsed.success) {
-      this.props.dispatch({ type: "logout" });
-      return;
-    }
+    // if (!parsed.success) {
+    //   this.props.dispatch({ type: "logout" });
+    //   return;
+    // }
     this.props.dispatch({
       type: "set-messages",
       messages: parsed.chat,
@@ -73,13 +77,15 @@ class Chat extends Component {
       <div className="chat-section">
         <div className="event-information">Chat</div>
         <div className="chat-message-list" id="chatBottom">
-          {this.props.chat.map((msg, idx) => {
-            return (
-              <div key={idx}>
-                {msg.username}: {msg.message}
-              </div>
-            );
-          })}
+          {this.props.chat
+            ? this.props.chat.map((msg, idx) => {
+                return (
+                  <div key={idx}>
+                    {msg.username}: {msg.message}
+                  </div>
+                );
+              })
+            : ""}
         </div>
         <div>
           <form onSubmit={this.submitHandler} className="chat-form">

@@ -10,8 +10,13 @@ class Event extends Component {
     super();
     this.state = {
       mapModal: false,
+      deletingEvent: false,
     };
   }
+
+  deletingEventMethod = (evt) => {
+    this.setState({ deletingEvent: evt });
+  };
 
   accessToTheOnlineGame = () => {
     let event = this.props.events.find((element) => {
@@ -110,6 +115,7 @@ class Event extends Component {
               )}
             </div>
             <Queue
+              deletingEventMethod={this.deletingEventMethod}
               id={this.props.eventId}
               type={event.type}
               players={event.players}
@@ -143,6 +149,7 @@ class Event extends Component {
           </div>
           <div>
             <Chat
+              deletingEvent={this.state.deletingEvent}
               id={this.props.eventId}
               user={this.props.user}
               chat={event.chat}

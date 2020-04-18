@@ -23,6 +23,28 @@ let reducer = (state, action) => {
       draftState.MasterToken.grid = action.grid;
     });
   }
+  ///je travail ici
+
+  if (action.type === "BanPlayerNormalQueue") {
+    let index = state.events.findIndex((event) => {
+      return event.eventId === action.eventId;
+    });
+
+    return produce(state, (draftState) => {
+      draftState.events[index].players = draftState.events[
+        index
+      ].players.filter((user) => {
+        user !== action.user;
+      });
+      draftState.events[index].ban = draftState.events[index].ban.push(
+        action.user
+      );
+
+      // draftState.events[index].players.filter((user) => {
+      //   user !== action.user;
+      // });
+    });
+  }
 
   if (action.type === "changingGmPage") {
     if (action.doesGoingToThisGmPageExist) {

@@ -229,7 +229,7 @@ export default function GmBar(props) {
             </button>
             <input
               type="number"
-              className="GmBar-Input"
+              className="GmBar-Input translate-input"
               value={isDuplicate.number}
               onChange={(evt) => {
                 dispatch({

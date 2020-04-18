@@ -23,8 +23,8 @@ class Card extends Component {
             <div>{cardEvent.when}</div>
             <div className="card-info-space">{cardEvent.time}</div>
             <div className="card-info-space">{cardEvent.language}</div>
-            <div className="card-info-space">{cardEvent.type}</div>
             <div className="card-info-space">{cardEvent.system}</div>
+            <div className="card-info-space">{cardEvent.type}</div>
           </div>
           <div className="card-info">{cardEvent.address}</div>
           <div className="card-img-container">
