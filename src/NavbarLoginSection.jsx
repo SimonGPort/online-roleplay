@@ -43,6 +43,10 @@ class NavbarLoginSection extends Component {
     this.props.history.push(`/online/${this.props.user}/GM`);
   };
 
+  // linkFacebookGroup = () => {
+  //   this.props.history.push("https://www.facebook.com/groups/256791222025595/");
+  // };
+
   render = () => (
     <>
       {this.props.login === false ? (
@@ -53,6 +57,13 @@ class NavbarLoginSection extends Component {
           {this.state.signupModal === true && (
             <SignupModal removeSignupModal={this.removeSignupModal} />
           )}
+          <a href="https://www.facebook.com/groups/256791222025595/">
+            <img
+              src="/images/facebook-icon.png"
+              className="facebook-icon"
+              // onClick={this.linkFacebookGroup}
+            />
+          </a>
           <button onClick={this.addLoginModal} className="navbar-button">
             Log in
           </button>
@@ -62,6 +73,13 @@ class NavbarLoginSection extends Component {
         </div>
       ) : (
         <div>
+          <a href="https://www.facebook.com/groups/256791222025595/">
+            <img
+              src="/images/facebook-icon.png"
+              className="facebook-icon"
+              // onClick={this.linkFacebookGroup}
+            />
+          </a>
           <button className="navbar-button option-menu">
             Option
             <div className="sub-option">

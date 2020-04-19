@@ -305,11 +305,11 @@ class GameViewPort extends Component {
 
     const { width, height, src, clear } = this.props.canvas;
     let img = new Image(width, height);
-    if (clear) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
 
     img.onload = async () => {
+      if (clear) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
       ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(img, 0, 0);
       // this.props.dispatch({

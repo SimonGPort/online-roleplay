@@ -46,19 +46,20 @@ class MainPage extends Component {
 
   render = () => {
     if (this.props.events.length === 0) {
-      return null;
-      // <div className="main-page">
-      //   <div></div>
-      //   <Calendar
-      //     localizer={localizer}
-      //     events={this.props.events}
-      //     startAccessor="start"
-      //     endAccessor="end"
-      //     style={{ height: 500 }}
-      //     views={["month"]}
-      //     onSelectEvent={this.handleSubmit}
-      //   />
-      // </div>
+      return (
+        <div className="main-page">
+          <Announcements announcements={this.props.selection} />
+          <Calendar
+            localizer={localizer}
+            events={this.props.events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 500 }}
+            views={["month"]}
+            onSelectEvent={this.handleSubmit}
+          />
+        </div>
+      );
     }
     return (
       <div className="main-page">

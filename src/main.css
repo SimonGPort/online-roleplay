@@ -854,3 +854,10 @@ body {
   font-family: "Do Hyeon", sans-serif;
   text-decoration: none;
 }
+
+.facebook-icon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transform: translate(-10px, 15px);
+}
