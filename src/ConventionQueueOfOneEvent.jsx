@@ -145,7 +145,7 @@ class ConventionQueueOfOneEvent extends Component {
           {this.props.user === this.props.host ||
           this.props.user === this.props.table.tableCreator ? (
             <div>
-              <button onClick={this.deleteEvent} className="card-enter-event ">
+              <button onClick={this.deleteEvent} className="card-enter-event">
                 Delete Event
               </button>
             </div>

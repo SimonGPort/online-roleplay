@@ -16,7 +16,7 @@ class Announcements extends Component {
         <div className="announcements-zone">
           <div className="welcome-card">
             <p>
-              Welcome to <span className="navbar-logo-text">RollPlay</span>
+              Welcome to <span className="navbar-logo-text">GloriousRoll</span>
             </p>
             <p>
               Take a closer look at this role-playing plateform and find out why

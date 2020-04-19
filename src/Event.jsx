@@ -54,7 +54,7 @@ class Event extends Component {
     if (isOnlineGameIsOpen()) {
       this.props.history.push(`/online/${event.host}/${event.eventId}`);
     } else {
-      alert("The game is not open");
+      alert("You don't have access");
     }
   };
 

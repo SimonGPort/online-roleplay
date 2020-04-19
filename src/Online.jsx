@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import GameViewPort from "./GameViewPort.jsx";
 import CreationOnlineToken from "./CreationOnlineToken.jsx";
+import { useHistory } from "react-router";
 
 export default function Online(props) {
   let [loading, setLoading] = useState(false);
   let dragging = useSelector((state) => state.dragging);
   let page = useSelector((state) => state.page);
   let user = useSelector((state) => state.user);
+  let events = useSelector((state) => state.events);
   let CreationToken = useSelector((state) => state.CreationOnlineToken);
   let dispatch = useDispatch();
   let MasterToken = useSelector((state) => state.MasterToken);
@@ -16,6 +18,7 @@ export default function Online(props) {
   let interval = useRef();
   let updating = useRef(false);
   let gameUpdateVersion = useRef(1);
+  let history = useHistory();
   // let [gameUpdateVersion, setGameUpdateVersion] = useState(1);
 
   // useEffect(() => {
@@ -157,6 +160,22 @@ export default function Online(props) {
 
   useEffect(() => {
     // dispatch({ type: "newUserOnline", user: user });
+    console.log("useEffect");
+    let access = verifyIfAccessToTheOnlineGame(
+      user,
+      events,
+      props.host,
+      props.eventId
+    );
+    if (access === false) {
+      dispatch({
+        type: "removeSelectionEvent",
+      });
+      history.push("/");
+      alert("you dont have access to this event");
+      return;
+    }
+
     (async () => {
       let data = new FormData();
       data.append("user", user);
@@ -172,6 +191,48 @@ export default function Online(props) {
       componentCleanup();
     };
   }, []);
+
+  let verifyIfAccessToTheOnlineGame = (user, events, host, eventId) => {
+    if (user === "") {
+      return false;
+    }
+
+    if (eventId === "GM" && user !== host) {
+      return false;
+    }
+
+    if (eventId === "GM" && user === host) {
+      return true;
+    }
+
+    let event = events.find((event) => event.eventId === eventId);
+    if (!event.players.includes(user)) {
+      return false;
+    }
+    let today = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let date = today.getDate();
+    let hours = today.getHours();
+    let minute = today.getMinutes();
+    let yearEvent = parseInt(event.when.slice(0, 4));
+    let monthEvent = parseInt(event.when.slice(5, 7));
+    let dateEvent = parseInt(event.when.slice(8));
+    let hoursEvent = parseInt(event.time.slice(0, 2));
+    let minuteEvent = parseInt(event.time.slice(3));
+    let time = hours * 60 + minute;
+    let timeEvent = hoursEvent * 60 + minuteEvent;
+    if (
+      year === yearEvent &&
+      month === monthEvent &&
+      date === dateEvent &&
+      time >= timeEvent &&
+      time <= timeEvent + 240
+    ) {
+      return true;
+    }
+    return false;
+  };
 
   let componentCleanup = () => {
     // dispatch({ type: "newUserOffline", user: user });

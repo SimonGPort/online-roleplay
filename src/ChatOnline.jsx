@@ -158,12 +158,6 @@ class ChatOnline extends Component {
       );
       listOfNumber.push(number);
     }
-    console.log(
-      "treatment",
-      indexOfStartingNum,
-      indexOfClosingNum,
-      listOfNumber
-    );
 
     let completeMessage = [];
 
@@ -188,7 +182,6 @@ class ChatOnline extends Component {
         completeMessage = completeMessage.concat(afterMessage);
         message = completeMessage;
       }
-      console.log("completeMessage", completeMessage);
     } else {
       completeMessage = msg.message;
     }

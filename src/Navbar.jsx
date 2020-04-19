@@ -24,7 +24,7 @@ class Navbar extends Component {
             onClick={this.removeSelectionEvent}
           >
             <img src="/images/dice20 logo3.png" className="navbar-logo" />
-            <div className="navbar-logo-text">RollPlay </div>
+            <div className="navbar-logo-text">GloriousRoll </div>
           </Link>
         </div>
         <div></div>
