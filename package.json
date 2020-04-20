@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "webpack --mode production"
   },
   "keywords": [],
   "author": "Jacques Le Normand",
