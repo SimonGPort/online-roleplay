@@ -58,7 +58,6 @@ class Draggable extends Component {
 
   duplicateToken = async (evt) => {
     let data = new FormData();
-    console.log(this.props.token);
     data.append("number", this.props.isDuplicateToken.number);
     data.append("token", JSON.stringify(this.props.token));
     let response = await fetch("/duplicateToken", {
@@ -72,7 +71,6 @@ class Draggable extends Component {
         type: "isDuplicate",
         isDuplicate: false,
       });
-      console.log("the token is duplicate");
     }
   };
 

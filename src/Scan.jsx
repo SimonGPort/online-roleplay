@@ -4,7 +4,7 @@ class Scan extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showScan: true
+      showScan: true,
     };
   }
 
@@ -15,11 +15,6 @@ class Scan extends React.Component {
   }
 
   render = () => {
-    console.log(
-      "scan position:",
-      this.props.scan.positionX,
-      this.props.scan.positionY
-    );
     return (
       this.state.showScan && (
         <img
@@ -29,7 +24,7 @@ class Scan extends React.Component {
             top: `${this.props.scan.positionY}px`,
             left: `${this.props.scan.positionX}px`,
             position: "absolute",
-            zIndex: 5
+            zIndex: 5,
           }}
         />
       )

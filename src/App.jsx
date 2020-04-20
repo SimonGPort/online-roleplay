@@ -16,7 +16,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      loading: false
+      loading: false,
     };
   }
 
@@ -52,7 +52,7 @@ class App extends Component {
       this.props.dispatch({
         type: "login",
         login: true,
-        user: body.username
+        user: body.username,
       });
     } else {
       console.log("no autologin");
@@ -63,12 +63,11 @@ class App extends Component {
     let response = await fetch("/fetchEvents");
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("/fetchEvents", body);
     if (body.success) {
       console.log("fetchEvents success");
       this.props.dispatch({
         type: "fetchEvents",
-        events: body.events
+        events: body.events,
       });
     } else {
       console.log("fetchEvents error");
@@ -93,13 +92,13 @@ class App extends Component {
         />
         <Route
           path="/event/:eventId"
-          render={routeProps => (
+          render={(routeProps) => (
             <Event eventId={routeProps.match.params.eventId} />
           )}
         />
         <Route
           path="/online/:host/:eventId"
-          render={routeProps => (
+          render={(routeProps) => (
             <Online
               host={routeProps.match.params.host}
               eventId={routeProps.match.params.eventId}
@@ -108,8 +107,7 @@ class App extends Component {
         />
         <Route
           path="/creation-convention-table/:eventId"
-          render={routeProps => {
-            console.log(routeProps.match.params.eventId);
+          render={(routeProps) => {
             return (
               <CreationConventionTable
                 eventId={routeProps.match.params.eventId}
@@ -119,7 +117,7 @@ class App extends Component {
         />
         <Route
           path="/convention-event/:eventId/:tableId"
-          render={routeProps => {
+          render={(routeProps) => {
             return (
               <ConventionEvent
                 tableId={routeProps.match.params.tableId}

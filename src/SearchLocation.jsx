@@ -11,7 +11,6 @@ class SearchLocation extends React.Component {
   }
 
   handleChange = (address) => {
-    console.log("typeof", typeof address);
     this.props.setAddress(address);
     this.setState({ address });
   };
@@ -19,7 +18,6 @@ class SearchLocation extends React.Component {
   handleSelect = async (address) => {
     const results = await geocodeByAddress(address);
     const latlng = await getLatLng(results[0]);
-    console.log(latlng);
     this.props.setLocation(latlng);
     this.props.setAddress(address);
     this.setState({ address });

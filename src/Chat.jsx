@@ -15,7 +15,6 @@ class Chat extends Component {
     let chatBottom = document.getElementById("chatBottom");
     chatBottom.scrollTop = chatBottom.scrollHeight;
     this.messageInterval = setInterval(this.updateMessages, 500);
-    console.log("this.props.chat", this.props.chat);
     this.setState({ chatLength: this.props.chat.length });
   }
 
@@ -45,7 +44,6 @@ class Chat extends Component {
     //   this.props.dispatch({ type: "logout" });
     //   return;
     // }
-    console.log("parse.chat", parsed.chat);
     this.props.dispatch({
       type: "set-messages",
       messages: parsed.chat,

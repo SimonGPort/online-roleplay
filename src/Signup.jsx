@@ -8,21 +8,21 @@ class Signup extends Component {
     this.state = {
       username: "",
       email: "",
-      password: ""
+      password: "",
     };
   }
 
-  usernameChange = evt => {
+  usernameChange = (evt) => {
     this.setState({ username: evt.target.value });
   };
-  emailChange = evt => {
+  emailChange = (evt) => {
     this.setState({ email: evt.target.value });
   };
-  passwordChange = evt => {
+  passwordChange = (evt) => {
     this.setState({ password: evt.target.value });
   };
 
-  submitHandler = async evt => {
+  submitHandler = async (evt) => {
     evt.preventDefault();
     let data = new FormData();
     data.append("username", this.state.username);
@@ -30,13 +30,12 @@ class Signup extends Component {
     data.append("password", this.state.password);
     let response = await fetch("/signup", { method: "POST", body: data });
     let body = await response.text();
-    console.log("/register response", body);
     body = JSON.parse(body);
     if (body.success) {
       this.props.dispatch({
         type: "signup",
         login: true,
-        user: this.state.username
+        user: this.state.username,
       });
       this.props.history.push("/");
     } else {

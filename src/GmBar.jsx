@@ -44,11 +44,9 @@ export default function GmBar(props) {
       method: "POST",
       body: data,
     });
-    console.log("frontend got /thereIsGrid");
     const body = await response.text();
     const parsed = JSON.parse(body);
     if (parsed.success) {
-      console.log("thereIsGrid success");
       dispatch({
         type: "thereIsGrid",
         grid: !grid,
@@ -78,7 +76,6 @@ export default function GmBar(props) {
     const body = await response.text();
     const parsed = JSON.parse(body);
     if (parsed.success) {
-      console.log("dispatch changingTheBackgroundSize");
       dispatch({
         type: "changingTheBackgroundSize",
         backgroundWidth: parsed.backgroundWidth,
@@ -120,9 +117,7 @@ export default function GmBar(props) {
     });
     const body = await response.text();
     const parsed = JSON.parse(body);
-    console.log("backend work changing page");
     if (parsed.success) {
-      console.log("ChangingThePage succes backend, frontend res");
       if (parsed.isChangingTheGmPage) {
         dispatch({
           type: "changingGmPage",

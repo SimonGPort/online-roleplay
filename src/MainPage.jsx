@@ -5,9 +5,6 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { connect } from "react-redux";
 import Announcements from "./Announcements.jsx";
 
-console.log(momentLocalizer);
-console.log(moment);
-
 // new Date(year, month, day, hours, minutes, seconds, milliseconds)
 const localizer = momentLocalizer(moment); // or globalizeLocalizer
 
@@ -24,7 +21,6 @@ class MainPage extends Component {
     let response = await fetch("/fetchEvents");
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("/fetchEvents", body);
     if (body.success) {
       this.props.dispatch({
         type: "fetchEvents",

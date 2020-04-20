@@ -35,7 +35,6 @@ app.use("/uploads", express.static("uploads"));
 app.post("/login", uploads.none(), async (req, res) => {
   let username = req.body.username;
   let pwd = req.body.password;
-  console.log("name", username);
   try {
     const user = await dbo
       .collection("users")
@@ -59,7 +58,6 @@ app.post("/signup", uploads.none(), async (req, res) => {
   let username = req.body.username;
   let pwd = req.body.password;
   let email = req.body.email;
-  console.log("name", username);
   try {
     const user = await dbo.collection("users").findOne({ username: username });
     if (user) {
@@ -107,7 +105,6 @@ app.post("/signup", uploads.none(), async (req, res) => {
 app.post("/newUserOnline", uploads.none(), async (req, res) => {
   let user = req.body.user;
   let host = req.body.host;
-  console.log("newUserOnline", user, host);
   try {
     await dbo
       .collection("tokens")
@@ -495,7 +492,6 @@ app.post("/drawData", uploads.none(), async (req, res) => {
 app.post("/leaveTheQueue", uploads.none(), async (req, res) => {
   let user = req.body.user;
   let eventId = req.body.id;
-  console.log("user and eventID", user, eventId);
   try {
     await dbo
       .collection("events")
@@ -562,7 +558,6 @@ app.post("/hostingAEvent", uploads.single("imgFile"), (req, res) => {
   let img = "/uploads/" + req.file.filename;
   let eventId = "" + Math.floor(Math.random() * 1000000);
 
-  console.log("image", img);
   if (host === undefined) {
     console.log("The user need to login");
     res.send(JSON.stringify({ success: false }));
@@ -898,10 +893,7 @@ app.post("/postMessageChatOnline", uploads.none(), async (req, res) => {
     for (let i = 0; i < firstNumber; i++) {
       diceResult = diceResult + " " + diceArray[i];
     }
-
-    console.log("dice", firstNumber, secondNumber);
   }
-  console.log("dice2", firstNumber, secondNumber);
   if (diceResult) {
     message = message + diceResult;
   }
@@ -935,7 +927,6 @@ app.post("/postMessageConvention", uploads.none(), async (req, res) => {
   let message = req.body.message;
   let tableIndex = req.body.tableIndex;
   let field = "conventionsGame." + tableIndex + ".chat";
-  console.log("field:", field);
 
   try {
     await dbo.collection("events").updateOne(
@@ -1059,7 +1050,6 @@ app.post("/newGmEventConvention", uploads.none(), async (req, res) => {
   const eventId = req.body.eventId;
   let tableIndex = req.body.tableIndex;
   let field = "conventionsGame." + tableIndex + ".gm";
-  console.log("field:", field);
 
   try {
     await dbo.collection("events").updateOne(
@@ -1148,7 +1138,6 @@ app.post(
 );
 
 app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
-  console.log("helloworld");
   const sessionId = req.cookies.sid;
   if (sessions[sessionId] === undefined) {
     res.status(403);
@@ -1159,7 +1148,6 @@ app.post("/creatingANewToken", uploads.single("imgFile"), async (req, res) => {
   let host = req.body.host;
   let page = JSON.parse(req.body.page);
   let type = req.body.type;
-  console.log("type", type);
   let zIndex = 2;
   if (type === "Background") {
     zIndex = 1;
@@ -1208,7 +1196,6 @@ app.get("/fetchEvents", async (req, res) => {
 app.post("/login", uploads.none(), async (req, res) => {
   let username = req.body.username;
   let pwd = req.body.password;
-  console.log("name", username);
   try {
     const user = await dbo
       .collection("users")
@@ -1269,13 +1256,11 @@ app.post("/hideToken", uploads.none(), async (req, res) => {
 
 app.post("/duplicateToken", uploads.none(), async (req, res) => {
   let number = parseInt(req.body.number);
-  console.log(number, "number");
   let token = JSON.parse(req.body.token);
   let positionX = JSON.parse(token.positionX) + 30;
   let positionY = JSON.parse(token.positionY);
   positionX = JSON.stringify(positionX);
   positionY = JSON.stringify(positionY);
-  console.log("token", token);
   let imgFile = token.imgFile;
   let host = token.host;
   let page = token.page;
@@ -1289,7 +1274,6 @@ app.post("/duplicateToken", uploads.none(), async (req, res) => {
   try {
     await dbo.collection("tokens").insertMany(
       Array.from(new Array(number)).map(() => {
-        console.log("number", number);
         return {
           tokenId: "" + Math.floor(Math.random() * 1000000),
           imgFile: imgFile,
@@ -1322,6 +1306,7 @@ app.all("/*", (req, res, next) => {
   res.sendFile(__dirname + "/build/index.html");
 });
 
-app.listen(4000, "0.0.0.0", () => {
-  console.log("Server running on port 4000");
+const { PORT = 4000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;
+app.listen(PORT, LOCAL_ADDRESS, () => {
+  console.log("app running on port" + PORT);
 });

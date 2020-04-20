@@ -121,7 +121,6 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "erasingCanvas") {
-    console.log("erasingCanvas:", action.erasingCanvas);
     return { ...state, erasingCanvas: action.erasingCanvas };
   }
 
@@ -254,7 +253,6 @@ let reducer = (state, action) => {
     if (sameGameView && sameMasterToken && sameCanvas) {
       return state;
     }
-    console.log(action.canvas);
     if (sameCanvas) {
       return produce(state, (draftState) => {
         draftState.gameView = action.gameView;
@@ -418,7 +416,6 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "newUserOffline") {
-    console.log(action.user);
     return produce(state, (draftState) => {
       draftState.MasterToken.onlineUsers = draftState.MasterToken.onlineUsers.filter(
         (user) => user.user !== action.user

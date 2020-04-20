@@ -248,14 +248,12 @@ class GameViewPort extends Component {
       this.props.dispatch({
         type: "startPostingData",
       });
-      console.log("down");
     }
     if (status === "up" || status === "out") {
       if (this.state.localFlag === false) {
         return;
       }
       this.props.dispatch({ type: "draggingEnd" });
-      console.log("up");
       this.setState({
         localFlag: false,
       });
@@ -360,7 +358,7 @@ class GameViewPort extends Component {
     if (body.success) {
       console.log("Your scan is post");
     } else {
-      console.log("Can't scan");
+      console.log("Scan error");
     }
     this.props.dispatch({
       type: "isScanning",

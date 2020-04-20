@@ -7,31 +7,30 @@ class Login extends Component {
     super();
     this.state = {
       username: "",
-      password: ""
+      password: "",
     };
   }
 
-  usernameChange = evt => {
+  usernameChange = (evt) => {
     this.setState({ username: evt.target.value });
   };
-  passwordChange = evt => {
+  passwordChange = (evt) => {
     this.setState({ password: evt.target.value });
   };
 
-  submitHandler = async evt => {
+  submitHandler = async (evt) => {
     evt.preventDefault();
     let data = new FormData();
     data.append("username", this.state.username);
     data.append("password", this.state.password);
     let response = await fetch("/login", { method: "POST", body: data });
     let body = await response.text();
-    console.log("/login response", body);
     body = JSON.parse(body);
     if (body.success) {
       this.props.dispatch({
         type: "login",
         login: true,
-        user: this.state.username
+        user: this.state.username,
       });
       this.props.history.push("/");
     } else {

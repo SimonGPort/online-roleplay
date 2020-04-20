@@ -33,7 +33,6 @@ class SignupModal extends Component {
     data.append("password", this.state.password);
     let response = await fetch("/signup", { method: "POST", body: data });
     let body = await response.text();
-    console.log("/register response", body);
     body = JSON.parse(body);
     if (body.success) {
       this.props.dispatch({

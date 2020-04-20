@@ -24,7 +24,6 @@ class LoginModal extends Component {
     data.append("password", this.state.password);
     let response = await fetch("/login", { method: "POST", body: data });
     let body = await response.text();
-    console.log("/login response", body);
     body = JSON.parse(body);
     if (body.success) {
       this.props.dispatch({
