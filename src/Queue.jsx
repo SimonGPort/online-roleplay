@@ -178,7 +178,7 @@ class Queue extends Component {
                             this.handleBanPlayer(this.props.id, player);
                           }}
                         />
-                        <p class="ban-message-hovering">Ban this player</p>
+                        <p class="Ban-message-hovering">Ban this player</p>
                       </span>
                     ) : (
                       ""

@@ -193,16 +193,16 @@ export default function Online(props) {
   }, []);
 
   let verifyIfAccessToTheOnlineGame = (user, events, host, eventId) => {
+    if (user === host) {
+      return true;
+    }
+
     if (user === "") {
       return false;
     }
 
     if (eventId === "GM" && user !== host) {
       return false;
-    }
-
-    if (eventId === "GM" && user === host) {
-      return true;
     }
 
     let event = events.find((event) => event.eventId === eventId);

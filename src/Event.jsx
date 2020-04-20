@@ -37,14 +37,16 @@ class Event extends Component {
       let minuteEvent = parseInt(event.time.slice(3));
       let time = hours * 60 + minute;
       let timeEvent = hoursEvent * 60 + minuteEvent;
+      let isUserInTheQueue =
+        event.players.includes(this.props.user) ||
+        this.props.user === event.host;
       if (
-        (year === yearEvent &&
-          month === monthEvent &&
-          date === dateEvent &&
-          time >= timeEvent &&
-          time <= timeEvent + 240 &&
-          event.players.includes(this.props.user)) ||
-        this.props.user === event.host
+        year === yearEvent &&
+        month === monthEvent &&
+        date === dateEvent &&
+        time >= timeEvent &&
+        time <= timeEvent + 240 &&
+        isUserInTheQueue
       ) {
         return true;
       }

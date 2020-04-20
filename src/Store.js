@@ -23,7 +23,6 @@ let reducer = (state, action) => {
       draftState.MasterToken.grid = action.grid;
     });
   }
-  ///je travail ici
   if (action.type === "BanPlayerConventionQueue") {
     let index = state.events.findIndex((event) => {
       return event.eventId === action.eventId;
@@ -122,6 +121,7 @@ let reducer = (state, action) => {
   }
 
   if (action.type === "erasingCanvas") {
+    console.log("erasingCanvas:", action.erasingCanvas);
     return { ...state, erasingCanvas: action.erasingCanvas };
   }
 

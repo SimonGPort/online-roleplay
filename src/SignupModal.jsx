@@ -23,6 +23,10 @@ class SignupModal extends Component {
 
   submitHandler = async (evt) => {
     evt.preventDefault();
+    if (!this.state.email.includes("@")) {
+      alert("you need a valid email");
+      return;
+    }
     let data = new FormData();
     data.append("username", this.state.username);
     data.append("email", this.state.email);
@@ -79,7 +83,7 @@ class SignupModal extends Component {
               <div className="modalElement">
                 Password
                 <input
-                  type="text"
+                  type="password"
                   onChange={this.passwordChange}
                   className="inputModal"
                 />

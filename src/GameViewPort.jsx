@@ -71,6 +71,10 @@ class GameViewPort extends Component {
   };
   canvasFill = async () => {
     this.props.dispatch({
+      type: "erasingCanvas",
+      erasingCanvas: false,
+    });
+    this.props.dispatch({
       type: "startPostingData",
     });
     // let pageDiplay = undefined;
@@ -89,6 +93,7 @@ class GameViewPort extends Component {
 
     const { width, height } = this.state.canvas;
     this.state.ctx.fillStyle = this.state.penColor;
+    this.state.ctx.globalCompositeOperation = "source-over";
     this.state.ctx.fillRect(0, 0, width, height);
     let data = new FormData();
     // data.append("canvas", JSON.stringify(this.props.MasterToken.canvas));
@@ -108,7 +113,7 @@ class GameViewPort extends Component {
         type: "changeCanvasAfterDraw",
         clear: false,
         src: this.canvasRef.current.toDataURL(),
-        canvasIndex: canvasIndex,
+        // canvasIndex: canvasIndex,
       });
       this.props.dispatch({
         type: "endPostingData",
@@ -122,6 +127,10 @@ class GameViewPort extends Component {
   };
 
   canvasClear = async () => {
+    this.props.dispatch({
+      type: "erasingCanvas",
+      erasingCanvas: false,
+    });
     this.props.dispatch({
       type: "startPostingData",
     });
@@ -140,7 +149,9 @@ class GameViewPort extends Component {
     // }
 
     const { width, height } = this.state.canvas;
+    this.state.ctx.globalCompositeOperation = "destination-out";
     this.state.ctx.clearRect(0, 0, width, height);
+    this.state.ctx.globalCompositeOperation = "source-over";
     let data = new FormData();
     data.append("page", this.props.page.gmPage);
     data.append("canvas", JSON.stringify(this.props.MasterToken.canvas));
@@ -160,7 +171,7 @@ class GameViewPort extends Component {
         type: "changeCanvasAfterDraw",
         clear: true,
         src: this.canvasRef.current.toDataURL(),
-        canvasIndex: canvasIndex,
+        // canvasIndex: canvasIndex,
       });
       this.props.dispatch({
         type: "endPostingData",
@@ -305,11 +316,15 @@ class GameViewPort extends Component {
 
     const { width, height, src, clear } = this.props.canvas;
     let img = new Image(width, height);
+    if (clear) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     img.onload = async () => {
       if (clear) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
+
       ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(img, 0, 0);
       // this.props.dispatch({
