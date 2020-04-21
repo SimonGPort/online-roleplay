@@ -442,7 +442,7 @@ let reducer = (state, action) => {
   return state;
 };
 
-const Store = createStore(
+const store = createStore(
   reducer,
   {
     sessions: [],
@@ -472,4 +472,4 @@ const Store = createStore(
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
-export default Store;
+export default store;
