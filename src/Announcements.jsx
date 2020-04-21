@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import Card from "./Card.jsx";
 import { connect } from "react-redux";
 
-///Mettre l'ID de l'eventSponsored en string, exemple: "221641"
-///S'il n'y a pas eventSponsered mettre un empty string ""
+//Mettre l'ID de l'eventSponsored en string, exemple: "221641"
+//S'il n'y a pas eventSponsered mettre un empty string ""
 const eventSponsored = "";
 
 class Announcements extends Component {
