@@ -61,7 +61,7 @@ class ConventionQueue extends Component {
                   {this.props.host === this.props.user ? (
                     <div className="iconGameConvertion-icon-container">
                       <img
-                        src="/images/visibility_off.svg"
+                        src="/Images/visibility_off.svg"
                         className="visibility_off-iconGameConvention"
                         onClick={() => this.gameAccepted(idx)}
                       />
@@ -72,7 +72,7 @@ class ConventionQueue extends Component {
                   ) : (
                     <div className="iconGameConvertion-icon-container">
                       <img
-                        src="/images/visibility_off.svg"
+                        src="/Images/visibility_off.svg"
                         className="visibility_off-iconGameConvention"
                       />
                       <p class="img-description-gameConvention">
