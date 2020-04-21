@@ -204,7 +204,7 @@ class ConventionQueueOfOneEvent extends Component {
                   this.props.user === this.props.table.gm ? (
                     <span className="ban-player-container">
                       <img
-                        src="/images/Ban Hammer.svg"
+                        src="/Images/Ban_Hammer.svg"
                         className="ban-player-button"
                         onClick={() => {
                           this.handleBanPlayerConvention(
@@ -229,7 +229,7 @@ class ConventionQueueOfOneEvent extends Component {
                 this.props.user === this.props.table.gm ? (
                   <span className="ban-player-container">
                     <img
-                      src="/images/Ban Hammer.svg"
+                      src="/Images/Ban_Hammer.svg"
                       className="ban-player-button"
                       onClick={() => {
                         this.BanPlayer.handleBanPlayerConvention(

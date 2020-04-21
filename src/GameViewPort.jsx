@@ -437,7 +437,7 @@ class GameViewPort extends Component {
     return (
       <div>
         <div className="GmBar-Menu-Button-container" onClick={this.ToggleGmBar}>
-          <img className="GmBar-Menu-Button" src="/images/library_books.svg" />
+          <img className="GmBar-Menu-Button" src="/Images/library_books.svg" />
         </div>
         {scan && <Scan scan={scan} />}
 

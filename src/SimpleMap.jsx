@@ -3,7 +3,7 @@ import GoogleMapReact from "google-map-react";
 
 const AnyReactComponent = ({ text }) => (
   <div>
-    <img className="markerOnMap" src="/images/marker.png" />
+    <img className="markerOnMap" src="/Images/marker.png" />
   </div>
 );
 
@@ -11,9 +11,9 @@ class SimpleMap extends Component {
   static defaultProps = {
     center: {
       lat: 45.5017,
-      lng: -73.5673
+      lng: -73.5673,
     },
-    zoom: 11
+    zoom: 11,
   };
 
   render() {

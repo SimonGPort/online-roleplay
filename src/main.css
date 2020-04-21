@@ -2,6 +2,7 @@ body {
   background-color: #e5e5d9;
   /* background-image: linear-gradient(to top,  #e7e7db, #5b7b9b) */
   margin: 0;
+  font-family: "Do Hyeon", sans-serif;
 }
 
 .overlay {
@@ -254,9 +255,9 @@ body {
 }
 
 .modalSubmit {
-  margin: 0 15px 0 15px;
-  width: 220px;
-  font-size: 30px;
+  /* margin: 0 15px 0 15px; */
+  width: 100%;
+  /* font-size: 30px; */
 }
 .modal-container {
   height: 100%;

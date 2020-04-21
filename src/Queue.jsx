@@ -172,7 +172,7 @@ class Queue extends Component {
                     {this.props.user === this.props.host ? (
                       <span className="ban-player-container">
                         <img
-                          src="/images/Ban Hammer.svg"
+                          src="/Images/Ban_Hammer.svg"
                           className="ban-player-button"
                           onClick={() => {
                             this.handleBanPlayer(this.props.id, player);
@@ -192,7 +192,7 @@ class Queue extends Component {
                   {this.props.user === this.props.host ? (
                     <span className="ban-player-container">
                       <img
-                        src="/images/Ban Hammer.svg"
+                        src="/Images/Ban_Hammer.svg"
                         className="ban-player-button"
                         onClick={() => {
                           this.handleBanPlayer(this.props.id, player);

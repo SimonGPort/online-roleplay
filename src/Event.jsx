@@ -100,7 +100,7 @@ class Event extends Component {
                   <div className="event-info-space">
                     <img
                       className="event-map-button"
-                      src="/images/explore-24px.svg"
+                      src="/Images/explore-24px.svg"
                       onClick={this.addMapModal}
                     />
                   </div>

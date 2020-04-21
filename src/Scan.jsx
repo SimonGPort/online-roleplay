@@ -18,7 +18,7 @@ class Scan extends React.Component {
     return (
       this.state.showScan && (
         <img
-          src="/images/scan.gif"
+          src="/Images/scan.gif"
           className="scan"
           style={{
             top: `${this.props.scan.positionY}px`,
