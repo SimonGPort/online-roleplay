@@ -172,7 +172,7 @@ class ChatOnline extends Component {
         afterMessage = message.slice(indexOfClosingNum[i] - 2 * i + 1);
         centerMessage = [
           <div className="dice-chat-image-container">
-            <img className="dice-chat-image" src="/images/dice20 chat.png" />
+            <img className="dice-chat-image" src="/Images/dice20_chat.png" />
             {listOfNumber[i]}
           </div>,
         ];
@@ -254,7 +254,7 @@ class ChatOnline extends Component {
                 return (
                   <div key={idx} className="GmBar-User">
                     <div className="GmBar-user-container">
-                      <img src="/images/account_box.svg" /> {user.user}
+                      <img src="/Images/account_box.svg" /> {user.user}
                     </div>
                     <input
                       className="GmBar-Input"

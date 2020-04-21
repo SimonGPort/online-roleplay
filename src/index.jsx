@@ -3,13 +3,13 @@ import "./main.css";
 import App from "./App.jsx";
 import React from "react";
 import { Provider } from "react-redux";
-import store from "./store.js";
+import Store from "./Store.js";
 
 import reloadMagic from "./reload-magic-client.js"; // automatic reload
 reloadMagic(); // automatic reload
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={Store}>
     <App />
   </Provider>,
   document.getElementById("root")
