@@ -59,7 +59,7 @@ class NavbarLoginSection extends Component {
           )}
           <a href="https://www.facebook.com/groups/256791222025595/">
             <img
-              src="/images/facebook-icon.png"
+              src="/Images/facebook-icon.png"
               className="facebook-icon"
               // onClick={this.linkFacebookGroup}
             />
@@ -75,7 +75,7 @@ class NavbarLoginSection extends Component {
         <div>
           <a href="https://www.facebook.com/groups/256791222025595/">
             <img
-              src="/images/facebook-icon.png"
+              src="/Images/facebook-icon.png"
               className="facebook-icon"
               // onClick={this.linkFacebookGroup}
             />
