@@ -442,7 +442,7 @@ let reducer = (state, action) => {
   return state;
 };
 
-const store = createStore(
+const Store = createStore(
   reducer,
   {
     sessions: [],
