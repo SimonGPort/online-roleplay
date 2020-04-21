@@ -1,0 +1,864 @@
+body {
+  background-color: #e5e5d9;
+  /* background-image: linear-gradient(to top,  #e7e7db, #5b7b9b) */
+  margin: 0;
+  font-family: "Do Hyeon", sans-serif;
+}
+
+.overlay {
+  z-index: 50;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popup {
+  z-index: 100;
+  position: fixed;
+  top: 200px;
+  left: 200px;
+  right: 200px;
+  background-color: white;
+}
+.navbar-logo {
+  width: 50px;
+  height: 50px;
+  margin-left: 10px;
+  margin-right: 10px;
+  z-index: 2;
+}
+#navbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr;
+  height: 55px;
+  border-bottom: 3px solid #97cda9;
+  background-color: #5b7b9b;
+  align-items: center;
+  /* font-family: "Rubik", sans-serif; */
+}
+.main-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.event-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 10px;
+  height: calc(100vh - 58px);
+  box-sizing: border-box;
+}
+.card {
+  border: 1px solid #97cda9;
+  border-radius: 5px;
+  background-color: #5b7b9b;
+  padding: 10px;
+  margin: 10px;
+}
+
+.card-sponsored {
+  border: 1px solid #97cda9;
+  border-radius: 0 0 5px 5px;
+  background-color: #5b7b9b;
+  padding: 10px;
+}
+
+.card-info {
+  color: white;
+  display: flex;
+}
+.card-title {
+  font-size: 30px;
+}
+.card-img {
+  widows: 350px;
+  height: 350px;
+  object-fit: cover;
+  border: 3px solid #97cda9;
+}
+.card-info-space {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.card-img-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 5px;
+}
+
+.card-enter-event {
+  cursor: pointer;
+  background-color: white;
+  width: 100px;
+  height: 35px;
+  color: black;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 15px;
+  transition: 0.2s;
+  font-family: "Do Hyeon", sans-serif;
+  border: 1px solid black;
+  text-decoration: none;
+}
+.card-enter-event:hover {
+  cursor: pointer;
+  color: white;
+  /* background: #a33236; */
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+  font-family: "Do Hyeon", sans-serif;
+  text-decoration: none;
+}
+
+.card-enter {
+  width: 120px;
+  height: 60px;
+  color: black;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 24px;
+  transition: 0.2s;
+  font-family: "Do Hyeon", sans-serif;
+  border: 1px solid black;
+}
+
+.card-enter:hover {
+  color: white;
+  /* background: #a33236; */
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+  font-family: "Do Hyeon", sans-serif;
+}
+
+.markerOnMap {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  transform: translate(-50%, -100%);
+}
+
+.draggable-image {
+  background-size: cover;
+  cursor: move;
+  overflow: hidden;
+  position: relative;
+}
+
+#canvas {
+  border: solid black 1px;
+  z-index: 3;
+  position: relative;
+}
+.scan {
+  height: 60px;
+  width: 60px;
+  transform: translate(-50%, -50%);
+}
+
+.grid {
+  border: solid white 1px;
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.GameViewPort_Playfield {
+  position: absolute;
+}
+
+.grid-row {
+  display: flex;
+  pointer-events: none;
+}
+
+.grid-case {
+  border: solid black 1px;
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.navbar-button {
+  width: 80px;
+  font-size: 15px;
+  height: 40px;
+  margin: 5px;
+  padding: 10px;
+  background-color: #5b7b9b;
+  color: black;
+  transition-duration: 0.2s;
+  text-decoration: none;
+  border: 0;
+  font-family: "Rubik", sans-serif;
+  cursor: pointer;
+}
+
+.navbar-button:hover {
+  background-color: #3b6c9c;
+  font-size: 15px;
+  border-radius: 3px;
+  width: 80px;
+  height: 40px;
+  padding: 10px;
+  margin: 5px;
+  color: white;
+  font-family: "Rubik", sans-serif;
+}
+
+.navbar-img {
+  width: 50px;
+  height: 50px;
+}
+
+.dark-background {
+  background-color: black;
+  opacity: 0.4;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 0;
+  top: 0;
+}
+
+.LoginModalForm {
+  background-color: white;
+  border-radius: 5px;
+  z-index: 20;
+  margin: 30px;
+  opacity: 1;
+  border: 3px solid #5a5a5a;
+  background-color: #5b7b9b;
+}
+
+.modalElement {
+  margin: 15px;
+}
+
+.modalSubmit {
+  /* margin: 0 15px 0 15px; */
+  width: 100%;
+  /* font-size: 30px; */
+}
+.modal-container {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  top: 0;
+}
+.inputModal {
+  margin-left: 10px;
+  float: right;
+}
+.sub-option {
+  display: none;
+}
+
+.sub-option li {
+  list-style-type: none;
+  padding: 10px;
+  margin: 5px;
+  text-decoration: none;
+}
+
+.noLinkDecoration {
+  text-decoration: none;
+  color: black;
+}
+
+.sub-option ul {
+  padding: 0px;
+}
+
+.sub-option li:hover {
+  background-color: #3b6c9c;
+  font-size: 15px;
+  border-radius: 3px;
+  margin: 5px;
+  color: white;
+  font-family: "Rubik", sans-serif;
+  padding: 10px;
+}
+.option-menu:hover .sub-option {
+  display: block;
+  position: absolute;
+  margin-top: 10px;
+  margin-left: -15px;
+  background-color: #5b7b9b;
+  z-index: 20;
+  color: black;
+}
+
+.sub-option:hover {
+  display: block;
+  position: absolute;
+  margin-top: 10px;
+  margin-left: -15px;
+  background-color: #5b7b9b;
+  z-index: 20;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-left: 10px; */
+}
+
+.logo-container:hover .navbar-logo {
+  transform: translate(120px, 0) rotate(360deg);
+  margin-left: 0px;
+  transition-duration: 0.7s;
+  z-index: 2;
+}
+.logo-container:hover .navbar-logo-text {
+  transform: translate(-50px, 0);
+  margin-left: 5px;
+  transition-duration: 0.5s;
+  font-family: "Do Hyeon", sans-serif;
+}
+
+.navbar-logo-text {
+  font-family: "Do Hyeon", sans-serif;
+  font-size: 20px;
+}
+
+.event-sponsored-banner {
+  background-color: #97cda9;
+  display: flex;
+  justify-content: center;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  font-size: 22px;
+}
+.announcements-zone {
+  margin: 10px;
+}
+.creation-event-page {
+  grid-template-columns: auto auto auto;
+  display: grid;
+  justify-content: space-around;
+}
+
+.creation-event-category {
+  padding: 5px;
+  margin: 20px;
+  border-bottom: 3px solid #97cda9;
+}
+
+.creation-event-welcome {
+  font-family: "Do Hyeon", sans-serif;
+  font-size: 20px;
+}
+.creation-event-scrollmenu {
+  margin-left: 5px;
+  margin-right: 15px;
+}
+.creation-event-input {
+  width: -webkit-fill-available;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+.creation-event-enter-container {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+}
+
+.chat-form {
+  position: absolute;
+  bottom: 20px;
+  display: grid;
+  grid-template-columns: 80% 20%;
+  width: calc(100% - 20px);
+}
+
+.GmBar-chat-section {
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 5px 10px 10px 10px;
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+  display: grid;
+  grid-template-rows: 12% 80% 8%;
+}
+
+.chat-section {
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+  display: grid;
+  grid-template-rows: 6% 86% 8%;
+}
+
+.event-center-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+.GmBar-chat-message-list {
+  height: 493px;
+  overflow: scroll;
+  height: 160px;
+}
+
+.chat-message-list {
+  overflow: scroll;
+  height: 508px;
+  /* display: flex;
+  flex-direction: column-reverse; */
+}
+.chat-input {
+  border-radius: 5px;
+}
+.event-description-section {
+  overflow: sc;
+  width: 100%;
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+}
+.event-description {
+  overflow: scroll;
+  height: calc(100% - 20px);
+  height: 142px;
+}
+
+.event-queue-section {
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+  display: grid;
+  grid-template-rows: 92% 8%;
+}
+
+.event-chat-submit {
+  border-radius: 5px;
+  border: 3px solid #97cda9;
+}
+.event-info-space {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.event-info {
+  color: black;
+  display: flex;
+  margin-bottom: 15px;
+}
+.event-info-top-section {
+  border-bottom: 3px solid #97cda9;
+  padding-bottom: 5px;
+}
+.event-info-section-container {
+  border: 3px solid #97cda9;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+}
+.event-info-address {
+  padding-right: 10px;
+}
+
+.img-description-gameConvention {
+  visibility: hidden;
+}
+.iconGameConvertion-icon-container {
+  width: 24px;
+  height: 24px;
+}
+
+.iconGameConvertion-icon-container:hover .img-description-gameConvention {
+  visibility: visible;
+  opacity: 1;
+  position: fixed;
+  background-color: #5b7b9b;
+  transform: translate(-100px, -70px);
+  border: 3px solid #97cda9;
+  padding: 2px;
+  border-radius: 5px;
+}
+
+.visibility_off-iconGameConvention:hover {
+  cursor: pointer;
+  box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
+}
+
+.event-map-button:hover {
+  box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
+  cursor: pointer;
+}
+.map-modal-simple-map {
+  background-color: white;
+  border-radius: 5px;
+  z-index: 20;
+  margin: 30px;
+  opacity: 1;
+  border: 3px solid #5a5a5a;
+  width: 70%;
+}
+.event-attend-section {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 33% 33% 33%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.Attendees {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.access-to-online-game-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.GmBar-event-information {
+  font-size: x-large;
+}
+
+.event-information {
+  font-size: x-large;
+}
+
+.convention-createANewTable-button {
+  /* height: 30px;
+  border-radius: 5px;
+  
+  border: 1px solid black;
+  padding: 3px; */
+  color: black;
+  text-decoration: none;
+}
+
+.convention-createANewTable-button:hover {
+  /* height: 30px;
+  border-radius: 5px;
+  border: 1px solid black;
+  
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9; */
+  color: white;
+  text-decoration: none;
+}
+
+.ReturnToTheConvention-button-container {
+  margin-bottom: 10px;
+}
+.convention-createANewTable-button-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.convention-BecomeTheGm-button {
+  height: 30px;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid black;
+  padding: 3px;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.convention-BecomeTheGm-button:hover {
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: white;
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.AcceptThisGame-button {
+  height: 30px;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid black;
+  padding: 3px;
+  text-decoration: none;
+  margin-left: 10px;
+}
+.AcceptThisGame-button:hover {
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: white;
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+  text-decoration: none;
+  margin-left: 10px;
+}
+.convention-game-button {
+  padding-right: 15px;
+  font-size: 20px;
+  color: #3b6c9c;
+  text-decoration: none;
+  cursor: pointer;
+}
+.convention-game-button:hover {
+  padding-right: 15px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #97cda9;
+  cursor: pointer;
+}
+.GmBar {
+  border: 3px solid #5b7b9b;
+  display: grid;
+  grid-template-columns: 33% 57% 10%;
+  /* height: 145px; */
+  z-index: 20;
+  background-color: #e5e5d9;
+  width: -webkit-fill-available;
+  position: fixed;
+}
+.chatOnline {
+  display: grid;
+  grid-template-columns: 60% 40%;
+}
+.GmBar-User {
+  display: grid;
+  grid-template-columns: 43% 23% 33%;
+}
+.GmBar-Input {
+  width: 30px;
+  height: 15px;
+  text-align: center;
+}
+.GmBar-Gm-Sub-Section {
+  margin-bottom: 15px;
+  border-bottom: 3px solid #97cda9;
+  padding-bottom: 5px;
+}
+.GmBar-Gm-Section {
+  padding: 10px;
+}
+.GmBar-button-right-Margin-NewToken {
+  margin-right: 20px;
+}
+
+.GmBar-button-right-Margin {
+  margin-right: 10px;
+}
+.GmBar-button {
+  border-radius: 5px;
+  border: 3px solid #97cda9;
+  width: 65px;
+}
+.GmBar-button-initiative {
+  border-radius: 5px;
+  border: 3px solid #97cda9;
+  width: 90px;
+}
+.rbc-event-content {
+  font-size: 14px;
+  text-align: center;
+}
+.rbc-calendar {
+  border: 3px solid #97cda9;
+}
+.rbc-day-bg {
+  border: 1px solid #97cda9;
+}
+.rbc-header {
+  border: 1px solid #97cda9;
+}
+.listOfUsers {
+  margin: 5px;
+  border-right: 3px solid #97cda9;
+}
+.GmBar-user-container {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+.GmBar-User-Section {
+  height: 165px;
+  overflow: scroll;
+}
+/* .GmBar2 {
+  top: 0;
+  height: 30%;
+  position: fixed;
+  z-index: 50;
+  background-color: #e5e5d9;
+  width: -webkit-fill-available;
+} */
+
+.GmBar-Menu-Button {
+  height: 30px;
+  width: 30px;
+  top: 50%;
+  left: 30px;
+  z-index: 50;
+}
+
+.GmBar-Menu-Button-container {
+  height: 30px;
+  width: 30px;
+  position: fixed;
+  top: 50%;
+  left: 30px;
+  z-index: 50;
+  background-color: #e5e5d9;
+  cursor: pointer;
+}
+
+.GmBar-Menu-Button-container:hover {
+  height: 30px;
+  width: 30px;
+  position: fixed;
+  top: 50%;
+  left: 30px;
+  z-index: 50;
+  background-color: yellow;
+  cursor: pointer;
+}
+
+.dice-chat-image-container {
+  transform: translate(20%, -15%);
+  height: 25px;
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-right: 5px;
+}
+
+.dice-chat-image {
+  position: absolute;
+  height: 25px;
+  width: 25px;
+  z-index: -1;
+}
+.creation-online-token-section {
+  padding: 10px;
+}
+
+.textDecorationNone {
+  text-decoration: none;
+}
+
+.translate-input {
+  transform: translate(10px, 10px);
+}
+.ban-player-button {
+  float: right;
+  transform: translate(0, -5px);
+}
+.ban-player-button:hover {
+  box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
+  cursor: pointer;
+}
+
+.Ban-message-hovering {
+  display: none;
+}
+.ban-player-container {
+  width: 24px;
+  height: 24px;
+}
+
+.ban-player-container:hover .Ban-message-hovering {
+  display: inline;
+  visibility: visible;
+  opacity: 1;
+  position: fixed;
+  background-color: #5b7b9b;
+  transform: translate(260px, -50px);
+  border: 3px solid #97cda9;
+  padding: 2px;
+  border-radius: 5px;
+}
+/* .access-to-online-game-button {
+  height: 30px;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid black;
+}
+
+.access-to-online-game-button:hover {
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: white;
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+} */
+
+.access-to-online-game-button {
+  cursor: pointer;
+  background-color: white;
+  width: 100px;
+  height: 45px;
+  color: black;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 15px;
+  transition: 0.2s;
+  font-family: "Do Hyeon", sans-serif;
+  border: 1px solid black;
+  text-decoration: none;
+}
+
+.access-to-online-game-button:hover {
+  width: 100px;
+  height: 45px;
+  cursor: pointer;
+  color: white;
+  /* background: #a33236; */
+  background: #97cda9;
+  box-shadow: 0 0 10px #97cda9, 0 0 40px #97cda9, 0 0 80px #97cda9;
+  font-family: "Do Hyeon", sans-serif;
+  text-decoration: none;
+}
+
+.facebook-icon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transform: translate(-10px, 15px);
+}
