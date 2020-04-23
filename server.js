@@ -27,7 +27,7 @@ const sessions = {};
 reloadMagic(app);
 
 app.use("/", express.static("build")); // Needed for the HTML and JS files
-app.use("/", express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 app.use("/", express.static("public")); // Needed for local assets
 app.use(express.static("public"));
 
