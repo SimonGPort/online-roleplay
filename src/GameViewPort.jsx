@@ -5,6 +5,8 @@ import GmBar from "./GmBar.jsx";
 import Grid from "./Grid.jsx";
 import Scan from "./Scan.jsx";
 
+let loadingFirstDrawing = true;
+
 class GameViewPort extends Component {
   constructor(props) {
     super(props);
@@ -21,6 +23,7 @@ class GameViewPort extends Component {
       penSize: 5,
       penColor: "black",
       GmBarDisplay: false,
+      // loadingFirstDrawing: true,
     };
   }
   componentDidMount() {
@@ -289,8 +292,8 @@ class GameViewPort extends Component {
       let response = await fetch("/drawData", { method: "POST", body: data });
       const body = await response.text();
       const parsed = JSON.parse(body);
+
       if (parsed.success) {
-        console.log("draw post success");
         this.props.dispatch({
           type: "endPostingData",
         });
@@ -307,7 +310,11 @@ class GameViewPort extends Component {
       }
     }
   };
-  drawCanvas = async (ctx, canvas) => {
+  drawCanvas = (ctx, canvas) => {
+    if (this.props.user === this.props.host && loadingFirstDrawing === false) {
+      return;
+    }
+
     if (Object.entries(this.props.canvas).length === 0) {
       return;
     }
@@ -315,23 +322,34 @@ class GameViewPort extends Component {
     const { width, height, src, clear } = this.props.canvas;
     let img = new Image(width, height);
     if (clear) {
+      console.log("first clear", clear);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    img.onload = async () => {
-      if (clear) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-
       ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(img, 0, 0);
-      // this.props.dispatch({
-      //   type: "changeMaster",
-      //   src: this.canvasRef.current.toDataURL(),
-      //   clear: undefined,
-      //   canvasIndex: canvasIndex,
-      // });
+      loadingFirstDrawing = false;
+    }
+    console.log("before onload");
+    img.onload = () => {
+      console.log("in onload", clear);
+      if (clear) {
+        console.log("2 clear");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = "source-over";
+        ctx.drawImage(img, 0, 0);
+      } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.drawImage(img, 0, 0);
+        // this.props.dispatch({
+        //   type: "changeMaster",
+        //   src: this.canvasRef.current.toDataURL(),
+        //   clear: undefined,
+        //   canvasIndex: canvasIndex,
+        // });
+      }
+      loadingFirstDrawing = false;
     };
+
+    console.log("after onload");
     img.src = src;
   };
   handleMouseDown = async (evt) => {
@@ -519,6 +537,8 @@ let mapStateToProps = (state) => {
     postingData: state.postingData,
     canvas: state.canvas,
     selectedToken: state.selectedToken,
+    Operation_ComponentDBRedux_Complete:
+      state.Operation_ComponentDBRedux_Complete,
   };
 };
 export default connect(mapStateToProps)(GameViewPort);
