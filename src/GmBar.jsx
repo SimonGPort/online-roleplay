@@ -102,7 +102,6 @@ export default function GmBar(props) {
     // dispatch({
     //   type: "startPostingData",
     // });
-
     let data = new FormData();
     data.append("newGmPage", JSON.stringify(gmPageInput));
     data.append("newPlayersPage", JSON.stringify(playersPageInput));
@@ -140,6 +139,7 @@ export default function GmBar(props) {
     dispatch({
       type: "endPostingData",
     });
+    props.restartLoadingFirstDrawing(gmPageInput);
   };
 
   return (

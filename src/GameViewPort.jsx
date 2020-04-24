@@ -187,6 +187,11 @@ class GameViewPort extends Component {
     }
   };
 
+  restartLoadingFirstDrawing = (gmPage) => {
+    this.state.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    loadingFirstDrawing = true;
+  };
+
   resizeCanvasDimensions = () => {
     // let pageDiplay = undefined;
     // if (this.props.user === this.props.host) {
@@ -460,6 +465,7 @@ class GameViewPort extends Component {
         {scan && <Scan scan={scan} />}
 
         <GmBar
+          restartLoadingFirstDrawing={this.restartLoadingFirstDrawing}
           GmBarDisplay={this.state.GmBarDisplay}
           host={this.props.host}
           eventId={this.props.eventId}
