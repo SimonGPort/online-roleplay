@@ -1,6 +1,8 @@
 let express = require("express");
 let app = express();
 let reloadMagic = require("./reload-magic.js");
+/////problem ici
+let fileRoutes = require("./image-upload.js");
 let multer = require("multer");
 let uploads = multer({
   dest: __dirname + "/uploads",
